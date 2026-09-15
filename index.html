@@ -11,7 +11,10 @@
     <meta property="og:description" content="Движение — это жизнь. Остановился — удалён.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Press Start 2P не содержит кириллицы: под ним весь русский текст
+         падал в дефолтный monospace браузера. Пиксельный шрифт остаётся
+         только на логотипе, остальное набрано JetBrains Mono. -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -90,6 +93,7 @@
     <div id="minimap-hint">[C] КАРТА</div>
 
     <script src="./dom.js"></script>
+    <script src="./deck.js"></script>
     <script src="./state.js"></script>
     <script src="./save.js"></script>
     <script src="./economy.js"></script>

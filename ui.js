@@ -89,7 +89,7 @@ function initHTMLUI() {
         </div>
         
         <div id="lore-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
-            <button id="lang-toggle-btn" class="menu-btn" onclick="toggleLangBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">EN / RU</button>
+            <button id="lang-toggle-btn" class="menu-btn" onclick="toggleLangBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">EN / RU</button>
             <div class="lore-container">
                 <div class="lore-col">
                     <h3 data-ru="СУЩНОСТИ ГЛУБИНЫ" data-en="ENTITIES OF THE DEEP"></h3>
@@ -135,7 +135,7 @@ function initHTMLUI() {
         </div>
         
         <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; overflow-y:auto;">
-            <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <h2 style="font-family:var(--font-pixel); font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Один? Выбери себе устройство и закрой панель — ко-оп так и останется выключенным.</div>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Геймпада нет в списке — нажми на нём любую кнопку. Браузер замечает устройство только после первого сигнала.</div>
@@ -157,7 +157,7 @@ function initHTMLUI() {
         </div>
 
         <div id="achievements-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideAchievementsBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn" onclick="hideAchievementsBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div style="display:flex; gap:8px; margin-bottom:16px;">
                 <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ТРОФЕИ</button>
                 <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ЗАКРЫТЫЕ ДАННЫЕ</button>
@@ -167,7 +167,7 @@ function initHTMLUI() {
         </div>
 
         <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:560px;">
                 <div class="menu-eyebrow">ТО ЖЕ САМОЕ ЛЕЖИТ В ПАУЗЕ</div>
                 <h1 class="menu-title" style="font-size:20px;">РАСКЛАДКА</h1>
@@ -185,7 +185,7 @@ function initHTMLUI() {
         </div>
 
         <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
                 <h1 class="menu-title" style="font-size:20px;">СВОДКА ДНЯ</h1>
@@ -196,7 +196,7 @@ function initHTMLUI() {
         </div>
 
         <div id="shop-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideShopBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn" onclick="hideShopBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">ТРАТИТСЯ ЗДЕСЬ. ВНИЗУ УЖЕ НЕ ПОЧИНИШЬ</div>
                 <h1 class="menu-title" style="font-size:20px;">МАСТЕРСКАЯ</h1>
@@ -275,435 +275,10 @@ function initHTMLUI() {
     document.addEventListener('pointerover', uiSound(0.3));
     document.addEventListener('click', uiSound(0.55));
 
-    const style = document.createElement('style');
-    style.innerHTML = `
-        .ui-screen { background:
-            radial-gradient(ellipse at 50% 40%, rgba(40,10,70,0.55), rgba(5,8,16,0.96) 70%),
-            rgba(5,8,16,0.94);
-        backdrop-filter: blur(3px) saturate(1.15); -webkit-backdrop-filter: blur(3px) saturate(1.15);
-        animation: screenIn 160ms ease-out 1; }
-        @keyframes screenIn { from { opacity: 0; } to { opacity: 1; } }
-        .menu-panel { position: relative; padding: 32px; border: 1px solid var(--line);
-            border-left: 3px solid var(--magenta); border-radius: 0; box-shadow: var(--shadow);
-            background: linear-gradient(145deg, rgba(20,14,40,0.90), rgba(6,10,20,0.94));
-            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
-        /* Ребро дышит: панель на статичном фоне иначе читается как картинка, а не как экран */
-        .menu-panel::after { content: ''; position: absolute; left: -3px; top: 0; bottom: 0; width: 3px;
-            background: var(--pa, var(--magenta)); box-shadow: 0 0 18px var(--pa, var(--magenta));
-            animation: edgeGlow 2400ms ease-in-out infinite alternate; pointer-events: none; }
-        @keyframes edgeGlow { from { opacity: 0.45; } to { opacity: 1; } }
-        .menu-eyebrow { font-size: 10px; line-height: 1.6; color: var(--txt-mute); letter-spacing: 2px; margin-bottom: 16px; }
-        /* Клавиша перезапуска была только в коде: работала, но нигде не написана */
-        .go-hint { margin-top: 16px; font-size: 10px; color: var(--txt-mute); letter-spacing: 1px; }
-        .menu-divider { width: 100%; height: 1px; margin: 16px 0 24px;
-            background: linear-gradient(90deg, transparent, var(--magenta) 50%, transparent); opacity: 0.55; }
-        .menu-title { font-size: 32px; color: var(--txt); line-height: 1.1; margin: 0;
-            text-shadow: 0 0 22px rgba(234,242,255,0.28), 2px 0 0 rgba(0,224,255,0.22), -2px 0 0 rgba(255,47,208,0.22); }
-        .menu-title span { color: var(--magenta);
-            text-shadow: 0 0 14px var(--magenta), 0 0 44px rgba(255,47,208,0.55); }
-        .menu-stats { font-size: 10px; line-height: 1.9; color: var(--txt-dim); margin-top: 16px; }
-        .menu-stats b { font-weight: normal; color: var(--txt); }
-
-        /* Кнопка — параллелограмм: форму даёт заливка, обрезанная clip-path.
-           ::after — та же заливка с отступом 2px, поэтому по периметру остаётся
-           кромка. ::before — конический градиент под ней: вращаясь, он светит
-           сквозь эту кромку, и по контуру бежит блик. Оба псевдоэлемента с
-           отрицательным z-index, чтобы не перекрывать текст. */
-        .menu-btn { position: relative; isolation: isolate; display: block; width: 100%; font-family: var(--font-pixel); font-size: 12px; line-height: 1.5; padding: 14px 30px; margin-bottom: 8px; background: var(--line-dim); border: 0; border-radius: 0; color: var(--txt); cursor: pointer; text-align: right; clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%); transition: color 120ms linear; }
-        .menu-btn::after { content: ''; position: absolute; z-index: -1; inset: 2px; background: inherit; clip-path: polygon(17px 0, 100% 0, calc(100% - 17px) 100%, 0 100%); }
-        .menu-btn::before { content: ''; position: absolute; z-index: -2; left: 50%; top: 50%; width: 190%; padding-bottom: 190%; height: 0; transform: translate(-50%, -50%); opacity: 0; filter: blur(4px); background: conic-gradient(from 0deg, transparent 0 46%, rgba(196,109,255,0.25) 62%, var(--magenta) 80%, #ffffff 88%, var(--magenta) 95%, transparent 100%); }
-        .menu-btn:hover, .menu-btn:focus-visible { outline: none; color: var(--magenta); }
-        .menu-btn:hover::before, .menu-btn:focus-visible::before { opacity: 1; animation: btnOrbit 1500ms linear infinite; }
-        .menu-btn:hover, .menu-btn:focus-visible { filter: drop-shadow(0 0 8px rgba(196,109,255,0.6)) drop-shadow(0 0 24px rgba(196,109,255,0.4)); }
-        .menu-btn:active { transform: translateY(1px); }
-        @keyframes btnOrbit { to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-        /* Одно главное действие на экран */
-        .menu-btn.primary { background: var(--magenta); color: var(--bg); padding: 20px 30px; margin-bottom: 16px; }
-
-        /* Третьестепенное: назад, недоступно */
-        .menu-btn.muted { background: var(--panel-2); color: var(--txt-dim); }
-
-        /* Красный только для деструктивного действия */
-        .menu-btn.red { background: var(--red); color: var(--bg); }
-
-        /* Табы: активный — залит акцентом, неактивный — тёмный */
-        .menu-btn.tab { background: var(--magenta); color: var(--bg); }
-        .menu-btn.tab.is-off { background: var(--panel-2); color: var(--txt-dim); }
-
-        /* На залитых кнопках маджента-текст слился бы с фоном: там блик белый,
-           а текст остаётся тёмным. */
-        .menu-btn.primary:hover, .menu-btn.primary:focus-visible,
-        .menu-btn.red:hover, .menu-btn.red:focus-visible,
-        .menu-btn.tab:not(.is-off):hover, .menu-btn.tab:not(.is-off):focus-visible { color: var(--bg); }
-        .menu-btn.primary::before, .menu-btn.red::before, .menu-btn.tab:not(.is-off)::before { background: conic-gradient(from 0deg, transparent 0 46%, rgba(255,255,255,0.3) 64%, #ffffff 88%, rgba(255,255,255,0.3) 94%, transparent 100%); }
-        .menu-btn.red:hover, .menu-btn.red:focus-visible { filter: drop-shadow(0 0 8px rgba(255,45,85,0.6)) drop-shadow(0 0 24px rgba(255,45,85,0.4)); }
-
-        .menu-btn:disabled, .menu-btn.is-disabled { background: var(--panel); color: var(--txt-mute); cursor: not-allowed; }
-        .menu-btn:disabled:hover, .menu-btn.is-disabled:hover { color: var(--txt-mute); filter: none; }
-        .menu-btn:disabled:hover::before, .menu-btn.is-disabled:hover::before { opacity: 0; animation: none; }
-
-        .lore-container { display: flex; gap: 24px; width: 90vw; max-width: 1100px; height: 75vh; }
-        .lore-col { flex: 1; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--magenta); padding: 24px; overflow-y: auto; }
-        .lore-col h3 { color: var(--magenta); font-size: 12px; line-height: 1.5; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
-        .lore-entry { margin-bottom: 24px; border-left: 2px solid var(--line); padding-left: 16px; }
-        .lore-entry h4 { color: var(--cyan); margin-bottom: 8px; font-size: 10px; line-height: 1.5; }
-        .lore-col p { font-family: var(--font-ui); font-size: 15px; line-height: 1.6; color: var(--txt-dim); margin-bottom: 16px; max-width: 70ch; }
-        .lore-col::-webkit-scrollbar { width: 8px; }
-        .lore-col::-webkit-scrollbar-track { background: var(--panel-2); }
-        .lore-col::-webkit-scrollbar-thumb { background: var(--line); border-radius: 0; }
-
-        .achievement-toast { background: var(--panel); border: 1px solid var(--gold); border-left: 3px solid var(--gold); border-radius: 0; padding: 12px 16px; font-family: var(--font-pixel); font-size: 12px; line-height: 1.6; color: var(--gold); box-shadow: var(--shadow); text-align: left; }
-        .achievement-toast .toast-label { display: block; font-size: 10px; color: var(--txt-dim); margin-bottom: 8px; }
-        .achievement-toast.out { opacity: 0; transition: opacity 150ms linear; }
-
-        /* Карта улучшения. Тёмная колода: рамка уголками, эмблема ромбом
-           в цвете улучшения — тот же знак, что у артефакта в мире. Свечения
-           нет: слой UI плоский, отклик даёт цвет рамки, а не ореол. */
-        .levelup-sub { font-size: 10px; color: var(--txt-dim); margin-bottom: 24px; }
-        .levelup-hint { font-size: 10px; color: var(--txt-mute); margin-top: 24px; letter-spacing: 1px; }
-        .levelup-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
-
-        .menu-btn.perk-card { position: relative; display: flex; flex-direction: column; align-items: center;
-            width: 220px; min-height: 300px; margin: 0; padding: 24px 16px; text-align: center;
-            background: var(--panel); border: 1px solid var(--line-dim); border-top: 3px solid var(--perk);
-            clip-path: none; filter: none; transition: border-color 120ms linear, background 120ms linear; }
-        .menu-btn.perk-card::after { content: ''; position: absolute; z-index: 0; inset: 6px; background: none;
-            border: 1px solid var(--line-dim); clip-path: polygon(0 0, 22px 0, 22px 1px, 1px 1px, 1px 22px, 0 22px,
-                0 100%, 22px 100%, 22px calc(100% - 1px), 1px calc(100% - 1px), 1px calc(100% - 22px), 0 calc(100% - 22px),
-                100% 0, calc(100% - 22px) 0, calc(100% - 22px) 1px, calc(100% - 1px) 1px, calc(100% - 1px) 22px, 100% 22px,
-                100% 100%, calc(100% - 22px) 100%, calc(100% - 22px) calc(100% - 1px), calc(100% - 1px) calc(100% - 1px),
-                calc(100% - 1px) calc(100% - 22px), 100% calc(100% - 22px)); }
-        .menu-btn.perk-card::before { display: none; }
-        .menu-btn.perk-card:hover, .menu-btn.perk-card:focus-visible,
-        .menu-btn.perk-card.is-kb { filter: none; color: var(--txt); border-color: var(--perk); background: var(--panel-2); }
-        .menu-btn.perk-card.is-kb { animation: perkPick 120ms steps(2) 1; }
-        @keyframes perkPick { from { background: var(--line-dim); } to { background: var(--panel-2); } }
-
-        .perk-card > * { position: relative; z-index: 1; }
-        .perk-key { font-size: 10px; color: var(--txt-mute); align-self: flex-start; }
-        .perk-emblem { width: 34px; height: 34px; margin: 24px 0; transform: rotate(45deg);
-            border: 3px solid var(--perk); background: var(--panel-2); box-shadow: inset 0 0 0 6px var(--panel); }
-        .perk-title { font-size: 10px; line-height: 1.6; color: var(--perk); margin-bottom: 16px; }
-        .perk-desc { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-bottom: auto; }
-        .perk-pips { display: flex; gap: 4px; margin-top: 16px; }
-        .perk-pip { width: 10px; height: 4px; background: var(--line-dim); }
-        .perk-pip.on { background: var(--perk); }
-        .perk-level { font-size: 10px; color: var(--txt-mute); margin-top: 8px; }
-
-        /* Задание дня. Трек с рамкой — как у строки способности в HUD: без
-           рамки заливка читается как случайное пятно, а не как шкала. */
-        .daily-item { border-left: 2px solid var(--line-dim); padding: 0 0 0 16px; margin-bottom: 24px; }
-        .daily-item.done { border-left-color: var(--gold); }
-        .daily-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; }
-        .daily-title { font-size: 10px; line-height: 1.6; color: var(--txt); }
-        .daily-item.done .daily-title { color: var(--gold); }
-        .daily-reward { font-size: 10px; color: var(--txt-dim); white-space: nowrap; }
-        .daily-track { height: 10px; background: var(--panel-2); border: 1px solid var(--line-dim); }
-        .daily-fill { height: 100%; background: var(--cyan); }
-        .daily-item.done .daily-fill { background: var(--gold); }
-        .daily-count { font-size: 10px; color: var(--txt-mute); margin-top: 8px; }
-
-        .ach-item { border-left: 2px solid var(--line-dim); padding-left: 16px; margin-bottom: 16px; }
-        .ach-item.unlocked { border-left-color: var(--gold); }
-        .ach-item .ach-title { font-size: 12px; line-height: 1.5; color: var(--txt-mute); margin-bottom: 8px; }
-        .ach-item.unlocked .ach-title { color: var(--gold); }
-        .ach-item .ach-desc { font-family: var(--font-ui); font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; }
-
-        .dev-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--line); padding: 12px 16px; }
-        .dev-row.selected { border-color: var(--green); border-left-color: var(--green); }
-        .dev-name { font-size: 10px; line-height: 1.5; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .dev-note { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
-
-        #storage-warning { margin-top: 16px; padding: 12px 16px; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--amber); font-size: 10px; line-height: 1.6; color: var(--amber); text-align: left; }
-        #storage-warning span { display: block; margin-top: 8px; font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
-
-        .shop-wallet { font-size: 12px; line-height: 1.6; color: var(--txt-dim); margin-top: 16px; }
-        .shop-wallet b { font-weight: normal; color: var(--gold); }
-
-        .shop-item { border-left: 2px solid var(--line-dim); padding-left: 16px; margin-bottom: 24px; }
-        .shop-item.ready { border-left-color: var(--cyan); }
-        .shop-item.maxed { border-left-color: var(--gold); }
-        .shop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; }
-        .shop-title { font-size: 12px; line-height: 1.5; color: var(--txt); }
-        .shop-item.maxed .shop-title { color: var(--gold); }
-        .shop-lvl { font-size: 10px; color: var(--txt-dim); }
-        .shop-desc { font-family: var(--font-ui); font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; margin-bottom: 8px; }
-        .shop-buy { display: flex; align-items: center; gap: 16px; }
-        .shop-track { flex: 1; height: 6px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
-        .shop-fill { height: 100%; background: var(--cyan); transition: width 150ms linear; }
-        .shop-item.maxed .shop-fill { background: var(--gold); }
-        .shop-cost { font-size: 10px; color: var(--txt-dim); min-width: 90px; text-align: right; }
-        .shop-item.ready .shop-cost { color: var(--cyan); }
-        /* Кнопка, на которую хватает денег, не должна выглядеть как та,
-           на которую не хватает. Цена цветом — это половина сигнала. */
-        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled) { background: var(--cyan); color: var(--bg); }
-        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled)::before {
-            background: conic-gradient(from 0deg, transparent 0 46%, rgba(255,255,255,0.35) 64%, #ffffff 88%, rgba(255,255,255,0.35) 94%, transparent 100%); }
-        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled):hover { color: var(--bg);
-            filter: drop-shadow(0 0 8px rgba(0,224,255,0.7)) drop-shadow(0 0 24px rgba(0,224,255,0.45)); }
-        .shop-item.ready .shop-fill { box-shadow: 0 0 12px var(--cyan); }
-        .shop-item.maxed .shop-buy .menu-btn { background: transparent; color: var(--gold); }
-        .shop-item.maxed .shop-cost { color: var(--gold); }
-
-        /* Карточка текстуры: образец слева, текст справа. Образец обязан быть
-           крупным — покупают по нему, а не по названию. */
-        /* Вкладки во всю ширину панели: две покупки разного рода не должны
-           лежать в одном списке, иначе за апгрейдами приходится прокручивать
-           косметику и наоборот. */
-        /* Плашка новинок. Золото — потому что это единственное, что игрок
-           купил сам; всё остальное на экране он уже видел. */
-        .depth-picker { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
-        .depth-picker .depth-btn { width: 56px; margin: 0; padding: 14px 0; text-align: center; }
-        .depth-picker .depth-btn.is-on { background: var(--amber); color: var(--bg); }
-        .depth-info { font-size: var(--fs-sm); line-height: 1.9; color: var(--txt-dim); text-align: center; }
-        .depth-info b { font-weight: normal; color: var(--txt); }
-
-        .pool-banner { margin-top: 16px; padding: 12px 16px; background: var(--panel-2); border-left: 3px solid var(--gold); text-align: left; }
-        .pool-banner .pb-head { font-size: var(--fs-sm); color: var(--gold); margin-bottom: 8px; }
-        .pool-banner .pb-row { display: flex; gap: 8px; align-items: baseline; margin-top: 4px; }
-        .pool-banner .pb-tag { font-size: var(--fs-sm); color: var(--cyan); white-space: nowrap; }
-        .pool-banner .pb-what { font-family: var(--font-ui); font-size: 13px; color: var(--txt-dim); }
-
-        .shop-tabs { display: flex; gap: 8px; margin-top: 16px; }
-        .shop-tabs .menu-btn { flex: 1; width: auto; margin: 0; padding: 12px 20px; text-align: center; }
-        .shop-note { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-mute); margin: 16px 0; }
-        /* Экран прижат к верху инлайн-стилем; auto-поля центрируют панель, пока
-           место есть, и обнуляются, когда содержимое выше экрана. Центрирование
-           через justify-content в этом случае срезало бы верх с вкладками. */
-        #shop-screen .menu-panel { margin: auto; }
-
-        .skin-item { display: flex; gap: 16px; align-items: flex-start; }
-        .skin-body { flex: 1; min-width: 0; }
-        .skin-swatch { width: 64px; height: 64px; flex: none; image-rendering: pixelated; border: 1px solid var(--line); background: var(--panel-2); }
-        .skin-item.maxed .skin-swatch { border-color: var(--gold); }
-        .skin-on { font-size: 10px; color: var(--gold); padding: 8px 16px; }
-
-        .hint-key { border: 1px solid var(--line); border-left: 3px solid var(--cyan); background: var(--panel); border-radius: 0; padding: 8px 12px; margin-bottom: 6px; color: var(--cyan); font-size: 10px; }
-        .hint-label { font-size: 10px; color: var(--txt-dim); }
-
-        /* Клавиатурный фокус повторяет hover: одна и та же кнопка не должна
-           выглядеть по-разному от того, мышью до неё дошли или стрелками. */
-        .menu-btn.is-kb { color: var(--magenta); filter: drop-shadow(0 0 8px rgba(196,109,255,0.6)) drop-shadow(0 0 24px rgba(196,109,255,0.4)); }
-        .menu-btn.is-kb::before { opacity: 1; animation: btnOrbit 1500ms linear infinite; }
-        .menu-btn.primary.is-kb, .menu-btn.red.is-kb, .menu-btn.tab:not(.is-off).is-kb { color: var(--bg); }
-        .menu-btn.red.is-kb { filter: drop-shadow(0 0 8px rgba(255,45,85,0.6)) drop-shadow(0 0 24px rgba(255,45,85,0.4)); }
-
-        /* --- Пауза --- */
-        #pause-screen { background: rgba(5,8,14,0.72); }
-        .pause-panel { width: 90vw; max-width: 560px; border-left-color: var(--cyan); --pa: var(--cyan); }
-        .pause-warn { font-size: 10px; line-height: 1.6; color: var(--txt-mute); margin-top: 8px; text-align: right; }
-
-        /* Справочник управления. Две колонки на строку: слева клавиша,
-           справа действие — так строка читается без бегающего взгляда. */
-        .keymap { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; align-items: baseline; }
-        .keymap dt { font-size: 10px; line-height: 1.6; color: var(--cyan); white-space: nowrap; }
-        .keymap dd { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin: 0; }
-        .keymap .km-sep { grid-column: 1 / -1; height: 1px; background: var(--line-dim); margin: 4px 0; }
-
-        /* Блок «что открылось». Появляется только когда есть что показать:
-           пустая рамка «ничего не открыто» — это упрёк, а не информация. */
-        .go-unlocks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 24px; }
-        .go-unlock { background: var(--panel); border: 1px solid var(--gold); border-left: 3px solid var(--gold);
-            padding: 12px 16px; max-width: 320px; text-align: left; animation: goPop 150ms steps(3) 1; }
-        .go-unlock .gu-tag { font-size: var(--fs-sm); color: var(--txt-dim); margin-bottom: 8px; }
-        .go-unlock .gu-title { font-size: var(--fs-sm); line-height: 1.6; color: var(--gold); }
-        .go-unlock .gu-reward { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 8px; }
-        @keyframes goPop { from { transform: translateY(-6px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-        .go-block-label { font-size: var(--fs-sm); color: var(--txt-mute); letter-spacing: 1px; margin-bottom: 8px; }
-        /* Ровно одна цель: список «до чего осталось» игрок не читает,
-           а одну строку с числом — читает всегда. */
-        .go-next { border-left: 2px solid var(--cyan); padding-left: 16px; }
-        .go-next .gn-what { font-size: var(--fs-sm); line-height: 1.6; color: var(--txt); margin-bottom: 8px; }
-        .go-next .gn-gap { font-size: var(--fs-sm); color: var(--cyan); }
-        .go-next .gn-track { height: 8px; margin-top: 8px; background: var(--panel-2); border: 1px solid var(--line-dim); }
-        .go-next .gn-fill { height: 100%; background: var(--cyan); }
-
-        /* --- Итоги забега --- */
-        /* Три блока в ряд: вердикт, сводка, история. На узком экране складываются
-           в столбец — порядок тот же, что и приоритет чтения. */
-        .go-body { display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch; justify-content: center; margin-bottom: 24px; width: 90vw; max-width: 900px; }
-        .go-verdict, .go-sheet, .go-board { background: var(--panel); border: 1px solid var(--line); padding: 24px; }
-        .go-verdict { border-left: 3px solid var(--red); min-width: 200px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
-        .go-sheet { border-left: 3px solid var(--cyan); flex: 1; min-width: 260px; }
-        .go-board { border-left: 3px solid var(--line); min-width: 160px; }
-
-        .go-grade-label { font-size: 10px; color: var(--txt-dim); margin-bottom: 16px; }
-        #go-grade { font-size: 88px; line-height: 1; color: var(--txt-mute); }
-        .go-grade-why { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 16px; }
-
-        #go-stats { font-size: 12px; line-height: 1.9; color: var(--cyan); text-align: left; }
-        .go-breakdown { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; }
-        .go-breakdown dt { font-size: 10px; line-height: 1.6; color: var(--txt-dim); }
-        .go-breakdown dd { font-size: 10px; line-height: 1.6; color: var(--txt); margin: 0; text-align: right; }
-        .go-breakdown dd.hi { color: var(--gold); }
-
-        .go-board-label { font-size: 10px; color: var(--txt-dim); margin-bottom: 16px; }
-        #go-leaderboard { font-size: 10px; line-height: 1.9; color: var(--txt-mute); }
-        #go-leaderboard .is-run { color: var(--gold); }
-
-        /* Оценка красится тем же набором, что и ранг в HUD */
-        .grade-p { color: var(--cyan) !important; }
-        .grade-s { color: var(--blue) !important; }
-        .grade-a { color: var(--magenta) !important; }
-        .grade-b { color: var(--green) !important; }
-        .grade-c { color: var(--gold) !important; }
-        .grade-d { color: var(--txt-mute) !important; }
-
-        /* Заголовок смерти обязан ударить. Один проход глитча на появлении:
-           повторяющийся — превращается в обои и перестаёт читаться. */
-        #go-title {
-            text-shadow: 0 0 28px currentColor, 3px 0 0 rgba(0,224,255,0.45), -3px 0 0 rgba(255,47,208,0.45);
-            animation: goGlitch 620ms steps(2) 1;
-        }
-        @keyframes goGlitch {
-            0%   { transform: translateX(-10px) skewX(-8deg); opacity: 0; letter-spacing: 8px; }
-            25%  { transform: translateX(8px)   skewX(6deg);  opacity: 1; }
-            50%  { transform: translateX(-4px); }
-            75%  { transform: translateX(3px)  skewX(-2deg); }
-            100% { transform: none; letter-spacing: normal; }
-        }
-
-        /* Буква оценки — главный итог экрана. Свет по ней держит взгляд
-           на секунду дольше, чем держал бы просто крупный шрифт. */
-        #go-grade {
-            text-shadow: 0 0 34px currentColor;
-            animation: gradeIn 420ms cubic-bezier(.2,1.5,.4,1) 1;
-        }
-        @keyframes gradeIn {
-            from { transform: scale(0.4); opacity: 0; }
-            to   { transform: none; opacity: 1; }
-        }
-
-        /* Строка итогов въезжает лесенкой: сводка читается сверху вниз,
-           и порядок появления задаёт тот же порядок чтения. */
-        .go-verdict { animation: goCol 260ms ease-out 1 both; }
-        .go-sheet   { animation: goCol 260ms ease-out 60ms 1 both; }
-        .go-board   { animation: goCol 260ms ease-out 120ms 1 both; }
-        @keyframes goCol { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
-
-        /* Кнопка «снова вниз» подсвечивается сама: после смерти игрок
-           ищет глазами именно её, и она не должна выглядеть как остальные. */
-        #game-over-screen .menu-btn.primary { animation: againPulse 1800ms ease-in-out infinite alternate; }
-        @keyframes againPulse {
-            from { box-shadow: 0 0 0 rgba(255,47,208,0); }
-            to   { box-shadow: 0 0 34px rgba(255,47,208,0.55); }
-        }
-
-        /* Тост о достижении: въезжает сбоку, а не проявляется.
-           Проявление на тёмном фоне глаз не ловит — движение ловит. */
-        .achievement-toast { animation: toastIn 220ms cubic-bezier(.2,1.4,.4,1) 1; }
-        @keyframes toastIn { from { transform: translateX(-120%); } to { transform: none; } }
-
-        @media (prefers-reduced-motion: reduce) {
-            #go-title, #go-grade, .go-verdict, .go-sheet, .go-board,
-            #game-over-screen .menu-btn.primary, .achievement-toast { animation: none; }
-        }
-
-        /* ============================================================
-           ТОЧЕЧНОЕ ПОЛЕ ПОД ЭКРАНАМИ UI
-           Два слоя одной сетки: у ::before точки мелкие, у ::after крупные.
-           Дрейф у них общий и равен ровно шагу сетки, поэтому петля не видна.
-           Размер точки не анимируется: слои гасят друг друга в противофазе,
-           и глаз читает это как пульсацию. Анимировать радиус градиента
-           дешевле выглядит, но заставляет перерисовывать весь экран каждый
-           кадр, а прозрачность и сдвиг считает композитор.
-           ============================================================ */
-        .ui-screen, #levelup-screen { isolation: isolate; }
-
-        .ui-screen::before, .ui-screen::after,
-        #levelup-screen::before, #levelup-screen::after {
-            content: '';
-            position: absolute;
-            inset: -40px;
-            z-index: -1;
-            pointer-events: none;
-            background-repeat: repeat;
-            background-size: 30px 30px;
-            animation: dotDrift 13s linear infinite, dotBreathe 4200ms ease-in-out infinite;
-        }
-        .ui-screen::before, #levelup-screen::before {
-            background-image: radial-gradient(circle at center, rgba(158,174,196,0.55) 0 1.1px, transparent 1.7px);
-            animation-direction: normal, alternate;
-        }
-        .ui-screen::after, #levelup-screen::after {
-            background-image: radial-gradient(circle at center, rgba(158,174,196,0.45) 0 2.1px, transparent 2.7px);
-            animation-direction: normal, alternate-reverse;
-        }
-        @keyframes dotDrift { to { transform: translate3d(30px, 30px, 0); } }
-        @keyframes dotBreathe { from { opacity: 0.9; } to { opacity: 0.14; } }
-
-        /* Луч развёртки проходит по панели один раз при открытии: экран
-           включается, а не просто появляется. Clip-path панели его обрезает. */
-        .menu-panel::before {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; top: 0;
-            height: 45%;
-            pointer-events: none;
-            background: linear-gradient(180deg, transparent, rgba(0,224,255,0.07) 55%, rgba(0,224,255,0.22));
-            animation: panelSweep 820ms ease-out 1 both;
-        }
-        @keyframes panelSweep {
-            0%   { transform: translateY(-110%); opacity: 0; }
-            25%  { opacity: 1; }
-            100% { transform: translateY(250%); opacity: 0; }
-        }
-
-        /* Заголовок собирается из расхождения каналов: полсекунды монитор
-           ловит фокус. Только у панелей — у экрана итогов свой глитч. */
-        .menu-panel .menu-title { animation: titleSettle 380ms steps(3) 1 both; }
-        @keyframes titleSettle {
-            0%   { text-shadow: 7px 0 0 rgba(0,224,255,0.75), -7px 0 0 rgba(255,47,208,0.75); letter-spacing: 4px; opacity: 0.6; }
-            60%  { text-shadow: 3px 0 0 rgba(0,224,255,0.5), -3px 0 0 rgba(255,47,208,0.5); letter-spacing: 1px; opacity: 1; }
-            100% { text-shadow: 0 0 22px rgba(234,242,255,0.28), 2px 0 0 rgba(0,224,255,0.22), -2px 0 0 rgba(255,47,208,0.22); letter-spacing: normal; }
-        }
-
-        /* Буквы расходятся под курсором. Сдвиг кнопки занят состоянием
-           :active, и отдавать ему ещё и наведение — значит потерять отклик
-           на нажатие. */
-        .menu-btn { transition: color 120ms linear, letter-spacing 140ms ease-out; }
-        .menu-panel .menu-btn:hover, .menu-panel .menu-btn:focus-visible,
-        .menu-panel .menu-btn.is-kb { letter-spacing: 1.6px; }
-
-        /* Блик по выбранной карте улучшения: три карты одинаковой формы,
-           и рамки мало, чтобы показать, какая под курсором. */
-        .menu-btn.perk-card:hover::before, .menu-btn.perk-card.is-kb::before {
-            display: block;
-            content: '';
-            position: absolute;
-            z-index: 0;
-            inset: 0;
-            opacity: 1;
-            filter: none;
-            transform: none;
-            padding-bottom: 0;
-            background: linear-gradient(115deg, transparent 38%, color-mix(in srgb, var(--perk) 30%, transparent) 50%, transparent 62%);
-            background-size: 280% 100%;
-            animation: perkShine 1100ms ease-out infinite;
-        }
-        @keyframes perkShine { from { background-position: 190% 0; } to { background-position: -90% 0; } }
-
-        /* Строки списков отзываются на курсор: ребро наливается цветом,
-           текст подаётся вперёд. Без этого длинный список выглядит мёртвым. */
-        .shop-item, .ach-item, .daily-item {
-            transition: border-left-color 140ms linear, padding-left 140ms ease-out;
-        }
-        .shop-item:hover { border-left-color: var(--cyan); padding-left: 22px; }
-        .ach-item:hover, .daily-item:hover { border-left-color: var(--gold); padding-left: 22px; }
-        .ach-item:hover { padding-left: 22px; }
-
-        @media (prefers-reduced-motion: reduce) {
-            .ui-screen::before, .ui-screen::after,
-            #levelup-screen::before, #levelup-screen::after,
-            .menu-panel::before, .menu-panel .menu-title,
-            .menu-btn.perk-card:hover::before, .menu-btn.perk-card.is-kb::before { animation: none; }
-            .ui-screen::before, #levelup-screen::before { opacity: 0.5; }
-            .ui-screen::after, #levelup-screen::after { opacity: 0.25; }
-        }
-    `;
-    document.head.appendChild(style);
+    // Оформление целиком лежит в style.css. Раньше половина правил
+    // впрыскивалась отсюда и перекрывала таблицу стилей просто потому,
+    // что попадала в <head> позже: два источника на одну кнопку — это
+    // спор каскада при каждой правке темы.
 
     // Покупка не должна раствориться: игрок идёт в забег, ЗНАЯ, что тот будет
     // другим. Поэтому плашка висит на последнем экране перед стартом и гаснет
@@ -1513,6 +1088,8 @@ function moveMenuFocus(btns, dir) {
 }
 
 // Возвращает true, если клавишу забрало меню — тогда игровой обработчик её не видит
+const DIGIT_PICK_SCREENS = new Set(['main-menu-screen', 'pause-screen', 'levelup-screen']);
+
 function handleMenuKeys(e) {
     if (gameState === 'playing') return false;
     const screen = activeMenuScreen();
@@ -1532,7 +1109,11 @@ function handleMenuKeys(e) {
     // проходим только вертикальными, которых на нём нет
     if (e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'ArrowRight' || e.code === 'KeyD') { moveMenuFocus(btns, 1); return true; }
     if (e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'ArrowLeft' || e.code === 'KeyA') { moveMenuFocus(btns, -1); return true; }
-    if (screen.id === 'levelup-screen' && /^Digit[1-3]$/.test(e.code)) {
+    // Цифра выбирает строку напрямую. Список экранов закрытый: в мастерской
+    // кнопок «купить» столько же, сколько товаров, и «1» там списала бы
+    // деньги вместо навигации. Номера рисуются ровно на этих же экранах —
+    // номер, под которым ничего не происходит, обманывает.
+    if (DIGIT_PICK_SCREENS.has(screen.id) && /^Digit[1-9]$/.test(e.code)) {
         const i = Number(e.code.slice(5)) - 1;
         if (btns[i]) { resetMenuFocus(); btns[i].click(); return true; }
     }
