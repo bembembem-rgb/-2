@@ -675,6 +675,15 @@ body.is-critical .hp-square {
 .dv-what { font-family: var(--font-ui); font-size: 15px; color: var(--txt-dim); }
 .dv-foot { font-size: var(--fs-sm); color: var(--txt-mute); margin-top: 8px; letter-spacing: 1px; }
 
+/* Контракт не по карману. Карточку не прячем: игрок должен видеть,
+   мимо чего прошёл, иначе ставка ничего не значит. */
+#contract-offer.is-poor {
+    border-left-color: var(--txt-mute);
+    filter: saturate(0.35);
+}
+#contract-offer.is-poor .ct-head { color: var(--txt-mute); animation: none; }
+#contract-offer.is-poor .ct-stake { color: var(--red); }
+
 /* Кнопка-клавиша: то же действие мышью, что и с клавиатуры */
 .tap-btn {
     font-family: var(--font-pixel);
@@ -695,6 +704,14 @@ body.is-critical .hp-square {
     box-shadow: 0 0 20px rgba(0, 224, 255, 0.6);
 }
 .tap-btn:active { transform: translateY(1px); }
+
+/* Отказ — второстепенное действие. Тот же размер, меньше цвета. */
+.tap-btn.muted { border-left-color: var(--line); color: var(--txt-mute); }
+.tap-btn.muted:hover, .tap-btn.muted:focus-visible {
+    background: var(--line-dim);
+    color: var(--txt);
+    box-shadow: none;
+}
 
 /* ============================================================
    ПОДСКАЗКИ УПРАВЛЕНИЯ В НАЧАЛЕ ЗАБЕГА

@@ -176,7 +176,7 @@ function failExtraction() {
     questState = 'none';
     clearQuestSite();
     shakeTime = Math.max(shakeTime, 500);
-    showAchievementToast('ОКНО ЭВАКУАЦИИ ЗАКРЫТО');
+    showAchievementToast('ЭВАКУАЦИЯ УШЛА БЕЗ ТЕБЯ');
     scheduleQuestRespawn(8000);
 }
 

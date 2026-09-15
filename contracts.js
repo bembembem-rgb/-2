@@ -12,14 +12,14 @@ const CONTRACT_DECIDE = 8000;         // сколько висит карточ�
 
 const CONTRACT_POOL = [
     { id: 'kills40',  title: 'УБЕЙ 40 ВРАГОВ',        goal: 40, limit: 60000, stake: 30, mult: 4, kind: 'kill'   },
-    { id: 'noHit45',  title: 'НЕ ПОЛУЧАЙ УРОН',       goal: 45, limit: 45000, stake: 40, mult: 5, kind: 'nohit'  },
-    { id: 'bossNoQ',  title: 'СВАЛИ БОССА БЕЗ ИМПУЛЬСА', goal: 1, limit: 0,   stake: 60, mult: 4, kind: 'bossNoPulse' },
+    { id: 'noHit45',  title: 'НИ ЦАРАПИНЫ',           goal: 45, limit: 45000, stake: 40, mult: 5, kind: 'nohit'  },
+    { id: 'bossNoQ',  title: 'БОСС БЕЗ ИМПУЛЬСА', goal: 1, limit: 0,   stake: 60, mult: 4, kind: 'bossNoPulse' },
     { id: 'vault',    title: 'СДАЙ ГРУЗ ЧЕРЕЗ ШЛЮЗ',  goal: 1,  limit: 0,     stake: 50, mult: 5, kind: 'vault'  },
     { id: 'chain25',  title: 'ДЕРЖИ ЦЕПЬ x25',        goal: 1,  limit: 0,     stake: 35, mult: 5, kind: 'chain'  },
     // Чёрный рынок (узел contracts2): ставки выше, выплаты крупнее
     { id: 'kills120', title: 'УБЕЙ 120 ВРАГОВ',        goal: 120, limit: 120000, stake: 90, mult: 4, kind: 'kill',  unlock: 'contracts2' },
     { id: 'wrecks6',  title: 'РАЗБЕРИ 6 ТРАНСПОРТОВ',  goal: 6,  limit: 90000,  stake: 70, mult: 5, kind: 'vehicle', unlock: 'contracts2' },
-    { id: 'noHit90',  title: 'НЕ ПОЛУЧАЙ УРОН',        goal: 90, limit: 90000,  stake: 110, mult: 6, kind: 'nohit', unlock: 'contracts2' }
+    { id: 'noHit90',  title: 'НИ ЦАРАПИНЫ, ДОЛГО',     goal: 90, limit: 90000,  stake: 110, mult: 6, kind: 'nohit', unlock: 'contracts2' }
 ];
 const CONTRACT_BY_ID = {};
 for (const c of CONTRACT_POOL) CONTRACT_BY_ID[c.id] = c;
@@ -151,7 +151,7 @@ function renderContractUI() {
                 + (can
                     ? `<div class="ct-keys"><button class="tap-btn" onclick="acceptContract()">[G] ПРИНЯТЬ</button>`
                       + `<button class="tap-btn muted" onclick="declineContract()">[H] ОТКАЗ</button></div>`
-                    : `<div class="ct-keys">НЕ ХВАТАЕТ КРЕДИТОВ</div>`);
+                    : `<div class="ct-keys">НЕЧЕМ СТАВИТЬ</div>`);
             card.className = can ? '' : 'is-poor';
         }
         card.style.display = 'block';
