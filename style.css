@@ -556,6 +556,19 @@ body.is-critical .hp-square {
     border: 1px solid var(--line-dim);
     overflow: hidden;
 }
+#vehicle-hp-bar, #evac-bar { position: relative; overflow: hidden; }
+#vehicle-hp-bar::after, #evac-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(115deg,
+        rgba(255, 255, 255, 0) 0 8px,
+        rgba(255, 255, 255, 0.22) 8px 14px);
+    background-size: 28px 100%;
+    animation: barStripes 700ms linear infinite;
+}
+@keyframes barStripes { to { background-position: 28px 0; } }
+
 #vehicle-hp-bar {
     height: 100%;
     width: 100%;
@@ -677,12 +690,25 @@ body.is-critical .hp-square {
 
 /* Контракт не по карману. Карточку не прячем: игрок должен видеть,
    мимо чего прошёл, иначе ставка ничего не значит. */
+.depth-picker .depth-btn.is-on {
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.55);
+    animation: depthOn 1800ms ease-in-out infinite alternate;
+}
+@keyframes depthOn {
+    from { box-shadow: 0 0 10px rgba(255, 159, 28, 0.35); }
+    to   { box-shadow: 0 0 26px rgba(255, 159, 28, 0.75); }
+}
+
 #contract-offer.is-poor {
     border-left-color: var(--txt-mute);
     filter: saturate(0.35);
 }
 #contract-offer.is-poor .ct-head { color: var(--txt-mute); animation: none; }
 #contract-offer.is-poor .ct-stake { color: var(--red); }
+
+/* Плашка новинок: единственное на экране, что игрок купил сам */
+.pool-banner { animation: bannerIn 320ms cubic-bezier(.2,1.4,.4,1) 1; }
+@keyframes bannerIn { from { transform: translateY(-10px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* Кнопка-клавиша: то же действие мышью, что и с клавиатуры */
 .tap-btn {

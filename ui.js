@@ -600,6 +600,108 @@ function initHTMLUI() {
             #go-title, #go-grade, .go-verdict, .go-sheet, .go-board,
             #game-over-screen .menu-btn.primary, .achievement-toast { animation: none; }
         }
+
+        /* ============================================================
+           ТОЧЕЧНОЕ ПОЛЕ ПОД ЭКРАНАМИ UI
+           Два слоя одной сетки: у ::before точки мелкие, у ::after крупные.
+           Дрейф у них общий и равен ровно шагу сетки, поэтому петля не видна.
+           Размер точки не анимируется: слои гасят друг друга в противофазе,
+           и глаз читает это как пульсацию. Анимировать радиус градиента
+           дешевле выглядит, но заставляет перерисовывать весь экран каждый
+           кадр, а прозрачность и сдвиг считает композитор.
+           ============================================================ */
+        .ui-screen, #levelup-screen { isolation: isolate; }
+
+        .ui-screen::before, .ui-screen::after,
+        #levelup-screen::before, #levelup-screen::after {
+            content: '';
+            position: absolute;
+            inset: -40px;
+            z-index: -1;
+            pointer-events: none;
+            background-repeat: repeat;
+            background-size: 30px 30px;
+            animation: dotDrift 13s linear infinite, dotBreathe 4200ms ease-in-out infinite;
+        }
+        .ui-screen::before, #levelup-screen::before {
+            background-image: radial-gradient(circle at center, rgba(158,174,196,0.55) 0 1.1px, transparent 1.7px);
+            animation-direction: normal, alternate;
+        }
+        .ui-screen::after, #levelup-screen::after {
+            background-image: radial-gradient(circle at center, rgba(158,174,196,0.45) 0 2.1px, transparent 2.7px);
+            animation-direction: normal, alternate-reverse;
+        }
+        @keyframes dotDrift { to { transform: translate3d(30px, 30px, 0); } }
+        @keyframes dotBreathe { from { opacity: 0.9; } to { opacity: 0.14; } }
+
+        /* Луч развёртки проходит по панели один раз при открытии: экран
+           включается, а не просто появляется. Clip-path панели его обрезает. */
+        .menu-panel::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0;
+            height: 45%;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent, rgba(0,224,255,0.07) 55%, rgba(0,224,255,0.22));
+            animation: panelSweep 820ms ease-out 1 both;
+        }
+        @keyframes panelSweep {
+            0%   { transform: translateY(-110%); opacity: 0; }
+            25%  { opacity: 1; }
+            100% { transform: translateY(250%); opacity: 0; }
+        }
+
+        /* Заголовок собирается из расхождения каналов: полсекунды монитор
+           ловит фокус. Только у панелей — у экрана итогов свой глитч. */
+        .menu-panel .menu-title { animation: titleSettle 380ms steps(3) 1 both; }
+        @keyframes titleSettle {
+            0%   { text-shadow: 7px 0 0 rgba(0,224,255,0.75), -7px 0 0 rgba(255,47,208,0.75); letter-spacing: 4px; opacity: 0.6; }
+            60%  { text-shadow: 3px 0 0 rgba(0,224,255,0.5), -3px 0 0 rgba(255,47,208,0.5); letter-spacing: 1px; opacity: 1; }
+            100% { text-shadow: 0 0 22px rgba(234,242,255,0.28), 2px 0 0 rgba(0,224,255,0.22), -2px 0 0 rgba(255,47,208,0.22); letter-spacing: normal; }
+        }
+
+        /* Буквы расходятся под курсором. Сдвиг кнопки занят состоянием
+           :active, и отдавать ему ещё и наведение — значит потерять отклик
+           на нажатие. */
+        .menu-btn { transition: color 120ms linear, letter-spacing 140ms ease-out; }
+        .menu-panel .menu-btn:hover, .menu-panel .menu-btn:focus-visible,
+        .menu-panel .menu-btn.is-kb { letter-spacing: 1.6px; }
+
+        /* Блик по выбранной карте улучшения: три карты одинаковой формы,
+           и рамки мало, чтобы показать, какая под курсором. */
+        .menu-btn.perk-card:hover::before, .menu-btn.perk-card.is-kb::before {
+            display: block;
+            content: '';
+            position: absolute;
+            z-index: 0;
+            inset: 0;
+            opacity: 1;
+            filter: none;
+            transform: none;
+            padding-bottom: 0;
+            background: linear-gradient(115deg, transparent 38%, color-mix(in srgb, var(--perk) 30%, transparent) 50%, transparent 62%);
+            background-size: 280% 100%;
+            animation: perkShine 1100ms ease-out infinite;
+        }
+        @keyframes perkShine { from { background-position: 190% 0; } to { background-position: -90% 0; } }
+
+        /* Строки списков отзываются на курсор: ребро наливается цветом,
+           текст подаётся вперёд. Без этого длинный список выглядит мёртвым. */
+        .shop-item, .ach-item, .daily-item {
+            transition: border-left-color 140ms linear, padding-left 140ms ease-out;
+        }
+        .shop-item:hover { border-left-color: var(--cyan); padding-left: 22px; }
+        .ach-item:hover, .daily-item:hover { border-left-color: var(--gold); padding-left: 22px; }
+        .ach-item:hover { padding-left: 22px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ui-screen::before, .ui-screen::after,
+            #levelup-screen::before, #levelup-screen::after,
+            .menu-panel::before, .menu-panel .menu-title,
+            .menu-btn.perk-card:hover::before, .menu-btn.perk-card.is-kb::before { animation: none; }
+            .ui-screen::before, #levelup-screen::before { opacity: 0.5; }
+            .ui-screen::after, #levelup-screen::after { opacity: 0.25; }
+        }
     `;
     document.head.appendChild(style);
 
