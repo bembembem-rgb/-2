@@ -313,7 +313,7 @@ function drawArtifactFx(time) {
     }
     if (hungerStacks > 0 && player) {
         ctx.save();
-        ctx.font = "10px 'Press Start 2P', monospace"; ctx.textAlign = 'center';
+        ctx.font = "10px var(--font-pixel)"; ctx.textAlign = 'center';
         ctx.fillStyle = 'rgba(5,8,14,0.85)'; ctx.fillText(`ГОЛОД x${hungerStacks}`, player.x + 2, player.y + 48);
         ctx.fillStyle = ARTIFACTS.leviathan.color; ctx.fillText(`ГОЛОД x${hungerStacks}`, player.x, player.y + 46);
         ctx.restore();
@@ -335,7 +335,7 @@ function drawArtifactFx(time) {
 
         if (player && Math.hypot(player.x - g.x, player.y - g.y) < 320) {
             ctx.save();
-            ctx.font = "9px 'Press Start 2P', monospace"; ctx.textAlign = 'center';
+            ctx.font = "9px var(--font-pixel)"; ctx.textAlign = 'center';
             ctx.fillStyle = 'rgba(5,8,14,0.85)'; ctx.fillText(a.name, g.x + 2, g.y - 36);
             ctx.fillStyle = a.color; ctx.fillText(a.name, g.x, g.y - 38);
             ctx.restore();

@@ -160,7 +160,7 @@ function updateP2TargetLine() {
     const on = !!(player2 && player2.lockedEnemy);
     if (on === _p2TargetOn) return;
     _p2TargetOn = on;
-    p2TargetStatus.innerText = on ? 'ЦЕЛЬ: ЗАХВАЧЕНА' : 'ЦЕЛЬ: НЕТ';
+    p2TargetStatus.innerText = on ? 'ЦЕЛЬ: В ПРИЦЕЛЕ' : 'ЦЕЛЬ: ПУСТО';
     p2TargetStatus.className = on ? 'status-line target-locked' : 'status-line';
 }
 

@@ -203,12 +203,12 @@ function drawDropFlash() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = Math.min(1, t * 2.2);
     ctx.textAlign = 'center';
-    ctx.font = "10px 'Press Start 2P', monospace";
+    ctx.font = "10px var(--font-pixel)";
     ctx.fillStyle = '#05080e';
     ctx.fillText(dropFlash.tier, canvas.width / 2 + 2, canvas.height / 2 - 32);
     ctx.fillStyle = dropFlash.color;
     ctx.fillText(dropFlash.tier, canvas.width / 2, canvas.height / 2 - 34);
-    ctx.font = "24px 'Press Start 2P', monospace";
+    ctx.font = "24px var(--font-pixel)";
     ctx.fillStyle = '#05080e';
     ctx.fillText(dropFlash.name, canvas.width / 2 + 3, canvas.height / 2 + 3);
     ctx.fillStyle = '#e4eef2';

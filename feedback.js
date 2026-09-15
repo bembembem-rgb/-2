@@ -112,7 +112,7 @@ function drawFloatTexts() {
     for (const f of floatTexts) {
         const t = f.life / f.maxLife;
         ctx.globalAlpha = t > 0.7 ? 1 : t / 0.7;
-        ctx.font = `${f.size}px 'Press Start 2P', monospace`;
+        ctx.font = `${f.size}px var(--font-pixel)`;
         // Подложка вместо свечения: текст читается на любом фоне и не «мылит».
         ctx.fillStyle = 'rgba(5,8,14,0.85)';
         ctx.fillText(f.text, f.x + 2, f.y + 2);

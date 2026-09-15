@@ -1,0 +1,822 @@
+/* ============================================================
+   NEON TIDES: ZERO — слой интерфейса
+   Один файл. Токены сверху, всё остальное собрано из них.
+   Правило: движение в HUD означает событие. Ничего не анимируем
+   «для красоты» — иначе игрок перестаёт замечать то, что важно.
+   ============================================================ */
+
+:root {
+    /* --- Глубина. Фон не чёрный: чёрный съедает неон --- */
+    --bg:        #050810;
+    --bg-deep:   #02040a;
+    --panel:     rgba(10, 16, 28, 0.82);
+    --panel-2:   rgba(16, 24, 40, 0.92);
+    --panel-hi:  rgba(26, 38, 62, 0.95);
+
+    /* --- Неон --- */
+    --magenta:   #ff2fd0;
+    --violet:    #c46dff;
+    --cyan:      #00e0ff;
+    --blue:      #3d8bff;
+    --green:     #2bff9e;
+    --amber:     #ff9f1c;
+    --gold:      #f0c419;
+    --red:       #ff2d55;
+
+    /* --- Линии и текст --- */
+    --line:      rgba(120, 90, 180, 0.38);
+    --line-dim:  rgba(70, 60, 110, 0.30);
+    --txt:       #eaf2ff;
+    --txt-dim:   #9fb0c8;
+    --txt-mute:  #5d6c84;
+
+    /* Цвет карточки улучшения. Перезаписывается инлайном на каждой карте. */
+    --perk:      var(--violet);
+
+    --shadow: 0 0 0 1px rgba(255, 47, 208, 0.07),
+              0 12px 40px rgba(0, 0, 0, 0.72),
+              0 0 60px rgba(196, 109, 255, 0.10);
+
+    --fs-sm: 10px;
+    --font-pixel: 'Press Start 2P', 'Courier New', monospace;
+    --font-ui: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+
+    /* Срез угла панели. Меняешь тут — меняется везде. */
+    --notch: 14px;
+}
+
+/* ============================================================
+   БАЗА
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-deep);
+    color: var(--txt);
+    font-family: var(--font-pixel);
+    -webkit-font-smoothing: none;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+    touch-action: none;
+}
+
+body {
+    cursor: crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#gameCanvas {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    z-index: 1;
+}
+
+h1, h2, h3, h4, p, dl, dd, dt { margin: 0; }
+button { font: inherit; color: inherit; }
+button:focus { outline: none; }
+
+/* Скроллбары под общий стиль: дефолтный светлый ползунок рвёт картинку */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.4); }
+::-webkit-scrollbar-thumb { background: var(--line); }
+::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
+/* ============================================================
+   CRT: строчная развёртка и виньетка поверх всего.
+   Два фиксированных слоя на body — дешевле, чем фильтр на канвасе,
+   и не трогает ни один кадр отрисовки.
+   ============================================================ */
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0)    0px,
+        rgba(0, 0, 0, 0)    2px,
+        rgba(0, 0, 0, 0.16) 3px,
+        rgba(0, 0, 0, 0.16) 4px
+    );
+    mix-blend-mode: multiply;
+    opacity: 0.55;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 901;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 50% 50%,
+            rgba(0, 0, 0, 0) 45%,
+            rgba(0, 0, 0, 0.45) 88%,
+            rgba(0, 0, 0, 0.78) 100%),
+        linear-gradient(90deg,
+            rgba(255, 47, 208, 0.04), rgba(0, 0, 0, 0) 20%,
+            rgba(0, 0, 0, 0) 80%, rgba(0, 224, 255, 0.04));
+}
+
+/* ============================================================
+   РЕАКЦИЯ НА УРОН
+   Вспышка — один короткий кадр по краям. Виньетка на 1 HP дышит:
+   пульс медленный, чтобы читаться боковым зрением, а не мигать.
+   ============================================================ */
+
+#hit-flash {
+    position: fixed;
+    inset: 0;
+    z-index: 880;
+    pointer-events: none;
+    opacity: 0;
+    background:
+        radial-gradient(ellipse at 50% 50%,
+            rgba(255, 45, 85, 0) 42%,
+            rgba(255, 45, 85, 0.55) 100%);
+}
+#hit-flash.on { animation: hitFlash 260ms steps(4) 1; }
+
+@keyframes hitFlash {
+    0%   { opacity: 1; }
+    40%  { opacity: 0.6; }
+    100% { opacity: 0; }
+}
+
+#critical-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 870;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 260ms linear;
+    background:
+        radial-gradient(ellipse at 50% 50%,
+            rgba(255, 45, 85, 0) 38%,
+            rgba(255, 45, 85, 0.30) 82%,
+            rgba(255, 45, 85, 0.62) 100%);
+}
+body.is-critical #critical-vignette {
+    opacity: 1;
+    animation: criticalPulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes criticalPulse {
+    from { opacity: 0.55; filter: saturate(1); }
+    to   { opacity: 1;    filter: saturate(1.5); }
+}
+
+/* На последнем HP панели тоже уходят в красный: игрок смотрит в центр
+   экрана, и цвет по периметру — единственное, что он там поймает. */
+body.is-critical .hud-panel {
+    border-color: rgba(255, 45, 85, 0.55);
+    box-shadow: 0 0 0 1px rgba(255, 45, 85, 0.20),
+                0 0 34px rgba(255, 45, 85, 0.28),
+                0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* ============================================================
+   ПАНЕЛЬ HUD
+   Срезанный угол + светящееся ребро слева. Ребро — не украшение:
+   это единственное, что отличает панель от фона в тёмной сцене.
+   ============================================================ */
+
+.hud-panel {
+    position: fixed;
+    z-index: 100;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--panel), rgba(6, 10, 20, 0.88));
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(6px) saturate(1.2);
+    -webkit-backdrop-filter: blur(6px) saturate(1.2);
+    clip-path: polygon(
+        var(--notch) 0, 100% 0,
+        100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%,
+        0 100%, 0 var(--notch));
+    transition: border-color 200ms linear, box-shadow 200ms linear;
+}
+
+/* Сканирующая полоса по панели. Медленная и почти прозрачная —
+   создаёт ощущение живого экрана, но не тянет взгляд на себя. */
+.hud-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 224, 255, 0) 0%,
+        rgba(0, 224, 255, 0.07) 48%,
+        rgba(0, 224, 255, 0) 60%);
+    background-size: 100% 240%;
+    animation: panelScan 5200ms linear infinite;
+}
+@keyframes panelScan {
+    from { background-position: 0 -140%; }
+    to   { background-position: 0 240%; }
+}
+
+/* Удар по игроку встряхивает панель HP: урон должен быть виден
+   и там, куда игрок смотрит, и там, где лежит цифра. */
+.hud-panel.panel-hit { animation: panelHit 220ms steps(3) 1; }
+@keyframes panelHit {
+    0%   { transform: translateX(-5px); border-color: var(--red); }
+    50%  { transform: translateX(4px);  border-color: var(--red); }
+    100% { transform: none; }
+}
+
+/* Верхнее ребро в цвете панели: якорь для глаза на пёстром фоне */
+.hud-panel::after {
+    content: '';
+    position: absolute;
+    left: var(--notch);
+    right: 0;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent, var(--magenta)));
+    box-shadow: 0 0 12px var(--accent, var(--magenta));
+    opacity: 0.75;
+    pointer-events: none;
+}
+
+#ui-container    { --accent: var(--magenta); }
+#p2-ui-container { --accent: var(--blue); }
+#score-container { --accent: var(--cyan); }
+#minimap-wrap    { --accent: var(--cyan); }
+#vehicle-hp-wrap { --accent: var(--amber); }
+#evac-wrap       { --accent: var(--cyan); }
+
+.hud-label {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--txt-mute);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+/* ============================================================
+   РАСКЛАДКА ЭКРАНА
+   Четыре угла + верхний центр. Центр экрана не занят ничем:
+   там происходит бой.
+   ============================================================ */
+
+#ui-container     { left: 20px;  bottom: 20px; min-width: 232px; }
+#p2-ui-container  { right: 20px; bottom: 20px; min-width: 232px;
+                    flex-direction: column; border-color: rgba(61, 139, 255, 0.4); }
+#score-container  { right: 20px; top: 20px;    min-width: 232px; text-align: right; }
+#minimap-wrap     { left: 20px;  top: 20px;    padding: 10px; }
+
+#top-center-hud {
+    position: fixed;
+    z-index: 100;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+#top-center-hud .hud-panel { position: relative; top: auto; left: auto; }
+
+/* HUD принадлежит забегу: вне его показывать нечего.
+   Гасим прозрачностью, а не display — display'ем управляет игровая логика. */
+#ui-container, #p2-ui-container, #score-container,
+#top-center-hud, #minimap-wrap, #minimap-hint {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 220ms ease-out, transform 220ms ease-out, visibility 220ms;
+}
+#score-container { transform: translateY(-10px); }
+#top-center-hud  { transform: translate(-50%, -14px); }
+#minimap-wrap    { transform: translateY(-10px); }
+
+body.in-run #ui-container, body.in-run #p2-ui-container,
+body.in-run #score-container, body.in-run #minimap-wrap,
+body.in-run #minimap-hint {
+    opacity: 1; visibility: visible; transform: none;
+}
+body.in-run #top-center-hud {
+    opacity: 1; visibility: visible; transform: translateX(-50%);
+}
+
+/* ============================================================
+   ЗДОРОВЬЕ
+   Квадраты, а не полоса: игрок должен считать удары, а не оценивать
+   длину. Три квадрата читаются как «три ошибки в запасе».
+   ============================================================ */
+
+#hp-container {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    min-height: 22px;
+}
+
+.hp-square {
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(160deg, #ff6ade, var(--magenta) 55%, #9c1180);
+    box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.28),
+        0 0 12px rgba(255, 47, 208, 0.75);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    animation: hpBreathe 2600ms ease-in-out infinite alternate;
+}
+.hp-square:nth-child(2) { animation-delay: 220ms; }
+.hp-square:nth-child(3) { animation-delay: 440ms; }
+.hp-square:nth-child(4) { animation-delay: 660ms; }
+.hp-square:nth-child(5) { animation-delay: 880ms; }
+
+@keyframes hpBreathe {
+    from { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.28), 0 0 8px  rgba(255,47,208,0.55); }
+    to   { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.28), 0 0 18px rgba(255,47,208,0.95); }
+}
+
+/* Потеря HP: оставшиеся квадраты дёргаются белым. Пропавший квадрат
+   заметить нельзя — его уже нет; заметно движение соседей. */
+#hp-container.hp-hit .hp-square { animation: hpLost 260ms steps(3) 1; }
+@keyframes hpLost {
+    0%   { background: #ffffff; transform: scale(1.35); }
+    60%  { background: #ffffff; transform: scale(0.88); }
+    100% { transform: none; }
+}
+
+body.is-critical .hp-square {
+    background: linear-gradient(160deg, #ff8fa6, var(--red) 55%, #8c0b22);
+    animation: hpCritical 520ms steps(2) infinite;
+}
+@keyframes hpCritical {
+    from { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4), 0 0 24px rgba(255,45,85,1); }
+    to   { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.1), 0 0 6px  rgba(255,45,85,0.4); }
+}
+
+/* ============================================================
+   СПОСОБНОСТИ
+   Строка — это и подпись, и шкала. --cd пишет JS: это остаток
+   перезарядки в процентах. Заливка уходит справа налево, поэтому
+   «пусто = готово» читается без слова READY.
+   ============================================================ */
+
+.status-line {
+    position: relative;
+    display: block;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    padding: 6px 10px 6px 12px;
+    margin-bottom: 4px;
+    color: var(--txt-dim);
+    background: rgba(0, 0, 0, 0.38);
+    border-left: 3px solid var(--line-dim);
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    --cd: 0%;
+    --ab: var(--cyan);
+}
+
+/* Полоса перезарядки под текстом */
+.status-line::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: var(--cd);
+    background: linear-gradient(90deg, rgba(255,255,255,0.03), color-mix(in srgb, var(--ab) 22%, transparent));
+    border-right: 1px solid color-mix(in srgb, var(--ab) 45%, transparent);
+    transition: width 90ms linear;
+}
+.status-line > * { position: relative; }
+
+/* Готово — цветное ребро и текст в цвете способности */
+.status-line[class*="-ready"] {
+    color: var(--ab);
+    border-left-color: var(--ab);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--ab) 60%, transparent);
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--ab) 10%, transparent), rgba(0, 0, 0, 0.38) 60%);
+}
+.status-line[class*="-cooldown"] {
+    color: var(--txt-mute);
+    border-left-color: var(--line-dim);
+}
+
+.dash-ready,  .dash-cooldown  { --ab: var(--cyan); }
+.alt-ready,   .alt-cooldown   { --ab: var(--amber); }
+.pulse-ready, .pulse-cooldown { --ab: var(--magenta); }
+.parry-ready, .parry-cooldown { --ab: var(--green); }
+.repair-idle                  { --ab: var(--blue); color: var(--txt-mute); }
+.target-locked                { --ab: var(--green); color: var(--green);
+                                border-left-color: var(--green);
+                                animation: lockBlink 700ms steps(2) infinite; }
+@keyframes lockBlink {
+    from { text-shadow: 0 0 12px var(--green); }
+    to   { text-shadow: none; }
+}
+
+/* ============================================================
+   СЧЁТ, РАНГ, ЦЕПЬ
+   ============================================================ */
+
+#score-container { font-size: var(--fs-sm); line-height: 1.9; color: var(--txt-dim); }
+#score-container > div { white-space: nowrap; }
+
+#score {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--txt);
+    text-shadow: 0 0 14px rgba(234, 242, 255, 0.35);
+}
+
+/* Ранг — самая крупная цифра в HUD. Это оценка того, как игрок играет
+   прямо сейчас, и она обязана видеться раньше всех остальных чисел. */
+#rank {
+    font-size: 46px;
+    line-height: 1;
+    margin-bottom: 6px;
+    color: var(--txt-mute);
+    letter-spacing: -2px;
+    /* Хроматическая аберрация: буква «плывёт», как на плохом мониторе */
+    text-shadow: 2px 0 0 rgba(255, 47, 208, 0.55), -2px 0 0 rgba(0, 224, 255, 0.55);
+}
+.rank-p { color: var(--cyan);    text-shadow: 0 0 24px var(--cyan),    2px 0 0 rgba(255,47,208,0.6), -2px 0 0 rgba(255,255,255,0.5); }
+.rank-s { color: var(--blue);    text-shadow: 0 0 20px var(--blue),    2px 0 0 rgba(255,47,208,0.5), -2px 0 0 rgba(0,224,255,0.5); }
+.rank-a { color: var(--magenta); text-shadow: 0 0 18px var(--magenta), 2px 0 0 rgba(196,109,255,0.5), -2px 0 0 rgba(0,224,255,0.4); }
+.rank-b { color: var(--green);   text-shadow: 0 0 14px var(--green); }
+.rank-c { color: var(--gold);    text-shadow: 0 0 12px var(--gold); }
+.rank-d { color: var(--txt-mute); }
+
+/* Любая выросшая цифра делает удар. Один кадр, без плавности:
+   плавное изменение числа не читается как награда. */
+.bump { animation: bump 200ms steps(3) 1; }
+@keyframes bump {
+    0%   { transform: scale(1.22); filter: brightness(1.8); }
+    60%  { transform: scale(0.96); }
+    100% { transform: none; }
+}
+
+#cores-display { color: var(--gold); }
+#cores-display .core-gain { color: var(--txt-mute); font-size: var(--fs-sm); }
+#cores-display .core-gain:not(:empty) { margin-left: 4px; }
+
+#level-display { color: var(--violet); }
+#depth-display { color: var(--txt-dim); }
+#zone-display  { font-size: var(--fs-sm); letter-spacing: 1px; transition: color 300ms linear; }
+
+#credits { color: var(--gold); }
+#credits .stake-label { color: var(--txt-mute); font-size: var(--fs-sm); margin-right: 4px; }
+#credits.empty { color: var(--txt-mute); }
+#credits.empty .stake-label { opacity: 0.5; }
+
+#contract-line { color: var(--amber); font-size: var(--fs-sm); }
+#contract-line.ct-low { color: var(--red); animation: lockBlink 500ms steps(2) infinite; }
+
+/* Цепь. Чем длиннее — тем горячее цвет и тем сильнее свечение.
+   Полоса снизу — остаток окна: видно, что пора добивать. */
+#chain-wrap {
+    position: relative;
+    padding-bottom: 5px;
+    margin-bottom: 2px;
+    --chain: 100%;
+}
+#chain-wrap::after {
+    content: '';
+    position: absolute;
+    right: 0; bottom: 0;
+    height: 2px;
+    width: var(--chain);
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    transition: width 90ms linear;
+}
+#chain-count { font-size: 14px; margin-right: 6px; }
+#chain-word  { font-size: var(--fs-sm); letter-spacing: 1px; }
+
+#chain-wrap:has(.chain-t1) { color: var(--cyan); }
+#chain-wrap:has(.chain-t2) { color: var(--amber); }
+#chain-wrap:has(.chain-t3) { color: var(--violet); }
+#chain-wrap:has(.chain-t4) { color: var(--red); }
+
+.chain-t1 { color: var(--cyan);   text-shadow: 0 0 10px var(--cyan); }
+.chain-t2 { color: var(--amber);  text-shadow: 0 0 12px var(--amber); }
+.chain-t3 { color: var(--violet); text-shadow: 0 0 16px var(--violet); }
+.chain-t4 {
+    color: var(--red);
+    text-shadow: 0 0 20px var(--red), 0 0 40px var(--red);
+    animation: chainBurn 260ms steps(2) infinite;
+}
+@keyframes chainBurn {
+    from { transform: translateX(-1px) scale(1.04); }
+    to   { transform: translateX(1px)  scale(1); }
+}
+
+/* ============================================================
+   ВЕРХНИЙ ЦЕНТР: транспорт и эвакуация
+   Сюда попадает только то, что горит по времени.
+   ============================================================ */
+
+#dive-mult {
+    font-size: var(--fs-sm);
+    letter-spacing: 1px;
+    color: var(--gold);
+    text-align: center;
+    text-shadow: 0 0 14px rgba(240, 196, 25, 0.6);
+}
+#dive-mult .dm-x     { font-size: 18px; margin-right: 6px; }
+#dive-mult .dm-label { color: var(--txt-mute); }
+
+#vehicle-hp-wrap, #evac-wrap { min-width: 300px; pointer-events: none; }
+
+#vehicle-hp {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--amber);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+#vehicle-hp-track, #evac-track {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--line-dim);
+    overflow: hidden;
+}
+#vehicle-hp-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ffd08a, var(--amber));
+    box-shadow: 0 0 12px rgba(255, 159, 28, 0.8);
+    transition: width 140ms linear;
+}
+#vehicle-hp-bar.low {
+    background: linear-gradient(90deg, #ff8fa6, var(--red));
+    box-shadow: 0 0 14px rgba(255, 45, 85, 0.9);
+    animation: lockBlink 420ms steps(2) infinite;
+}
+
+#evac-wrap { border-color: rgba(0, 224, 255, 0.45); }
+#evac-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+#evac-time { color: var(--cyan); }
+#evac-dist { color: var(--txt-dim); }
+#evac-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #9df4ff, var(--cyan));
+    box-shadow: 0 0 14px rgba(0, 224, 255, 0.85);
+    transition: width 140ms linear;
+}
+
+/* ============================================================
+   МИНИКАРТА
+   ============================================================ */
+
+#minimap-wrap { border-color: rgba(0, 224, 255, 0.32); }
+#minimapCanvas {
+    display: block;
+    image-rendering: pixelated;
+    background: rgba(2, 6, 14, 0.9);
+    border: 1px solid var(--line-dim);
+}
+#minimap-hint {
+    position: fixed;
+    z-index: 100;
+    left: 20px;
+    top: 20px;
+    padding: 8px 12px;
+    background: rgba(5, 8, 16, 0.6);
+    border-left: 2px solid var(--cyan);
+    font-size: var(--fs-sm);
+    letter-spacing: 1px;
+    color: var(--txt-mute);
+}
+
+/* ============================================================
+   КАРТОЧКИ РЕШЕНИЙ: контракт и «уйти или нырнуть»
+   Бой не останавливается, поэтому карточка живёт в углу и не тянет
+   на себя фокус. Таймер в заголовке — единственное, что мигает.
+   ============================================================ */
+
+#contract-offer, #dive-choice {
+    position: fixed;
+    z-index: 120;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--panel-2), rgba(6, 10, 20, 0.94));
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    clip-path: polygon(
+        var(--notch) 0, 100% 0,
+        100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%,
+        0 100%, 0 var(--notch));
+    animation: cardIn 180ms steps(3) 1;
+    pointer-events: auto;
+}
+@keyframes cardIn {
+    from { transform: translateY(14px); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+}
+
+#contract-offer {
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 330px;
+    border-left: 3px solid var(--amber);
+}
+#dive-choice {
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    max-width: 480px;
+    border-left: 3px solid var(--gold);
+}
+
+.ct-head, .dv-head {
+    font-size: var(--fs-sm);
+    letter-spacing: 1px;
+    color: var(--amber);
+    margin-bottom: 10px;
+    animation: lockBlink 800ms steps(2) infinite;
+}
+.dv-head { color: var(--gold); }
+.ct-title { font-size: 12px; line-height: 1.6; color: var(--txt); margin-bottom: 8px; }
+.ct-stake { font-size: var(--fs-sm); line-height: 1.6; color: var(--gold); margin-bottom: 10px; }
+.ct-keys  { display: flex; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--txt-mute); }
+
+.dv-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.dv-what { font-family: var(--font-ui); font-size: 15px; color: var(--txt-dim); }
+.dv-foot { font-size: var(--fs-sm); color: var(--txt-mute); margin-top: 8px; letter-spacing: 1px; }
+
+/* Кнопка-клавиша: то же действие мышью, что и с клавиатуры */
+.tap-btn {
+    font-family: var(--font-pixel);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    padding: 9px 14px;
+    background: var(--panel-hi);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--cyan);
+    color: var(--cyan);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 120ms linear, color 120ms linear, box-shadow 120ms linear;
+}
+.tap-btn:hover, .tap-btn:focus-visible {
+    background: var(--cyan);
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(0, 224, 255, 0.6);
+}
+.tap-btn:active { transform: translateY(1px); }
+
+/* ============================================================
+   ПОДСКАЗКИ УПРАВЛЕНИЯ В НАЧАЛЕ ЗАБЕГА
+   ============================================================ */
+
+.hint-key, .hint-label { font-family: var(--font-pixel); }
+
+/* ============================================================
+   СЕНСОРНОЕ УПРАВЛЕНИЕ
+   Кнопки крупные и по краям: большой палец не должен уезжать
+   к центру экрана, где идёт бой.
+   ============================================================ */
+
+#joystick-container { z-index: 150; }
+
+#touch-pad {
+    position: absolute;
+    right: 18px;
+    bottom: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.touch-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    font-family: var(--font-pixel);
+    font-size: 9px;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--txt);
+    background: rgba(10, 16, 28, 0.78);
+    border: 2px solid var(--line);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: auto;
+    user-select: none;
+    transition: transform 90ms linear, box-shadow 90ms linear;
+}
+.touch-btn:active { transform: scale(0.92); }
+
+.touch-btn.c-magenta { border-color: var(--magenta); color: var(--magenta); box-shadow: 0 0 20px rgba(255, 47, 208, 0.35); }
+.touch-btn.c-amber   { border-color: var(--amber);   color: var(--amber);   box-shadow: 0 0 20px rgba(255, 159, 28, 0.35); }
+.touch-btn.c-green   { border-color: var(--green);   color: var(--green);   box-shadow: 0 0 20px rgba(43, 255, 158, 0.35); }
+
+#touch-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 90vw;
+    padding: 10px 14px;
+    background: rgba(5, 8, 14, 0.8);
+    border-left: 3px solid var(--cyan);
+    font-size: 9px;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+    color: var(--txt-dim);
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 400ms linear;
+}
+/* Подсказка живёт первые секунды и уходит: текст поверх боя
+   перестают читать уже на второй минуте. */
+body.hint-done #touch-hint { opacity: 0; }
+
+/* ============================================================
+   АДАПТАЦИЯ
+   ============================================================ */
+
+@media (max-width: 900px), (max-height: 620px) {
+    :root { --notch: 10px; }
+    .hud-panel { padding: 9px 12px; }
+    #ui-container, #p2-ui-container, #score-container { min-width: 0; }
+    #ui-container { left: 12px; bottom: 12px; }
+    #p2-ui-container { right: 12px; bottom: 12px; }
+    #score-container { right: 12px; top: 12px; }
+    #minimap-wrap { left: 12px; top: 12px; transform: scale(0.72); transform-origin: top left; }
+    #minimap-hint { left: 12px; top: 12px; }
+    #rank { font-size: 32px; }
+    #score { font-size: 13px; }
+    .hp-square { width: 17px; height: 17px; }
+    #vehicle-hp-wrap, #evac-wrap { min-width: 220px; }
+    #contract-offer { max-width: 260px; top: auto; bottom: 120px; transform: none; }
+    #dive-choice { max-width: 92vw; }
+}
+
+/* На телефоне миникарта и вторая панель только мешают */
+body.is-mobile #minimap-hint,
+body.is-mobile #p2-ui-container { display: none !important; }
+
+/* ============================================================
+   ДОСТУПНОСТЬ
+   Выключаем всё декоративное движение, оставляем смену цвета:
+   без неё половина обратной связи в HUD исчезает.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+    }
+    body::before { display: none; }
+}
+
+/* Ряд клавиш из showControlHints живёт 4 секунды и в узком окне налезает
+   на панель HP. Поднимаем его над HUD, а не прячем: для многих это
+   единственное объяснение управления, которое они вообще увидят. */
+@media (max-width: 760px) {
+    #control-hints {
+        bottom: auto !important;
+        top: 56% !important;
+        flex-wrap: wrap !important;
+        max-width: 92vw !important;
+        justify-content: center !important;
+    }
+}

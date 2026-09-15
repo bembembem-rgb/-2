@@ -1,10 +1,10 @@
 // Палитра для canvas-слоя UI. Значения совпадают с токенами :root в style.css —
 // правишь там, поправь и здесь.
 const UI = {
-    bg: '#05080e', panel: '#0a1017', panel2: '#0d151d', line: '#21414f',
-    txt: '#e4eef2', txtDim: '#97a7b0', txtMute: '#74838c',
-    cyan: '#00e0ff', blue: '#3d8bff', magenta: '#c46dff',
-    green: '#3fdd4a', amber: '#ff9f1c', red: '#ff2d55', gold: '#f0c419'
+    bg: '#050810', panel: '#0a101c', panel2: '#101828', line: '#3a2d5c',
+    txt: '#eaf2ff', txtDim: '#9fb0c8', txtMute: '#5d6c84',
+    cyan: '#00e0ff', blue: '#3d8bff', magenta: '#c46dff', hotPink: '#ff2fd0',
+    green: '#2bff9e', amber: '#ff9f1c', red: '#ff2d55', gold: '#f0c419'
 };
 
 function showControlHints() {
@@ -15,9 +15,9 @@ function showControlHints() {
     const host = document.createElement('div');
     host.id = 'control-hints';
     host.style.cssText = 'position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:150; pointer-events:none; display:flex; gap:16px; opacity:0; transition:opacity 150ms linear;';
-    const items = [['WASD', 'ДВИЖЕНИЕ'], ['SHIFT', 'РЫВОК'], ['ЛКМ', 'СТРЕЛЬБА'], ['F', 'ОРУЖИЕ'], ['E', 'ТРАНСПОРТ']];
+    const items = [['WASD', 'ХОД'], ['SHIFT', 'РЫВОК'], ['ЛКМ', 'ОГОНЬ'], ['F', 'СТВОЛ'], ['E', 'ВЗЛОМ']];
     host.innerHTML = items.map(([key, label]) => `
-        <div style="text-align:center; font-family:'Press Start 2P', monospace;">
+        <div style="text-align:center; font-family:var(--font-pixel);">
             <div class="hint-key">${key}</div>
             <div class="hint-label">${label}</div>
         </div>`).join('');
@@ -36,7 +36,7 @@ function initHTMLUI() {
     
     ui.innerHTML = `
         <div id="fade-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#000; opacity:0; pointer-events:none; z-index:500; transition:opacity 150ms linear;"></div>
-        <button id="cutscene-skip-btn" onclick="window.endFinalCutscene ? window.endFinalCutscene() : null" style="display:none; position:absolute; bottom:32px; right:32px; z-index:501; pointer-events:auto; font-family:'Press Start 2P'; font-size:10px; padding:10px 16px; background:var(--panel); border:1px solid var(--line); color:var(--cyan); cursor:pointer;">ПРОПУСТИТЬ</button>
+        <button id="cutscene-skip-btn" onclick="window.endFinalCutscene ? window.endFinalCutscene() : null" style="display:none; position:absolute; bottom:32px; right:32px; z-index:501; pointer-events:auto; font-family:var(--font-pixel); font-size:10px; padding:10px 16px; background:var(--panel); border:1px solid var(--line); color:var(--cyan); cursor:pointer;">ПРОПУСТИТЬ</button>
 
         <div id="joystick-container" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
             <div id="touch-pad">
@@ -53,36 +53,36 @@ function initHTMLUI() {
                 <div id="menu-stats" class="menu-stats"></div>
                 <div id="storage-warning" style="display:none;"></div>
                 <div class="menu-divider"></div>
-                <button class="menu-btn primary" onclick="showPartSelectBtn()">НАЧАТЬ ПОГРУЖЕНИЕ</button>
+                <button class="menu-btn primary" onclick="showPartSelectBtn()">НЫРЯТЬ</button>
                 <button class="menu-btn" onclick="showShopBtn('menu')">МАСТЕРСКАЯ</button>
-                <button id="coop-toggle-btn" class="menu-btn" onclick="showCoopPanelBtn()">УПРАВЛЕНИЕ / КО-ОП</button>
-                <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">ЗАДАНИЯ ДНЯ</button>
-                <button class="menu-btn" onclick="showKeysBtn()">УПРАВЛЕНИЕ</button>
-                <button class="menu-btn" onclick="showAchievementsBtn()">ДОСТИЖЕНИЯ</button>
-                <button class="menu-btn" onclick="showLoreBtn()">БАЗА ДАННЫХ (ЛОР)</button>
+                <button id="coop-toggle-btn" class="menu-btn" onclick="showCoopPanelBtn()">НАПАРНИК</button>
+                <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">СВОДКА ДНЯ</button>
+                <button class="menu-btn" onclick="showKeysBtn()">РАСКЛАДКА</button>
+                <button class="menu-btn" onclick="showAchievementsBtn()">ТРОФЕИ</button>
+                <button class="menu-btn" onclick="showLoreBtn()">АРХИВ</button>
             </div>
         </div>
 
         <div id="part-select-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
-                <div class="menu-eyebrow" style="text-align:center;">ВЫБОР ГЛАВЫ</div>
-                <h1 class="menu-title" style="font-size:20px; text-align:center;">ВЫБОР ЧАСТИ</h1>
+                <div class="menu-eyebrow" style="text-align:center;">ТЫ УЖЕ РЕШИЛ. ОСТАЛОСЬ ВЫБРАТЬ, КАК ГЛУБОКО</div>
+                <h1 class="menu-title" style="font-size:20px; text-align:center;">КУДА ПАДАЕМ</h1>
                 <div id="pool-banner" class="pool-banner" style="display:none;"></div>
                 <div class="menu-divider"></div>
-                <div class="menu-eyebrow" style="text-align:center;">ГЛУБИНА ПОГРУЖЕНИЯ</div>
+                <div class="menu-eyebrow" style="text-align:center;">ГЛУБИНА</div>
                 <div id="depth-picker" class="depth-picker"></div>
                 <div id="depth-info" class="depth-info"></div>
                 <div class="menu-divider"></div>
-                <button class="menu-btn primary" style="text-align:center;" onclick="startGameBtn()">ЧАСТЬ 1: ЗАТОПЛЕННЫЕ ГЛУБИНЫ</button>
-                <button class="menu-btn muted" style="text-align:center;" onclick="showComingSoonBtn()">ЧАСТЬ 2 — НЕДОСТУПНА</button>
+                <button class="menu-btn primary" style="text-align:center;" onclick="startGameBtn()">ЧАСТЬ 1 · ЗАТОПЛЕННЫЕ ГЛУБИНЫ</button>
+                <button class="menu-btn muted" style="text-align:center;" onclick="showComingSoonBtn()">ЧАСТЬ 2 · ЗАПЕРТО</button>
                 <button class="menu-btn muted" style="text-align:center;" onclick="hidePartSelectBtn()">НАЗАД</button>
             </div>
         </div>
 
         <div id="coming-soon-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
-                <div class="menu-eyebrow" style="text-align:center;">ДОСТУП ОГРАНИЧЕН</div>
-                <h1 class="menu-title" style="font-size:20px; text-align:center;">ВСЁ ЕЩЁ В РАЗРАБОТКЕ</h1>
+                <div class="menu-eyebrow" style="text-align:center;">ДАЛЬШЕ СИГНАЛА НЕТ</div>
+                <h1 class="menu-title" style="font-size:20px; text-align:center;">КАБЕЛЬ ЕЩЁ НЕ ПРОЛОЖЕН</h1>
                 <div class="menu-divider"></div>
                 <button class="menu-btn primary" style="text-align:center;" onclick="hideComingSoonBtn()">НАЗАД</button>
             </div>
@@ -136,59 +136,59 @@ function initHTMLUI() {
         
         <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; overflow-y:auto;">
             <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
-            <h2 style="font-family:'Press Start 2P'; font-size:20px; color:var(--blue); margin-bottom:16px;">УСТРОЙСТВА ВВОДА</h2>
-            <div style="font-family:system-ui, sans-serif; font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Играешь один? Выбери устройство для игрока 1 и закрой панель — ко-оп останется выключенным.</div>
-            <div style="font-family:system-ui, sans-serif; font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Если геймпад не появился в списке, нажми на нём любую кнопку: браузер видит устройство только после первого сигнала.</div>
+            <h2 style="font-family:var(--font-pixel); font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
+            <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Один? Выбери себе устройство и закрой панель — ко-оп так и останется выключенным.</div>
+            <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Геймпада нет в списке — нажми на нём любую кнопку. Браузер замечает устройство только после первого сигнала.</div>
 
             <div style="width:90vw; max-width:520px; margin-bottom:16px;">
-                <div style="font-family:'Press Start 2P'; font-size:12px; color:var(--cyan); margin-bottom:8px;">ИГРОК 1 (ты)</div>
+                <div style="font-family:var(--font-pixel); font-size:12px; color:var(--cyan); margin-bottom:8px;">ИГРОК 1 (ты)</div>
                 <div id="p1-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
                 <div class="dev-note" style="margin-top:8px;">Геймпад для P1: стик — движение, прицел и огонь автоматические. Кнопки (Xbox/PlayStation определяются автоматически, для прочих — берётся стандартная раскладка): A/Cross — рывок, B/Circle — парирование, X/Square — смена оружия, Y/Triangle — импульс, LB/L1 — транспорт. Если раскладка не подходит под конкретное устройство — номер зажатой кнопки виден в списке ниже.</div>
                 <div class="dev-note" style="margin-top:8px;">P2 на клавиатуре: стрелки — движение, Enter — рывок, Quote (') — огонь (удерживать), Backslash (\) — транспорт, Right Ctrl — парирование, Slash (/) — альт. дробовик, Period (.) — импульс. P2 на геймпаде: та же раскладка, что у P1 (A/Cross — рывок, RT/R2 — огонь, LB/L1 — транспорт, B/Circle — парирование, X/Square — альт. дробовик).</div>
             </div>
 
             <div style="width:90vw; max-width:520px; margin-bottom:16px;">
-                <div style="font-family:'Press Start 2P'; font-size:12px; color:var(--blue); margin-bottom:8px;">ИГРОК 2 (друг)</div>
+                <div style="font-family:var(--font-pixel); font-size:12px; color:var(--blue); margin-bottom:8px;">ИГРОК 2 (друг)</div>
                 <div id="coop-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
 
-            <div id="coop-selected-note" style="font-family:'Press Start 2P'; font-size:10px; color:var(--green); min-height:16px; margin-bottom:16px;"></div>
-            <button class="menu-btn red" onclick="disableCoopBtn()" style="width:auto; padding:12px 20px; text-align:center;">ИГРАТЬ ОДНОМУ (ВЫКЛ КО-ОП)</button>
+            <div id="coop-selected-note" style="font-family:var(--font-pixel); font-size:10px; color:var(--green); min-height:16px; margin-bottom:16px;"></div>
+            <button class="menu-btn red" onclick="disableCoopBtn()" style="width:auto; padding:12px 20px; text-align:center;">ИДУ ОДИН</button>
         </div>
 
         <div id="achievements-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideAchievementsBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div style="display:flex; gap:8px; margin-bottom:16px;">
-                <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ДОСТИЖЕНИЯ</button>
-                <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">СЕКРЕТНЫЕ ДАННЫЕ</button>
+                <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ТРОФЕИ</button>
+                <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ЗАКРЫТЫЕ ДАННЫЕ</button>
             </div>
-            <div id="ach-progress" style="font-family:'Press Start 2P'; font-size:10px; color:var(--txt-dim); margin-bottom:16px;"></div>
+            <div id="ach-progress" style="font-family:var(--font-pixel); font-size:10px; color:var(--txt-dim); margin-bottom:16px;"></div>
             <div id="ach-list" style="width:90vw; max-width:800px; max-height:60vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); padding:24px;"></div>
         </div>
 
         <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:560px;">
-                <div class="menu-eyebrow">ТА ЖЕ РАСКЛАДКА, ЧТО И В ПАУЗЕ</div>
-                <h1 class="menu-title" style="font-size:20px;">УПРАВЛЕНИЕ</h1>
+                <div class="menu-eyebrow">ТО ЖЕ САМОЕ ЛЕЖИТ В ПАУЗЕ</div>
+                <h1 class="menu-title" style="font-size:20px;">РАСКЛАДКА</h1>
                 <div class="menu-divider"></div>
                 <dl class="keymap" id="keys-keymap"></dl>
             </div>
         </div>
 
         <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
-            <div class="menu-eyebrow" style="margin-bottom:8px;">ПОГРУЖЕНИЕ ПРИОСТАНОВЛЕНО</div>
+            <div class="menu-eyebrow" style="margin-bottom:8px;">ДАВЛЕНИЕ ПЕРЕСОБИРАЕТ СКАФАНДР</div>
             <h1 id="levelup-head" class="menu-title" style="font-size:20px; margin-bottom:8px;">УРОВЕНЬ 1</h1>
-            <div class="levelup-sub">ВЫБЕРИ ОДНО УЛУЧШЕНИЕ · ДЕЙСТВУЕТ ДО КОНЦА ЗАБЕГА</div>
+            <div class="levelup-sub">ОДНО. ДО КОНЦА ЗАБЕГА. ПЕРЕИГРАТЬ НЕЛЬЗЯ</div>
             <div id="levelup-cards" class="levelup-cards"></div>
-            <div class="levelup-hint">&larr; &rarr; ВЫБОР · ENTER ПОДТВЕРДИТЬ · 1 2 3 НАПРЯМУЮ</div>
+            <div class="levelup-hint">&larr; &rarr; ВЫБРАТЬ · ENTER ВЗЯТЬ · 1 2 3 БЫСТРО</div>
         </div>
 
         <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
-                <div class="menu-eyebrow">ОБНОВЛЯЮТСЯ В ПОЛНОЧЬ · НАГРАДА В КОШЕЛЁК</div>
-                <h1 class="menu-title" style="font-size:20px;">ЗАДАНИЯ ДНЯ</h1>
+                <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
+                <h1 class="menu-title" style="font-size:20px;">СВОДКА ДНЯ</h1>
                 <div id="daily-head" class="menu-stats"></div>
                 <div class="menu-divider"></div>
                 <div id="daily-list"></div>
@@ -198,24 +198,24 @@ function initHTMLUI() {
         <div id="shop-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideShopBtn()" style="position:absolute; top:24px; left:24px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
-                <div class="menu-eyebrow">МАСТЕРСКАЯ · ТРАТИТСЯ МЕЖДУ ЗАБЕГАМИ</div>
+                <div class="menu-eyebrow">ТРАТИТСЯ ЗДЕСЬ. ВНИЗУ УЖЕ НЕ ПОЧИНИШЬ</div>
                 <h1 class="menu-title" style="font-size:20px;">МАСТЕРСКАЯ</h1>
                 <div id="shop-wallet" class="shop-wallet"></div>
                 <div class="shop-tabs">
-                    <button id="shop-tab-upgrades" class="menu-btn tab" onclick="switchShopTab('upgrades')">УЛУЧШЕНИЯ</button>
-                    <button id="shop-tab-skins" class="menu-btn tab" onclick="switchShopTab('skins')">ТЕКСТУРЫ</button>
-                    <button id="shop-tab-tree" class="menu-btn tab" onclick="switchShopTab('tree')">ДЕРЕВО</button>
+                    <button id="shop-tab-upgrades" class="menu-btn tab" onclick="switchShopTab('upgrades')">ЖЕЛЕЗО</button>
+                    <button id="shop-tab-skins" class="menu-btn tab" onclick="switchShopTab('skins')">КРАСКА</button>
+                    <button id="shop-tab-tree" class="menu-btn tab" onclick="switchShopTab('tree')">ДОСТУПЫ</button>
                 </div>
                 <div id="shop-pane-upgrades">
-                    <div class="shop-note">Влияет на бой. Покупается один раз и остаётся навсегда.</div>
+                    <div class="shop-note">Бьёт по цифрам боя. Купил один раз — оно твоё навсегда.</div>
                     <div id="shop-list"></div>
                 </div>
                 <div id="shop-pane-tree" style="display:none;">
-                    <div class="shop-note">Платится ядрами. Открывает не проценты, а содержимое забега: стволы, перки, артефакты, врагов, контракты.</div>
+                    <div class="shop-note">Платится ядрами. Даёт не проценты, а новое содержимое: стволы, перки, артефакты, врагов, контракты.</div>
                     <div id="tree-list"></div>
                 </div>
                 <div id="shop-pane-skins" style="display:none;">
-                    <div class="shop-note">Косметика для транспорта. На бой не влияет.</div>
+                    <div class="shop-note">Чистый понт. На урон не влияет — на впечатление ещё как.</div>
                     <div id="skin-list"></div>
                 </div>
             </div>
@@ -223,14 +223,14 @@ function initHTMLUI() {
 
         <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel pause-panel">
-                <div class="menu-eyebrow">СЕАНС ПРИОСТАНОВЛЕН</div>
+                <div class="menu-eyebrow">ВОДА ЗАМЕРЛА. НЕНАДОЛГО</div>
                 <h1 class="menu-title" style="font-size:20px;">ПАУЗА</h1>
                 <div id="pause-stats" class="menu-stats"></div>
                 <div class="menu-divider"></div>
                 <dl class="keymap" id="pause-keymap"></dl>
                 <div class="menu-divider"></div>
-                <button class="menu-btn primary" onclick="resumeGameBtn()">ПРОДОЛЖИТЬ</button>
-                <button class="menu-btn muted" onclick="abandonRunBtn()">СВЕРНУТЬ ПОГРУЖЕНИЕ</button>
+                <button class="menu-btn primary" onclick="resumeGameBtn()">ОБРАТНО В ВОДУ</button>
+                <button class="menu-btn muted" onclick="abandonRunBtn()">БРОСИТЬ ЗАБЕГ</button>
                 <div class="pause-warn" id="pause-warn"></div>
             </div>
         </div>
@@ -240,28 +240,28 @@ function initHTMLUI() {
             <div id="go-unlocks" class="go-unlocks" style="display:none;"></div>
             <div class="go-body">
                 <div class="go-verdict">
-                    <div class="go-grade-label">ОЦЕНКА ПОГРУЖЕНИЯ</div>
+                    <div class="go-grade-label">КАК ЭТО ВЫГЛЯДЕЛО</div>
                     <div id="go-grade">D</div>
                     <div id="go-grade-why" class="go-grade-why"></div>
                 </div>
                 <div class="go-sheet">
-                    <div class="go-block-label">ЧТО ЗАРАБОТАНО</div>
+                    <div class="go-block-label">ЧТО ВЫНЕС НАВЕРХ</div>
                     <div id="go-stats"></div>
                     <dl id="go-breakdown" class="go-breakdown"></dl>
-                    <div class="go-block-label" style="margin-top:16px;">ЧТО РЯДОМ</div>
+                    <div class="go-block-label" style="margin-top:16px;">ЧУТЬ-ЧУТЬ НЕ ХВАТИЛО</div>
                     <div id="go-next" class="go-next"></div>
                 </div>
                 <div class="go-board">
-                    <div class="go-board-label">ТОП-10 ЗАБЕГОВ</div>
+                    <div class="go-board-label">ЛУЧШИЕ СПУСКИ</div>
                     <div id="go-leaderboard"></div>
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
-                <button class="menu-btn primary" onclick="startGameBtn()" style="width:auto; min-width:240px; text-align:center;">ЕЩЁ РАЗ [R]</button>
+                <button class="menu-btn primary" onclick="startGameBtn()" style="width:auto; min-width:240px; text-align:center;">СНОВА ВНИЗ [R]</button>
                 <button class="menu-btn" onclick="showShopBtn('gameover')" style="width:auto; min-width:240px; text-align:center;">МАСТЕРСКАЯ</button>
-                <button class="menu-btn muted" onclick="goToMenuBtn()" style="width:auto; min-width:240px; text-align:center;">ОТКЛЮЧЕНИЕ</button>
+                <button class="menu-btn muted" onclick="goToMenuBtn()" style="width:auto; min-width:240px; text-align:center;">ОТКЛЮЧИТЬСЯ</button>
             </div>
-            <div class="go-hint">[R] — СРАЗУ В НОВЫЙ ЗАБЕГ, БЕЗ МЕНЮ</div>
+            <div class="go-hint">[R] — вниз сразу, без меню</div>
         </div>
     `;
     document.body.appendChild(ui);
@@ -277,14 +277,30 @@ function initHTMLUI() {
 
     const style = document.createElement('style');
     style.innerHTML = `
-        .ui-screen { background: rgba(5,8,14,0.94); }
-        .menu-panel { padding: 32px; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--magenta); border-radius: 0; box-shadow: var(--shadow); }
-        .menu-eyebrow { font-size: 10px; color: var(--txt-dim); margin-bottom: 16px; }
+        .ui-screen { background:
+            radial-gradient(ellipse at 50% 40%, rgba(40,10,70,0.55), rgba(5,8,16,0.96) 70%),
+            rgba(5,8,16,0.94);
+        backdrop-filter: blur(3px) saturate(1.15); -webkit-backdrop-filter: blur(3px) saturate(1.15);
+        animation: screenIn 160ms ease-out 1; }
+        @keyframes screenIn { from { opacity: 0; } to { opacity: 1; } }
+        .menu-panel { position: relative; padding: 32px; border: 1px solid var(--line);
+            border-left: 3px solid var(--magenta); border-radius: 0; box-shadow: var(--shadow);
+            background: linear-gradient(145deg, rgba(20,14,40,0.90), rgba(6,10,20,0.94));
+            clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
+        /* Ребро дышит: панель на статичном фоне иначе читается как картинка, а не как экран */
+        .menu-panel::after { content: ''; position: absolute; left: -3px; top: 0; bottom: 0; width: 3px;
+            background: var(--pa, var(--magenta)); box-shadow: 0 0 18px var(--pa, var(--magenta));
+            animation: edgeGlow 2400ms ease-in-out infinite alternate; pointer-events: none; }
+        @keyframes edgeGlow { from { opacity: 0.45; } to { opacity: 1; } }
+        .menu-eyebrow { font-size: 10px; line-height: 1.6; color: var(--txt-mute); letter-spacing: 2px; margin-bottom: 16px; }
         /* Клавиша перезапуска была только в коде: работала, но нигде не написана */
         .go-hint { margin-top: 16px; font-size: 10px; color: var(--txt-mute); letter-spacing: 1px; }
-        .menu-divider { width: 100%; height: 1px; margin: 16px 0 24px; background: var(--line); }
-        .menu-title { font-size: 32px; color: var(--txt); line-height: 1.1; margin: 0; }
-        .menu-title span { color: var(--magenta); }
+        .menu-divider { width: 100%; height: 1px; margin: 16px 0 24px;
+            background: linear-gradient(90deg, transparent, var(--magenta) 50%, transparent); opacity: 0.55; }
+        .menu-title { font-size: 32px; color: var(--txt); line-height: 1.1; margin: 0;
+            text-shadow: 0 0 22px rgba(234,242,255,0.28), 2px 0 0 rgba(0,224,255,0.22), -2px 0 0 rgba(255,47,208,0.22); }
+        .menu-title span { color: var(--magenta);
+            text-shadow: 0 0 14px var(--magenta), 0 0 44px rgba(255,47,208,0.55); }
         .menu-stats { font-size: 10px; line-height: 1.9; color: var(--txt-dim); margin-top: 16px; }
         .menu-stats b { font-weight: normal; color: var(--txt); }
 
@@ -293,7 +309,7 @@ function initHTMLUI() {
            кромка. ::before — конический градиент под ней: вращаясь, он светит
            сквозь эту кромку, и по контуру бежит блик. Оба псевдоэлемента с
            отрицательным z-index, чтобы не перекрывать текст. */
-        .menu-btn { position: relative; isolation: isolate; display: block; width: 100%; font-family: 'Press Start 2P', monospace; font-size: 12px; line-height: 1.5; padding: 14px 30px; margin-bottom: 8px; background: var(--line-dim); border: 0; border-radius: 0; color: var(--txt); cursor: pointer; text-align: right; clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%); transition: color 120ms linear; }
+        .menu-btn { position: relative; isolation: isolate; display: block; width: 100%; font-family: var(--font-pixel); font-size: 12px; line-height: 1.5; padding: 14px 30px; margin-bottom: 8px; background: var(--line-dim); border: 0; border-radius: 0; color: var(--txt); cursor: pointer; text-align: right; clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%); transition: color 120ms linear; }
         .menu-btn::after { content: ''; position: absolute; z-index: -1; inset: 2px; background: inherit; clip-path: polygon(17px 0, 100% 0, calc(100% - 17px) 100%, 0 100%); }
         .menu-btn::before { content: ''; position: absolute; z-index: -2; left: 50%; top: 50%; width: 190%; padding-bottom: 190%; height: 0; transform: translate(-50%, -50%); opacity: 0; filter: blur(4px); background: conic-gradient(from 0deg, transparent 0 46%, rgba(196,109,255,0.25) 62%, var(--magenta) 80%, #ffffff 88%, var(--magenta) 95%, transparent 100%); }
         .menu-btn:hover, .menu-btn:focus-visible { outline: none; color: var(--magenta); }
@@ -332,12 +348,12 @@ function initHTMLUI() {
         .lore-col h3 { color: var(--magenta); font-size: 12px; line-height: 1.5; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
         .lore-entry { margin-bottom: 24px; border-left: 2px solid var(--line); padding-left: 16px; }
         .lore-entry h4 { color: var(--cyan); margin-bottom: 8px; font-size: 10px; line-height: 1.5; }
-        .lore-col p { font-family: system-ui, sans-serif; font-size: 15px; line-height: 1.6; color: var(--txt-dim); margin-bottom: 16px; max-width: 70ch; }
+        .lore-col p { font-family: var(--font-ui); font-size: 15px; line-height: 1.6; color: var(--txt-dim); margin-bottom: 16px; max-width: 70ch; }
         .lore-col::-webkit-scrollbar { width: 8px; }
         .lore-col::-webkit-scrollbar-track { background: var(--panel-2); }
         .lore-col::-webkit-scrollbar-thumb { background: var(--line); border-radius: 0; }
 
-        .achievement-toast { background: var(--panel); border: 1px solid var(--gold); border-left: 3px solid var(--gold); border-radius: 0; padding: 12px 16px; font-family: 'Press Start 2P', monospace; font-size: 12px; line-height: 1.6; color: var(--gold); box-shadow: var(--shadow); text-align: left; }
+        .achievement-toast { background: var(--panel); border: 1px solid var(--gold); border-left: 3px solid var(--gold); border-radius: 0; padding: 12px 16px; font-family: var(--font-pixel); font-size: 12px; line-height: 1.6; color: var(--gold); box-shadow: var(--shadow); text-align: left; }
         .achievement-toast .toast-label { display: block; font-size: 10px; color: var(--txt-dim); margin-bottom: 8px; }
         .achievement-toast.out { opacity: 0; transition: opacity 150ms linear; }
 
@@ -369,7 +385,7 @@ function initHTMLUI() {
         .perk-emblem { width: 34px; height: 34px; margin: 24px 0; transform: rotate(45deg);
             border: 3px solid var(--perk); background: var(--panel-2); box-shadow: inset 0 0 0 6px var(--panel); }
         .perk-title { font-size: 10px; line-height: 1.6; color: var(--perk); margin-bottom: 16px; }
-        .perk-desc { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-bottom: auto; }
+        .perk-desc { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-bottom: auto; }
         .perk-pips { display: flex; gap: 4px; margin-top: 16px; }
         .perk-pip { width: 10px; height: 4px; background: var(--line-dim); }
         .perk-pip.on { background: var(--perk); }
@@ -392,15 +408,15 @@ function initHTMLUI() {
         .ach-item.unlocked { border-left-color: var(--gold); }
         .ach-item .ach-title { font-size: 12px; line-height: 1.5; color: var(--txt-mute); margin-bottom: 8px; }
         .ach-item.unlocked .ach-title { color: var(--gold); }
-        .ach-item .ach-desc { font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; }
+        .ach-item .ach-desc { font-family: var(--font-ui); font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; }
 
         .dev-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--line); padding: 12px 16px; }
         .dev-row.selected { border-color: var(--green); border-left-color: var(--green); }
         .dev-name { font-size: 10px; line-height: 1.5; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .dev-note { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
+        .dev-note { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
 
         #storage-warning { margin-top: 16px; padding: 12px 16px; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--amber); font-size: 10px; line-height: 1.6; color: var(--amber); text-align: left; }
-        #storage-warning span { display: block; margin-top: 8px; font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
+        #storage-warning span { display: block; margin-top: 8px; font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); }
 
         .shop-wallet { font-size: 12px; line-height: 1.6; color: var(--txt-dim); margin-top: 16px; }
         .shop-wallet b { font-weight: normal; color: var(--gold); }
@@ -412,13 +428,22 @@ function initHTMLUI() {
         .shop-title { font-size: 12px; line-height: 1.5; color: var(--txt); }
         .shop-item.maxed .shop-title { color: var(--gold); }
         .shop-lvl { font-size: 10px; color: var(--txt-dim); }
-        .shop-desc { font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; margin-bottom: 8px; }
+        .shop-desc { font-family: var(--font-ui); font-size: 14px; line-height: 1.5; color: var(--txt-dim); max-width: 70ch; margin-bottom: 8px; }
         .shop-buy { display: flex; align-items: center; gap: 16px; }
         .shop-track { flex: 1; height: 6px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
         .shop-fill { height: 100%; background: var(--cyan); transition: width 150ms linear; }
         .shop-item.maxed .shop-fill { background: var(--gold); }
         .shop-cost { font-size: 10px; color: var(--txt-dim); min-width: 90px; text-align: right; }
         .shop-item.ready .shop-cost { color: var(--cyan); }
+        /* Кнопка, на которую хватает денег, не должна выглядеть как та,
+           на которую не хватает. Цена цветом — это половина сигнала. */
+        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled) { background: var(--cyan); color: var(--bg); }
+        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled)::before {
+            background: conic-gradient(from 0deg, transparent 0 46%, rgba(255,255,255,0.35) 64%, #ffffff 88%, rgba(255,255,255,0.35) 94%, transparent 100%); }
+        .shop-item.ready .shop-buy .menu-btn:not(.is-disabled):hover { color: var(--bg);
+            filter: drop-shadow(0 0 8px rgba(0,224,255,0.7)) drop-shadow(0 0 24px rgba(0,224,255,0.45)); }
+        .shop-item.ready .shop-fill { box-shadow: 0 0 12px var(--cyan); }
+        .shop-item.maxed .shop-buy .menu-btn { background: transparent; color: var(--gold); }
         .shop-item.maxed .shop-cost { color: var(--gold); }
 
         /* Карточка текстуры: образец слева, текст справа. Образец обязан быть
@@ -438,11 +463,11 @@ function initHTMLUI() {
         .pool-banner .pb-head { font-size: var(--fs-sm); color: var(--gold); margin-bottom: 8px; }
         .pool-banner .pb-row { display: flex; gap: 8px; align-items: baseline; margin-top: 4px; }
         .pool-banner .pb-tag { font-size: var(--fs-sm); color: var(--cyan); white-space: nowrap; }
-        .pool-banner .pb-what { font-family: system-ui, sans-serif; font-size: 13px; color: var(--txt-dim); }
+        .pool-banner .pb-what { font-family: var(--font-ui); font-size: 13px; color: var(--txt-dim); }
 
         .shop-tabs { display: flex; gap: 8px; margin-top: 16px; }
         .shop-tabs .menu-btn { flex: 1; width: auto; margin: 0; padding: 12px 20px; text-align: center; }
-        .shop-note { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-mute); margin: 16px 0; }
+        .shop-note { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-mute); margin: 16px 0; }
         /* Экран прижат к верху инлайн-стилем; auto-поля центрируют панель, пока
            место есть, и обнуляются, когда содержимое выше экрана. Центрирование
            через justify-content в этом случае срезало бы верх с вкладками. */
@@ -466,14 +491,14 @@ function initHTMLUI() {
 
         /* --- Пауза --- */
         #pause-screen { background: rgba(5,8,14,0.72); }
-        .pause-panel { width: 90vw; max-width: 560px; border-left-color: var(--cyan); }
+        .pause-panel { width: 90vw; max-width: 560px; border-left-color: var(--cyan); --pa: var(--cyan); }
         .pause-warn { font-size: 10px; line-height: 1.6; color: var(--txt-mute); margin-top: 8px; text-align: right; }
 
         /* Справочник управления. Две колонки на строку: слева клавиша,
            справа действие — так строка читается без бегающего взгляда. */
         .keymap { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; align-items: baseline; }
         .keymap dt { font-size: 10px; line-height: 1.6; color: var(--cyan); white-space: nowrap; }
-        .keymap dd { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin: 0; }
+        .keymap dd { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin: 0; }
         .keymap .km-sep { grid-column: 1 / -1; height: 1px; background: var(--line-dim); margin: 4px 0; }
 
         /* Блок «что открылось». Появляется только когда есть что показать:
@@ -483,7 +508,7 @@ function initHTMLUI() {
             padding: 12px 16px; max-width: 320px; text-align: left; animation: goPop 150ms steps(3) 1; }
         .go-unlock .gu-tag { font-size: var(--fs-sm); color: var(--txt-dim); margin-bottom: 8px; }
         .go-unlock .gu-title { font-size: var(--fs-sm); line-height: 1.6; color: var(--gold); }
-        .go-unlock .gu-reward { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 8px; }
+        .go-unlock .gu-reward { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 8px; }
         @keyframes goPop { from { transform: translateY(-6px); opacity: 0; } to { transform: none; opacity: 1; } }
 
         .go-block-label { font-size: var(--fs-sm); color: var(--txt-mute); letter-spacing: 1px; margin-bottom: 8px; }
@@ -506,7 +531,7 @@ function initHTMLUI() {
 
         .go-grade-label { font-size: 10px; color: var(--txt-dim); margin-bottom: 16px; }
         #go-grade { font-size: 88px; line-height: 1; color: var(--txt-mute); }
-        .go-grade-why { font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 16px; }
+        .go-grade-why { font-family: var(--font-ui); font-size: 13px; line-height: 1.5; color: var(--txt-dim); margin-top: 16px; }
 
         #go-stats { font-size: 12px; line-height: 1.9; color: var(--cyan); text-align: left; }
         .go-breakdown { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; }
@@ -525,6 +550,56 @@ function initHTMLUI() {
         .grade-b { color: var(--green) !important; }
         .grade-c { color: var(--gold) !important; }
         .grade-d { color: var(--txt-mute) !important; }
+
+        /* Заголовок смерти обязан ударить. Один проход глитча на появлении:
+           повторяющийся — превращается в обои и перестаёт читаться. */
+        #go-title {
+            text-shadow: 0 0 28px currentColor, 3px 0 0 rgba(0,224,255,0.45), -3px 0 0 rgba(255,47,208,0.45);
+            animation: goGlitch 620ms steps(2) 1;
+        }
+        @keyframes goGlitch {
+            0%   { transform: translateX(-10px) skewX(-8deg); opacity: 0; letter-spacing: 8px; }
+            25%  { transform: translateX(8px)   skewX(6deg);  opacity: 1; }
+            50%  { transform: translateX(-4px); }
+            75%  { transform: translateX(3px)  skewX(-2deg); }
+            100% { transform: none; letter-spacing: normal; }
+        }
+
+        /* Буква оценки — главный итог экрана. Свет по ней держит взгляд
+           на секунду дольше, чем держал бы просто крупный шрифт. */
+        #go-grade {
+            text-shadow: 0 0 34px currentColor;
+            animation: gradeIn 420ms cubic-bezier(.2,1.5,.4,1) 1;
+        }
+        @keyframes gradeIn {
+            from { transform: scale(0.4); opacity: 0; }
+            to   { transform: none; opacity: 1; }
+        }
+
+        /* Строка итогов въезжает лесенкой: сводка читается сверху вниз,
+           и порядок появления задаёт тот же порядок чтения. */
+        .go-verdict { animation: goCol 260ms ease-out 1 both; }
+        .go-sheet   { animation: goCol 260ms ease-out 60ms 1 both; }
+        .go-board   { animation: goCol 260ms ease-out 120ms 1 both; }
+        @keyframes goCol { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+        /* Кнопка «снова вниз» подсвечивается сама: после смерти игрок
+           ищет глазами именно её, и она не должна выглядеть как остальные. */
+        #game-over-screen .menu-btn.primary { animation: againPulse 1800ms ease-in-out infinite alternate; }
+        @keyframes againPulse {
+            from { box-shadow: 0 0 0 rgba(255,47,208,0); }
+            to   { box-shadow: 0 0 34px rgba(255,47,208,0.55); }
+        }
+
+        /* Тост о достижении: въезжает сбоку, а не проявляется.
+           Проявление на тёмном фоне глаз не ловит — движение ловит. */
+        .achievement-toast { animation: toastIn 220ms cubic-bezier(.2,1.4,.4,1) 1; }
+        @keyframes toastIn { from { transform: translateX(-120%); } to { transform: none; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            #go-title, #go-grade, .go-verdict, .go-sheet, .go-board,
+            #game-over-screen .menu-btn.primary, .achievement-toast { animation: none; }
+        }
     `;
     document.head.appendChild(style);
 
@@ -1000,7 +1075,7 @@ let _dailyBtnCache = '';
 function updateDailyMenuBtn() {
     const btn = document.getElementById('daily-menu-btn');
     if (!btn) return;
-    const s = `ЗАДАНИЯ ДНЯ · ${dailyDoneCount()}/${DAILY_COUNT}`;
+    const s = `СВОДКА ДНЯ · ${dailyDoneCount()}/${DAILY_COUNT}`;
     if (s !== _dailyBtnCache) { btn.innerText = s; _dailyBtnCache = s; }
 }
 
@@ -1014,8 +1089,8 @@ function updateMenuStats() {
     const s = `ЛУЧШИЙ СЧЁТ <b>${saveData.bestScore.toString().padStart(4, '0')}</b><br>`
             + `ЗАБЕГОВ <b>${saveData.runs.length}</b> · ОТКРЫТО <b>${done}/${ids.length}</b><br>`
             + `КОШЕЛЁК <b>${w} CR</b> · ЯДРА <b>${saveData.cores || 0}</b><br>`
-            + `ДЕРЕВО <b>${unlocksProgress().have}/${unlocksProgress().total}</b>`
-            + (goal ? ` · ДО АПГРЕЙДА <b>${Math.min(w, goal.cost)}/${goal.cost}</b>` : ' · ВСЁ КУПЛЕНО');
+            + `ДОСТУПЫ <b>${unlocksProgress().have}/${unlocksProgress().total}</b>`
+            + (goal ? ` · ДО АПГРЕЙДА <b>${Math.min(w, goal.cost)}/${goal.cost}</b>` : ' · КУПЛЕНО ВСЁ');
     if (s !== _menuStatsCache) { el.innerHTML = s; _menuStatsCache = s; }
     updateDailyMenuBtn();
     renderStorageWarning();
@@ -1104,7 +1179,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     // видеть, что ушёл сам, а не погиб
     const title = document.getElementById('go-title');
     if (title) {
-        title.innerText = runEscaped ? 'ЭВАКУАЦИЯ ЗАВЕРШЕНА' : 'CRITICAL ERROR';
+        title.innerText = runEscaped ? 'ВЫШЕЛ СВОИМ ХОДОМ' : 'CRITICAL ERROR';
         title.style.color = runEscaped ? 'var(--green)' : 'var(--red)';
     }
 
@@ -1112,7 +1187,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     const gradeEl = document.getElementById('go-grade');
     if (gradeEl) { gradeEl.innerText = g.letter; gradeEl.className = g.css; }
     const whyEl = document.getElementById('go-grade-why');
-    if (whyEl) whyEl.innerText = g.why.length ? g.why.join(' · ') : 'счёт держит оценку — стиль её поднимает';
+    if (whyEl) whyEl.innerText = g.why.length ? g.why.join(' · ') : 'счёт держит букву. стиль поднимает её выше';
 
     const statsEl = document.getElementById('go-stats');
     if (statsEl) {
@@ -1147,7 +1222,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     if (unEl) {
         unEl.style.display = runUnlocks.length ? 'flex' : 'none';
         unEl.innerHTML = runUnlocks.map(u => `<div class="go-unlock">`
-            + `<div class="gu-tag">${u.secret ? 'СЕКРЕТНЫЕ ДАННЫЕ' : 'ОТКРЫТО В ЭТОМ ЗАБЕГЕ'}</div>`
+            + `<div class="gu-tag">${u.secret ? 'ЗАКРЫТЫЕ ДАННЫЕ' : 'ВЫБИТО В ЭТОМ ЗАБЕГЕ'}</div>`
             + `<div class="gu-title">${u.title}</div>`
             + (u.reward ? `<div class="gu-reward">${u.reward}</div>` : '')
             + `</div>`).join('');
@@ -1157,11 +1232,11 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     if (nextEl) {
         const t = nextTarget();
         if (!t) {
-            nextEl.innerHTML = '<div class="gn-what">ОТКРЫТО ВСЁ, ЧТО ЕСТЬ</div>';
+            nextEl.innerHTML = '<div class="gn-what">ОТКРЫТО ВСЁ. ДАЛЬШЕ — ТОЛЬКО ИГРАТЬ ЛУЧШЕ</div>';
         } else {
             const pct = Math.max(0, Math.min(100, Math.round(t.have / t.need * 100)));
             nextEl.innerHTML = `<div class="gn-what">${t.what}</div>`
-                + `<div class="gn-gap">${t.ready ? 'ХВАТАЕТ — КУПИ В МАСТЕРСКОЙ' : `${t.have} / ${t.need} ${t.unit} · ОСТАЛОСЬ ${t.need - t.have}`}</div>`
+                + `<div class="gn-gap">${t.ready ? 'ДЕНЕГ ХВАТАЕТ. ИДИ И ЗАБЕРИ' : `${t.have} / ${t.need} ${t.unit} · ОСТАЛОСЬ ${t.need - t.have}`}</div>`
                 + `<div class="gn-track"><div class="gn-fill" style="width:${pct}%"></div></div>`
                 + (t.note ? `<div class="gn-gap" style="margin-top:8px; color:var(--txt-dim);">${t.note}</div>` : '');
         }
@@ -1175,7 +1250,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
             const mine = !marked && r.score === score;
             if (mine) marked = true;
             return `<div class="${mine ? 'is-run' : ''}">${i + 1}. ${r.score.toString().padStart(4, '0')}${r.escaped ? ' <span style="color:var(--green);">↑</span>' : ''}</div>`;
-        }).join('') || '<div style="color:var(--txt-mute);">НЕТ ЗАБЕГОВ</div>';
+        }).join('') || '<div style="color:var(--txt-mute);">ПОКА ПУСТО</div>';
     }
 }
 
@@ -1184,26 +1259,26 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
 // рисовать, поэтому под панелью виден замерший кадр, а не чёрный экран.
 
 const PAUSE_KEYS_P1 = [
-    ['WASD', 'движение'],
+    ['WASD', 'ход — стоять нельзя'],
     ['ЛКМ', 'огонь'],
     ['ПКМ', 'альт-залп'],
-    ['SHIFT', 'рывок'],
-    ['SPACE', 'парирование'],
-    ['Q', 'импульс'],
-    ['F', 'смена оружия'],
-    ['E', 'сесть в транспорт / выйти'],
-    ['G / H', 'принять / отклонить контракт'],
-    ['V / N', 'после сдачи груза: уйти или нырнуть'],
-    ['C', 'сонар (удерживать)'],
-    ['M', 'тактическая карта'],
+    ['SHIFT', 'рывок сквозь пули'],
+    ['SPACE', 'парировать — отбить чужое обратно'],
+    ['Q', 'импульс: расшвырять всё вокруг'],
+    ['F', 'сменить ствол'],
+    ['E', 'влезть в транспорт / вылезти'],
+    ['G / H', 'контракт: взять / отказать'],
+    ['V / N', 'после сдачи: наверх или глубже'],
+    ['C', 'сонар — держать'],
+    ['M', 'карта'],
     ['ESC', 'пауза']
 ];
 
 const PAUSE_KEYS_P2 = [
-    ['СТРЕЛКИ', 'движение'],
-    ['—', 'огонь автоматический по ближайшей цели'],
+    ['СТРЕЛКИ', 'ход'],
+    ['—', 'стреляет сам по ближайшей цели'],
     ['ENTER', 'рывок'],
-    ['RIGHT CTRL', 'парирование'],
+    ['RIGHT CTRL', 'парировать'],
     ['.', 'импульс'],
     ['\\', 'транспорт']
 ];
@@ -1220,12 +1295,12 @@ function renderPauseScreen() {
     }
     const st = document.getElementById('pause-stats');
     if (st) {
-        st.innerHTML = `SCORE <b>${score.toString().padStart(4, '0')}</b> · ПОД ВОДОЙ <b>${formatRunTime(worldTimer)}</b><br>`
+        st.innerHTML = `SCORE <b>${score.toString().padStart(4, '0')}</b> · В ВОДЕ <b>${formatRunTime(worldTimer)}</b><br>`
                      + `ЛУЧШАЯ ЦЕПЬ <b>x${chainBest}</b> · НА КОНУ <b>${runCredits} CR</b>`;
     }
     const warn = document.getElementById('pause-warn');
     // Предупреждение только когда есть что терять — иначе это просто шум.
-    if (warn) warn.innerText = runCredits > 0 ? `СВЕРНУВ ПОГРУЖЕНИЕ, ТЫ ПОТЕРЯЕШЬ ${runCredits} CR` : '';
+    if (warn) warn.innerText = runCredits > 0 ? `БРОСИШЬ СЕЙЧАС — ${runCredits} CR ОСТАНУТСЯ НА ДНЕ` : '';
 }
 
 function pauseGame() {

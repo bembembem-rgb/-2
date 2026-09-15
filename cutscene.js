@@ -137,7 +137,7 @@ function drawFinalCutscene(time) {
         ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, w, h);
         if (t < 0.6) {
             ctx.save(); ctx.globalAlpha = Math.sin((t / 0.6) * Math.PI); ctx.textAlign = 'center';
-            ctx.font = "18px 'Press Start 2P', monospace"; ctx.fillStyle = '#00ffff'; ctx.shadowBlur = 20; ctx.shadowColor = '#00ffff';
+            ctx.font = "18px var(--font-pixel)"; ctx.fillStyle = '#00ffff'; ctx.shadowBlur = 20; ctx.shadowColor = '#00ffff';
             ctx.fillText('СИСТЕМА СТАБИЛЬНА', cx, cy);
             ctx.restore();
         }
