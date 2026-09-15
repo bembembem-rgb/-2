@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON TIDES: ZERO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Реакция на урон: короткая вспышка по краям и постоянная виньетка на 1 HP -->
+    <div id="hit-flash" aria-hidden="true"></div>
+    <div id="critical-vignette" aria-hidden="true"></div>
+
+    <!-- P1: HP и статусы -->
+    <div id="ui-container" class="hud-panel">
+        <div id="p1-role" class="hud-label" style="display:none;"></div>
+        <div id="hp-container"></div>
+        <div id="dash-status" class="status-line"></div>
+        <div id="alt-status" class="status-line"></div>
+        <div id="pulse-status" class="status-line pulse-ready">PULSE: READY (Q)</div>
+        <div id="parry-status" class="status-line parry-ready">PARRY: READY (SPACE)</div>
+    </div>
+
+    <!-- P2: ко-оп -->
+    <div id="p2-ui-container" class="hud-panel" style="display:none;">
+        <div class="hud-label">P2 · ТЕХНИК</div>
+        <div id="p2-dash-status" class="status-line dash-ready">DASH: READY</div>
+        <div id="p2-target-status" class="status-line">ЦЕЛЬ: НЕТ</div>
+        <div id="p2-pulse-status" class="status-line pulse-ready">PULSE: READY (.)</div>
+        <div id="p2-parry-status" class="status-line parry-ready">PARRY: READY (RCTRL)</div>
+        <div id="p2-repair-status" class="status-line repair-idle">РЕМОНТ: ВНЕ ЗОНЫ</div>
+    </div>
+
+    <!-- Верх по центру: HP транспорта и окно эвакуации, стопкой -->
+    <div id="top-center-hud">
+        <div id="dive-mult" style="display:none;"></div>
+        <div id="vehicle-hp-wrap" class="hud-panel" style="display:none;">
+            <div id="vehicle-hp"></div>
+            <div id="vehicle-hp-track">
+                <div id="vehicle-hp-bar"></div>
+            </div>
+        </div>
+
+        <div id="evac-wrap" class="hud-panel" style="display:none;">
+            <div id="evac-head">
+                <span id="evac-time">ЭВАКУАЦИЯ 00:00</span>
+                <span id="evac-dist">0 М</span>
+            </div>
+            <div id="evac-track">
+                <div id="evac-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Счёт -->
+    <div id="score-container" class="hud-panel">
+        <div id="rank"></div>
+        <div id="chain-wrap" style="display:none;">
+            <span id="chain-count"></span><span id="chain-word"></span>
+        </div>
+        <div id="score">SCORE: 0000</div>
+        <div id="cores-display">ЯДРА 0 <span class="core-gain">+0</span></div>
+        <div id="level-display">УР. 1 · 0/900</div>
+        <div id="contract-line" style="display:none;"></div>
+        <div id="credits" class="empty"><span class="stake-label">НА КОНУ</span> 0000 CR</div>
+        <div id="depth-display">ГЛУБИНА 1</div>
+        <div id="zone-display">ZONE: SHALLOW WATERS</div>
+    </div>
+
+    <!-- Уйти или нырнуть: решение после сдачи груза, бой продолжается -->
+    <div id="dive-choice" style="display:none;"></div>
+
+    <!-- Предложение контракта: карточка в углу, бой не останавливается -->
+    <div id="contract-offer" style="display:none;"></div>
+
+    <!-- Миникарта -->
+    <div id="minimap-wrap" class="hud-panel" style="display:none;">
+        <canvas id="minimapCanvas" width="160" height="160"></canvas>
+    </div>
+    <div id="minimap-hint">[C] КАРТА</div>
+
+    <script src="js/dom.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/save.js"></script>
+    <script src="js/economy.js"></script>
+    <script src="js/daily.js"></script>
+    <script src="js/unlocks.js"></script>
+    <script src="js/depth.js"></script>
+    <script src="js/contracts.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/skins.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/projectiles.js"></script>
+    <script src="js/bosses.js"></script>
+    <script src="js/quest.js"></script>
+    <script src="js/hud.js"></script>
+    <script src="js/feedback.js"></script>
+    <script src="js/combat.js"></script>
+    <script src="js/cutscene.js"></script>
+    <script src="js/fx.js"></script>
+    <script src="js/artifacts.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/drops.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/coop.js"></script>
+    <script src="js/run.js"></script>
+    <script src="js/update.js"></script>
+    <script src="js/render-menu.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
