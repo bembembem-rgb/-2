@@ -65,7 +65,7 @@ function initHTMLUI() {
 
         <div id="part-select-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
-                <div class="menu-eyebrow" style="text-align:center;">ТЫ УЖЕ РЕШИЛ. ОСТАЛОСЬ ВЫБРАТЬ, КАК ГЛУБОКО</div>
+                <div class="menu-eyebrow" style="text-align:center;">ГЛУБИНА РЕШАЕТ, СКОЛЬКО ПЛАТЯТ И СКОЛЬКО ЛЕЗЕТ</div>
                 <h1 class="menu-title" style="font-size:20px; text-align:center;">КУДА ПАДАЕМ</h1>
                 <div id="pool-banner" class="pool-banner" style="display:none;"></div>
                 <div class="menu-divider"></div>
@@ -179,7 +179,7 @@ function initHTMLUI() {
         <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
             <div class="menu-eyebrow" style="margin-bottom:8px;">ДАВЛЕНИЕ ПЕРЕСОБИРАЕТ СКАФАНДР</div>
             <h1 id="levelup-head" class="menu-title" style="font-size:20px; margin-bottom:8px;">УРОВЕНЬ 1</h1>
-            <div class="levelup-sub">ОДНО. ДО КОНЦА ЗАБЕГА. ПЕРЕИГРАТЬ НЕЛЬЗЯ</div>
+            <div class="levelup-sub">ОДНО УЛУЧШЕНИЕ ДО КОНЦА ЗАБЕГА, ЗАМЕНИТЬ ПОТОМ НЕЛЬЗЯ</div>
             <div id="levelup-cards" class="levelup-cards"></div>
             <div class="levelup-hint">&larr; &rarr; ВЫБРАТЬ · ENTER ВЗЯТЬ · 1 2 3 БЫСТРО</div>
         </div>
@@ -198,7 +198,7 @@ function initHTMLUI() {
         <div id="shop-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideShopBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
-                <div class="menu-eyebrow">ТРАТИТСЯ ЗДЕСЬ. ВНИЗУ УЖЕ НЕ ПОЧИНИШЬ</div>
+                <div class="menu-eyebrow">КРЕДИТЫ ТРАТЯТСЯ ТОЛЬКО МЕЖДУ ЗАБЕГАМИ</div>
                 <h1 class="menu-title" style="font-size:20px;">МАСТЕРСКАЯ</h1>
                 <div id="shop-wallet" class="shop-wallet"></div>
                 <div class="shop-tabs">
@@ -207,15 +207,15 @@ function initHTMLUI() {
                     <button id="shop-tab-tree" class="menu-btn tab" onclick="switchShopTab('tree')">ДОСТУПЫ</button>
                 </div>
                 <div id="shop-pane-upgrades">
-                    <div class="shop-note">Бьёт по цифрам боя. Купил один раз — оно твоё навсегда.</div>
+                    <div class="shop-note">Бьёт по цифрам боя. Покупается один раз и остаётся навсегда.</div>
                     <div id="shop-list"></div>
                 </div>
                 <div id="shop-pane-tree" style="display:none;">
-                    <div class="shop-note">Платится ядрами. Даёт не проценты, а новое содержимое: стволы, перки, артефакты, врагов, контракты.</div>
+                    <div class="shop-note">Платится ядрами. Добавляет в забег новое: стволы, перки, артефакты, врагов, контракты.</div>
                     <div id="tree-list"></div>
                 </div>
                 <div id="shop-pane-skins" style="display:none;">
-                    <div class="shop-note">Чистый понт. На урон не влияет — на впечатление ещё как.</div>
+                    <div class="shop-note">На урон не влияет. Берут ради вида.</div>
                     <div id="skin-list"></div>
                 </div>
             </div>
@@ -223,7 +223,7 @@ function initHTMLUI() {
 
         <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel pause-panel">
-                <div class="menu-eyebrow">ВОДА ЗАМЕРЛА. НЕНАДОЛГО</div>
+                <div class="menu-eyebrow">ТАЙМЕР ОСТАНОВЛЕН, ВРАГИ ЖДУТ</div>
                 <h1 class="menu-title" style="font-size:20px;">ПАУЗА</h1>
                 <div id="pause-stats" class="menu-stats"></div>
                 <div class="menu-divider"></div>
@@ -864,7 +864,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     const gradeEl = document.getElementById('go-grade');
     if (gradeEl) { gradeEl.innerText = g.letter; gradeEl.className = g.css; }
     const whyEl = document.getElementById('go-grade-why');
-    if (whyEl) whyEl.innerText = g.why.length ? g.why.join(' · ') : 'счёт держит букву. стиль поднимает её выше';
+    if (whyEl) whyEl.innerText = g.why.length ? g.why.join(' · ') : 'букву задаёт счёт, поднимают её цепь и боссы';
 
     const statsEl = document.getElementById('go-stats');
     if (statsEl) {
@@ -909,11 +909,11 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
     if (nextEl) {
         const t = nextTarget();
         if (!t) {
-            nextEl.innerHTML = '<div class="gn-what">ОТКРЫТО ВСЁ. ДАЛЬШЕ — ТОЛЬКО ИГРАТЬ ЛУЧШЕ</div>';
+            nextEl.innerHTML = '<div class="gn-what">ОТКРЫТО ВСЁ, ЧТО ЕСТЬ В ИГРЕ</div>';
         } else {
             const pct = Math.max(0, Math.min(100, Math.round(t.have / t.need * 100)));
             nextEl.innerHTML = `<div class="gn-what">${t.what}</div>`
-                + `<div class="gn-gap">${t.ready ? 'ДЕНЕГ ХВАТАЕТ. ИДИ И ЗАБЕРИ' : `${t.have} / ${t.need} ${t.unit} · ОСТАЛОСЬ ${t.need - t.have}`}</div>`
+                + `<div class="gn-gap">${t.ready ? 'ХВАТАЕТ НА ПОКУПКУ' : `${t.have} / ${t.need} ${t.unit} · ОСТАЛОСЬ ${t.need - t.have}`}</div>`
                 + `<div class="gn-track"><div class="gn-fill" style="width:${pct}%"></div></div>`
                 + (t.note ? `<div class="gn-gap" style="margin-top:8px; color:var(--txt-dim);">${t.note}</div>` : '');
         }
