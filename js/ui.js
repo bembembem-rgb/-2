@@ -55,8 +55,8 @@ function initHTMLUI() {
                 <div class="menu-divider"></div>
                 <button class="menu-btn primary" onclick="showPartSelectBtn()">НЫРЯТЬ</button>
                 <button class="menu-btn" onclick="showShopBtn('menu')">МАСТЕРСКАЯ</button>
-                <button id="coop-toggle-btn" class="menu-btn" onclick="showCoopPanelBtn()">НАПАРНИК</button>
-                <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">СВОДКА ДНЯ</button>
+                <button id="coop-toggle-btn" class="menu-btn" onclick="showCoopPanelBtn()">УПРАВЛЕНИЕ: КЛАВИАТУРА</button>
+                <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">ЗАДАНИЯ ДНЯ</button>
                 <button class="menu-btn" onclick="showKeysBtn()">РАСКЛАДКА</button>
                 <button class="menu-btn" onclick="showAchievementsBtn()">ТРОФЕИ</button>
                 <button class="menu-btn" onclick="showLoreBtn()">АРХИВ</button>
@@ -65,8 +65,8 @@ function initHTMLUI() {
 
         <div id="part-select-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
-                <div class="menu-eyebrow" style="text-align:center;">ГЛУБИНА РЕШАЕТ, СКОЛЬКО ПЛАТЯТ И СКОЛЬКО ЛЕЗЕТ</div>
-                <h1 class="menu-title" style="font-size:20px; text-align:center;">КУДА ПАДАЕМ</h1>
+                <div class="menu-eyebrow" style="text-align:center;">ЧЕМ ГЛУБЖЕ, ТЕМ БОЛЬШЕ ЯДЕР И ВРАГОВ</div>
+                <h1 class="menu-title" style="font-size:20px; text-align:center;">СПУСК</h1>
                 <div id="pool-banner" class="pool-banner" style="display:none;"></div>
                 <div class="menu-divider"></div>
                 <div class="menu-eyebrow" style="text-align:center;">ГЛУБИНА</div>
@@ -81,8 +81,8 @@ function initHTMLUI() {
 
         <div id="coming-soon-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
-                <div class="menu-eyebrow" style="text-align:center;">ДАЛЬШЕ СИГНАЛА НЕТ</div>
-                <h1 class="menu-title" style="font-size:20px; text-align:center;">КАБЕЛЬ ЕЩЁ НЕ ПРОЛОЖЕН</h1>
+                <div class="menu-eyebrow" style="text-align:center;">ЧАСТЬ 2</div>
+                <h1 class="menu-title" style="font-size:20px; text-align:center;">ЕЩЁ НЕ СДЕЛАНА</h1>
                 <div class="menu-divider"></div>
                 <button class="menu-btn primary" style="text-align:center;" onclick="hideComingSoonBtn()">НАЗАД</button>
             </div>
@@ -169,7 +169,7 @@ function initHTMLUI() {
         <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:560px;">
-                <div class="menu-eyebrow">ТО ЖЕ САМОЕ ЛЕЖИТ В ПАУЗЕ</div>
+                <div class="menu-eyebrow">ЭТА ЖЕ РАСКЛАДКА ЕСТЬ В ПАУЗЕ</div>
                 <h1 class="menu-title" style="font-size:20px;">РАСКЛАДКА</h1>
                 <div class="menu-divider"></div>
                 <dl class="keymap" id="keys-keymap"></dl>
@@ -177,7 +177,7 @@ function initHTMLUI() {
         </div>
 
         <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
-            <div class="menu-eyebrow" style="margin-bottom:8px;">ДАВЛЕНИЕ ПЕРЕСОБИРАЕТ СКАФАНДР</div>
+            <div class="menu-eyebrow" style="margin-bottom:8px;">БОЙ ОСТАНОВЛЕН НА ВЫБОР</div>
             <h1 id="levelup-head" class="menu-title" style="font-size:20px; margin-bottom:8px;">УРОВЕНЬ 1</h1>
             <div class="levelup-sub">ОДНО УЛУЧШЕНИЕ ДО КОНЦА ЗАБЕГА, ЗАМЕНИТЬ ПОТОМ НЕЛЬЗЯ</div>
             <div id="levelup-cards" class="levelup-cards"></div>
@@ -188,7 +188,7 @@ function initHTMLUI() {
             <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
-                <h1 class="menu-title" style="font-size:20px;">СВОДКА ДНЯ</h1>
+                <h1 class="menu-title" style="font-size:20px;">ЗАДАНИЯ ДНЯ</h1>
                 <div id="daily-head" class="menu-stats"></div>
                 <div class="menu-divider"></div>
                 <div id="daily-list"></div>
@@ -203,11 +203,11 @@ function initHTMLUI() {
                 <div id="shop-wallet" class="shop-wallet"></div>
                 <div class="shop-tabs">
                     <button id="shop-tab-upgrades" class="menu-btn tab" onclick="switchShopTab('upgrades')">ЖЕЛЕЗО</button>
-                    <button id="shop-tab-skins" class="menu-btn tab" onclick="switchShopTab('skins')">КРАСКА</button>
-                    <button id="shop-tab-tree" class="menu-btn tab" onclick="switchShopTab('tree')">ДОСТУПЫ</button>
+                    <button id="shop-tab-skins" class="menu-btn tab" onclick="switchShopTab('skins')">ВНЕШНИЙ ВИД</button>
+                    <button id="shop-tab-tree" class="menu-btn tab" onclick="switchShopTab('tree')">ДЕРЕВО</button>
                 </div>
                 <div id="shop-pane-upgrades">
-                    <div class="shop-note">Бьёт по цифрам боя. Покупается один раз и остаётся навсегда.</div>
+                    <div class="shop-note">Меняет цифры боя. Покупается один раз и остаётся навсегда.</div>
                     <div id="shop-list"></div>
                 </div>
                 <div id="shop-pane-tree" style="display:none;">
@@ -215,7 +215,7 @@ function initHTMLUI() {
                     <div id="tree-list"></div>
                 </div>
                 <div id="shop-pane-skins" style="display:none;">
-                    <div class="shop-note">На урон не влияет. Берут ради вида.</div>
+                    <div class="shop-note">Только внешний вид, на бой не влияет.</div>
                     <div id="skin-list"></div>
                 </div>
             </div>
@@ -223,7 +223,7 @@ function initHTMLUI() {
 
         <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
             <div class="menu-panel pause-panel">
-                <div class="menu-eyebrow">ТАЙМЕР ОСТАНОВЛЕН, ВРАГИ ЖДУТ</div>
+                <div class="menu-eyebrow">ТАЙМЕР ЗАБЕГА ОСТАНОВЛЕН</div>
                 <h1 class="menu-title" style="font-size:20px;">ПАУЗА</h1>
                 <div id="pause-stats" class="menu-stats"></div>
                 <div class="menu-divider"></div>
@@ -240,7 +240,7 @@ function initHTMLUI() {
             <div id="go-unlocks" class="go-unlocks" style="display:none;"></div>
             <div class="go-body">
                 <div class="go-verdict">
-                    <div class="go-grade-label">КАК ЭТО ВЫГЛЯДЕЛО</div>
+                    <div class="go-grade-label">ОЦЕНКА</div>
                     <div id="go-grade">D</div>
                     <div id="go-grade-why" class="go-grade-why"></div>
                 </div>
@@ -248,7 +248,7 @@ function initHTMLUI() {
                     <div class="go-block-label">ЧТО ВЫНЕС НАВЕРХ</div>
                     <div id="go-stats"></div>
                     <dl id="go-breakdown" class="go-breakdown"></dl>
-                    <div class="go-block-label" style="margin-top:16px;">ЧУТЬ-ЧУТЬ НЕ ХВАТИЛО</div>
+                    <div class="go-block-label" style="margin-top:16px;">БЛИЖАЙШАЯ ЦЕЛЬ</div>
                     <div id="go-next" class="go-next"></div>
                 </div>
                 <div class="go-board">
@@ -300,7 +300,7 @@ function initHTMLUI() {
         for (let n = DEPTH_MIN; n <= DEPTH_MAX; n++) {
             const open = depthUnlocked(n);
             html += `<button class="menu-btn depth-btn${n === cur ? ' is-on' : ''}${open ? '' : ' is-disabled'}" `
-                + `${open ? `onclick="pickDepthBtn(${n})"` : 'disabled'}>${open ? n : '🔒'}</button>`;
+                + `${open ? `onclick="pickDepthBtn(${n})"` : 'disabled'}>${n}</button>`;
         }
         wrap.innerHTML = html;
         if (!info) return;
@@ -374,6 +374,10 @@ function initHTMLUI() {
         const gp = pads[player2InputMode];
         btn.innerText = 'КО-ОП: ВКЛ (P2 — ' + (gp ? gp.id.slice(0, 20).toUpperCase() : 'ГЕЙМПАД') + ')';
     }
+    // Раньше подпись обновлялась только при выходе из панели устройств.
+    // До первого захода туда кнопка показывала текст из разметки, который
+    // с настоящим состоянием ко-опа не сверялся.
+    updateCoopToggleLabel();
     let coopPanelInterval = null;
     window.showCoopPanelBtn = function() {
         document.getElementById('main-menu-screen').style.display = 'none';
@@ -752,7 +756,7 @@ let _dailyBtnCache = '';
 function updateDailyMenuBtn() {
     const btn = document.getElementById('daily-menu-btn');
     if (!btn) return;
-    const s = `СВОДКА ДНЯ · ${dailyDoneCount()}/${DAILY_COUNT}`;
+    const s = `ЗАДАНИЯ ДНЯ · ${dailyDoneCount()}/${DAILY_COUNT}`;
     if (s !== _dailyBtnCache) { btn.innerText = s; _dailyBtnCache = s; }
 }
 
@@ -766,7 +770,7 @@ function updateMenuStats() {
     const s = `ЛУЧШИЙ СЧЁТ <b>${saveData.bestScore.toString().padStart(4, '0')}</b><br>`
             + `ЗАБЕГОВ <b>${saveData.runs.length}</b> · ОТКРЫТО <b>${done}/${ids.length}</b><br>`
             + `КОШЕЛЁК <b>${w} CR</b> · ЯДРА <b>${saveData.cores || 0}</b><br>`
-            + `ДОСТУПЫ <b>${unlocksProgress().have}/${unlocksProgress().total}</b>`
+            + `ДЕРЕВО <b>${unlocksProgress().have}/${unlocksProgress().total}</b>`
             + (goal ? ` · ДО АПГРЕЙДА <b>${Math.min(w, goal.cost)}/${goal.cost}</b>` : ' · КУПЛЕНО ВСЁ');
     if (s !== _menuStatsCache) { el.innerHTML = s; _menuStatsCache = s; }
     updateDailyMenuBtn();
@@ -936,17 +940,17 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
 // рисовать, поэтому под панелью виден замерший кадр, а не чёрный экран.
 
 const PAUSE_KEYS_P1 = [
-    ['WASD', 'ход — стоять нельзя'],
+    ['WASD', 'ход, стоять нельзя'],
     ['ЛКМ', 'огонь'],
     ['ПКМ', 'альт-залп'],
     ['SHIFT', 'рывок сквозь пули'],
-    ['SPACE', 'парировать — отбить чужое обратно'],
+    ['SPACE', 'парировать: отбить чужой выстрел'],
     ['Q', 'импульс: расшвырять всё вокруг'],
     ['F', 'сменить ствол'],
     ['E', 'влезть в транспорт / вылезти'],
     ['G / H', 'контракт: взять / отказать'],
     ['V / N', 'после сдачи: наверх или глубже'],
-    ['C', 'сонар — держать'],
+    ['C', 'сонар, пока зажата'],
     ['M', 'карта'],
     ['ESC', 'пауза']
 ];

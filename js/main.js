@@ -213,7 +213,6 @@ function gameFrame(currentTime) {
 
 // Запуск HTML интерфейса и игрового цикла
 initHTMLUI();
-startDeck();
 requestAnimationFrame(gameLoop);
 
 // --- DEBUG: КОНСОЛЬНЫЙ СПАВН БОССОВ ---

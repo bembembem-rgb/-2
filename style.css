@@ -53,28 +53,6 @@
     --brk: 16px;
 }
 
-/* Четыре уголка вместо рамки. Восемь фоновых слоёв, ни одного лишнего
-   элемента в разметке: уголок — это два отрезка, горизонтальный и
-   вертикальный, прижатые к своему краю. */
-.brk {
-    background-image:
-        linear-gradient(var(--acc, var(--cyan)) 0 0), linear-gradient(var(--acc, var(--cyan)) 0 0),
-        linear-gradient(var(--acc, var(--cyan)) 0 0), linear-gradient(var(--acc, var(--cyan)) 0 0),
-        linear-gradient(var(--acc, var(--cyan)) 0 0), linear-gradient(var(--acc, var(--cyan)) 0 0),
-        linear-gradient(var(--acc, var(--cyan)) 0 0), linear-gradient(var(--acc, var(--cyan)) 0 0);
-    background-size:
-        var(--brk) 1px, 1px var(--brk),
-        var(--brk) 1px, 1px var(--brk),
-        var(--brk) 1px, 1px var(--brk),
-        var(--brk) 1px, 1px var(--brk);
-    background-position:
-        0 0, 0 0,
-        100% 0, 100% 0,
-        0 100%, 0 100%,
-        100% 100%, 100% 100%;
-    background-repeat: no-repeat;
-}
-
 /* ============================================================
    БАЗА
    ============================================================ */
@@ -230,15 +208,11 @@ body.is-critical .hud-panel {
     position: fixed;
     z-index: 100;
     padding: 12px 16px;
-    background: linear-gradient(135deg, var(--panel), rgba(6, 10, 20, 0.88));
-    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(4, 14, 20, 0.88), rgba(2, 8, 14, 0.9));
+    border: 1px solid var(--line-dim);
     box-shadow: var(--shadow);
     backdrop-filter: blur(6px) saturate(1.2);
     -webkit-backdrop-filter: blur(6px) saturate(1.2);
-    clip-path: polygon(
-        var(--notch) 0, 100% 0,
-        100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%,
-        0 100%, 0 var(--notch));
     transition: border-color 200ms linear, box-shadow 200ms linear;
 }
 
@@ -275,22 +249,15 @@ body.is-critical .hud-panel {
 .hud-panel::after {
     content: '';
     position: absolute;
-    left: var(--notch);
+    left: 0;
     right: 0;
     top: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent, var(--magenta)));
+    background: linear-gradient(90deg, transparent, var(--accent, var(--cyan)));
     box-shadow: 0 0 12px var(--accent, var(--magenta));
     opacity: 0.75;
     pointer-events: none;
 }
-
-#ui-container    { --accent: var(--magenta); }
-#p2-ui-container { --accent: var(--blue); }
-#score-container { --accent: var(--cyan); }
-#minimap-wrap    { --accent: var(--cyan); }
-#vehicle-hp-wrap { --accent: var(--amber); }
-#evac-wrap       { --accent: var(--cyan); }
 
 .hud-label {
     font-size: var(--fs-sm);
@@ -306,11 +273,13 @@ body.is-critical .hud-panel {
    там происходит бой.
    ============================================================ */
 
-#ui-container     { left: 20px;  bottom: 20px; min-width: 232px; }
+#ui-container     { left: 20px;  bottom: 20px; min-width: 232px; --accent: var(--magenta); }
 #p2-ui-container  { right: 20px; bottom: 20px; min-width: 232px;
-                    flex-direction: column; border-color: rgba(61, 139, 255, 0.4); }
-#score-container  { right: 20px; top: 20px;    min-width: 232px; text-align: right; }
-#minimap-wrap     { left: 20px;  top: 20px;    padding: 10px; }
+                    flex-direction: column; --accent: var(--blue); }
+#score-container  { right: 20px; top: 20px;    min-width: 232px; text-align: right; --accent: var(--cyan); }
+#minimap-wrap     { left: 20px;  top: 20px;    padding: 10px; --accent: var(--cyan); }
+#vehicle-hp-wrap  { --accent: var(--amber); }
+#evac-wrap        { --accent: var(--cyan); }
 
 #top-center-hud {
     position: fixed;
@@ -612,7 +581,6 @@ body.is-critical .hp-square {
     animation: lockBlink 420ms steps(2) infinite;
 }
 
-#evac-wrap { border-color: rgba(0, 224, 255, 0.45); }
 #evac-head {
     display: flex;
     justify-content: space-between;
@@ -635,7 +603,6 @@ body.is-critical .hp-square {
    МИНИКАРТА
    ============================================================ */
 
-#minimap-wrap { border-color: rgba(0, 224, 255, 0.32); }
 #minimapCanvas {
     display: block;
     image-rendering: pixelated;
@@ -665,15 +632,11 @@ body.is-critical .hp-square {
     position: fixed;
     z-index: 120;
     padding: 14px 18px;
-    background: linear-gradient(135deg, var(--panel-2), rgba(6, 10, 20, 0.94));
-    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(7, 18, 26, 0.96), rgba(3, 10, 16, 0.96));
+    border: 1px solid var(--line-dim);
     box-shadow: var(--shadow);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    clip-path: polygon(
-        var(--notch) 0, 100% 0,
-        100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%,
-        0 100%, 0 var(--notch));
     animation: cardIn 180ms steps(3) 1;
     pointer-events: auto;
 }
@@ -720,25 +683,12 @@ body.is-critical .hp-square {
 
 /* Контракт не по карману. Карточку не прячем: игрок должен видеть,
    мимо чего прошёл, иначе ставка ничего не значит. */
-.depth-picker .depth-btn.is-on {
-    box-shadow: 0 0 20px rgba(255, 159, 28, 0.55);
-    animation: depthOn 1800ms ease-in-out infinite alternate;
-}
-@keyframes depthOn {
-    from { box-shadow: 0 0 10px rgba(255, 159, 28, 0.35); }
-    to   { box-shadow: 0 0 26px rgba(255, 159, 28, 0.75); }
-}
-
 #contract-offer.is-poor {
     border-left-color: var(--txt-mute);
     filter: saturate(0.35);
 }
 #contract-offer.is-poor .ct-head { color: var(--txt-mute); animation: none; }
 #contract-offer.is-poor .ct-stake { color: var(--red); }
-
-/* Плашка новинок: единственное на экране, что игрок купил сам */
-.pool-banner { animation: bannerIn 320ms cubic-bezier(.2,1.4,.4,1) 1; }
-@keyframes bannerIn { from { transform: translateY(-10px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* Кнопка-клавиша: то же действие мышью, что и с клавиатуры */
 .tap-btn {
@@ -846,7 +796,6 @@ body.hint-done #touch-hint { opacity: 0; }
    ============================================================ */
 
 @media (max-width: 900px), (max-height: 620px) {
-    :root { --notch: 10px; }
     .hud-panel { padding: 9px 12px; }
     #ui-container, #p2-ui-container, #score-container { min-width: 0; }
     #ui-container { left: 12px; bottom: 12px; }
@@ -894,122 +843,11 @@ body.is-mobile #p2-ui-container { display: none !important; }
     }
 }
 
-/* ============================================================
-   ДЕКА: рамка экрана скафандра
-   Живёт только над экранами меню (body.deck-on ставит deck.js).
-   В забеге её место занимает HUD.
-   ============================================================ */
-
-#deck {
-    position: absolute;
-    inset: 0;
-    z-index: 400;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 180ms linear;
-    font-family: var(--font-pixel);
-}
-body.deck-on #deck { opacity: 1; }
-
-/* Уголки корпуса. Толще и длиннее, чем у панелей: это край устройства,
-   а не элемент внутри него. */
-.deck-corner {
-    position: absolute;
-    width: 34px;
-    height: 34px;
-    border: 0 solid var(--cyan);
-    opacity: 0.75;
-}
-.deck-corner.c-tl { left: 14px;  top: 14px;    border-left-width: 2px; border-top-width: 2px; }
-.deck-corner.c-tr { right: 14px; top: 14px;    border-right-width: 2px; border-top-width: 2px; }
-.deck-corner.c-bl { left: 14px;  bottom: 14px; border-left-width: 2px; border-bottom-width: 2px; }
-.deck-corner.c-br { right: 14px; bottom: 14px; border-right-width: 2px; border-bottom-width: 2px; }
-
-.deck-bar {
-    position: absolute;
-    left: 56px;
-    right: 56px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: var(--fs-sm);
-    line-height: 1;
-    letter-spacing: 1px;
-    color: var(--cyan);
-    white-space: nowrap;
-}
-.deck-top    { top: 22px; }
-.deck-bottom { bottom: 22px; }
-
-/* Заполнитель из точек между полями: без него значения разъезжаются
-   по ширине экрана и строка перестаёт читаться как одна строка. */
-.db-fill {
-    flex: 1;
-    height: 1px;
-    min-width: 12px;
-    background: repeating-linear-gradient(90deg,
-        var(--line) 0 2px, transparent 2px 6px);
-}
-.db-id   { color: var(--cyan); text-shadow: 0 0 12px rgba(0, 224, 255, 0.5); }
-.db-slot { color: var(--txt-dim); }
-.db-dim  { color: var(--txt-mute); }
-
-/* Журнал. Прижат к левому краю, потому что панели стоят по центру
-   или справа: колонка текста под панелью читалась бы как её часть. */
-.deck-log {
-    position: absolute;
-    left: 56px;
-    bottom: 74px;
-    width: 330px;
-    max-width: 26vw;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    font-size: 10px;
-    line-height: 1.7;
-    opacity: 0.85;
-}
-.deck-line {
-    display: flex;
-    gap: 8px;
-    align-self: flex-start;
-    max-width: 100%;
-    padding: 2px 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    background: rgba(1, 5, 10, 0.72);
-    border-left: 1px solid var(--line-dim);
-    animation: logIn 260ms steps(4) 1;
-}
-@keyframes logIn {
-    from { clip-path: inset(0 100% 0 0); opacity: 0; }
-    to   { clip-path: inset(0 0 0 0); opacity: 1; }
-}
-.dl-t { color: var(--txt-mute); }
-.dl-x { overflow: hidden; text-overflow: ellipsis; }
-.deck-line.k-ok   .dl-x { color: var(--green); }
-.deck-line.k-dim  .dl-x { color: var(--txt-dim); }
-.deck-line.k-warn .dl-x { color: var(--amber); }
-.deck-line.k-err  .dl-x { color: var(--red); }
-
-/* Курсор. Прямоугольный блок, а не подчёркивание: подчёркивание на
-   мелком кегле сливается с линией заполнителя рядом. */
-.deck-cursor {
-    display: inline-block;
-    width: 8px;
-    height: 13px;
-    background: var(--cyan);
-    box-shadow: 0 0 10px var(--cyan);
-    animation: caret 1000ms steps(2) infinite;
-}
-@keyframes caret { from { opacity: 1; } to { opacity: 0; } }
-
-@media (max-width: 900px) {
-    .deck-log { display: none; }
-    .deck-bar { left: 40px; right: 40px; font-size: 9px; }
-    .deck-corner { width: 22px; height: 22px; }
-}
+/* Рамка по краям экрана и журнал с бегущими строками вроде
+   «uplink ...... стабилен» убраны вместе с модулем, который их
+   рисовал. Журнал ничего не измерял: строки в нём были написаны
+   заранее, а таймер считал время, открытое в браузере. Скобки
+   вокруг панелей остались — они ниже, в правилах .menu-panel. */
 
 /* ============================================================
    ЭКРАНЫ
@@ -1107,7 +945,7 @@ body.deck-on #deck { opacity: 1; }
     letter-spacing: 1.5px;
     margin-bottom: 14px;
 }
-.menu-eyebrow::before { content: '// '; color: var(--line); }
+
 
 .menu-title {
     font-size: 26px;
@@ -1385,7 +1223,7 @@ body.deck-on #deck { opacity: 1; }
     margin-bottom: 18px; padding-bottom: 12px;
     border-bottom: 1px solid var(--line-dim);
 }
-.lore-col h3::before { content: '// '; color: var(--line); }
+
 .lore-entry { margin-bottom: 20px; padding-left: 14px; border-left: 1px solid var(--line-dim); }
 .lore-entry h4 { font-size: var(--fs-sm); line-height: 1.6; color: var(--magenta); letter-spacing: 1px; margin-bottom: 6px; }
 .lore-col p { font-size: 13px; line-height: 1.75; color: var(--txt-dim); margin-bottom: 12px; max-width: 72ch; }
@@ -1443,7 +1281,7 @@ body.deck-on #deck { opacity: 1; }
 }
 @keyframes toastIn { from { transform: translateX(-120%); } to { transform: none; } }
 .achievement-toast .toast-label { display: block; font-size: 10px; color: var(--txt-mute); margin-bottom: 5px; }
-.achievement-toast .toast-label::before { content: '// '; }
+
 .achievement-toast.out { opacity: 0; transition: opacity 150ms linear; }
 
 /* --- Пауза --- */
@@ -1491,7 +1329,7 @@ body.deck-on #deck { opacity: 1; }
 .go-grade-label, .go-block-label, .go-board-label {
     font-size: var(--fs-sm); color: var(--txt-mute); letter-spacing: 1.5px; margin-bottom: 12px;
 }
-.go-grade-label::before, .go-block-label::before, .go-board-label::before { content: '// '; color: var(--line); }
+
 
 #go-grade {
     font-family: var(--font-logo);
@@ -1528,7 +1366,7 @@ body.deck-on #deck { opacity: 1; }
 }
 @keyframes goPop { from { transform: translateY(-6px); opacity: 0; } to { transform: none; opacity: 1; } }
 .go-unlock .gu-tag    { font-size: 10px; color: var(--txt-mute); margin-bottom: 6px; }
-.go-unlock .gu-tag::before { content: '// '; }
+
 .go-unlock .gu-title  { font-size: var(--fs-sm); line-height: 1.7; color: var(--gold); }
 .go-unlock .gu-reward { font-size: 12px; line-height: 1.6; color: var(--txt-dim); margin-top: 6px; }
 
@@ -1551,24 +1389,6 @@ body.deck-on #deck { opacity: 1; }
 .grade-d { color: var(--txt-mute) !important; }
 
 /* ============================================================
-   HUD ПОД ТУ ЖЕ РАМКУ
-   Скос угла заменён на уголки: в забеге и в меню игрок смотрит
-   на одно и то же устройство.
-   ============================================================ */
-
-.hud-panel {
-    clip-path: none;
-    border-color: var(--line-dim);
-    background: linear-gradient(180deg, rgba(4, 14, 20, 0.88), rgba(2, 8, 14, 0.9));
-}
-.hud-panel::after {
-    left: 0;
-    background: linear-gradient(90deg, transparent, var(--accent, var(--cyan)));
-}
-.hud-label::before { content: '// '; color: var(--line); }
-#minimap-hint::before { content: ''; }
-
-/* ============================================================
    ДОСТУПНОСТЬ
    ============================================================ */
 
@@ -1576,7 +1396,7 @@ body.deck-on #deck { opacity: 1; }
     .ui-screen::before, .ui-screen::after,
     #levelup-screen::before, #levelup-screen::after,
     .menu-panel::before, .menu-title, #go-title, #go-grade,
-    .go-verdict, .go-sheet, .go-board, .deck-cursor, .deck-line,
+    .go-verdict, .go-sheet, .go-board,
     #game-over-screen .menu-btn.primary, .achievement-toast,
     .depth-picker .depth-btn.is-on { animation: none; }
     .ui-screen::before, #levelup-screen::before { opacity: 0.5; }
@@ -1606,15 +1426,17 @@ body.deck-on #deck { opacity: 1; }
    ============================================================ */
 
 #main-menu-screen .menu-panel, #pause-screen .menu-panel { counter-reset: row; }
-#main-menu-screen .menu-btn, #pause-screen .menu-btn { counter-increment: row; }
+#main-menu-screen .menu-btn, #pause-screen .menu-btn {
+    counter-increment: row;
+    padding-left: 46px;
+}
 #main-menu-screen .menu-btn::before, #pause-screen .menu-btn::before {
     content: '[' counter(row) ']';
+    left: 12px;
     opacity: 1;
     color: var(--txt-mute);
     letter-spacing: 0;
 }
-#main-menu-screen .menu-btn, #pause-screen .menu-btn { padding-left: 46px; }
-#main-menu-screen .menu-btn::before, #pause-screen .menu-btn::before { left: 12px; }
 #main-menu-screen .menu-btn:hover, #main-menu-screen .menu-btn.is-kb,
 #pause-screen .menu-btn:hover, #pause-screen .menu-btn.is-kb { padding-left: 50px; }
 #main-menu-screen .menu-btn:hover::before, #main-menu-screen .menu-btn.is-kb::before,
