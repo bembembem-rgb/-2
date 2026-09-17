@@ -11,6 +11,14 @@
 
 // Алфавит без похожих знаков: 0/O, 1/I/L, 5/S, 8/B перепутать на слух
 // и при перепечатке из комментария проще всего.
+// Куда ведёт ссылка из скопированной карточки. Впиши сюда адрес, по
+// которому игра открывается напрямую, без обёрток:
+//   const GAME_URL = 'https://ник.github.io/название/';
+// Пусто — ссылка соберётся из текущего адреса. На itch.io так нельзя:
+// игра там живёт в рамке на служебном домене, её внутренний адрес
+// меняется при каждой перезаливке, и все разосланные ссылки протухнут.
+const GAME_URL = '';
+
 const SEED_CHARS = 'ACDEFGHJKMNPQRTUVWXY2346789';
 const SEED_LEN = 5;
 
@@ -80,11 +88,20 @@ function normalizeSeed(raw) {
 }
 
 function readLinkSeed() {
-    try {
-        const p = new URLSearchParams(location.search);
-        const s = normalizeSeed(p.get('seed'));
-        if (s.length === SEED_LEN) { seedFromLink = s; seedMode = 'link'; }
-    } catch (err) { /* адрес без параметров — обычный случай */ }
+    const take = (str) => {
+        try {
+            const q = str.indexOf('?');
+            if (q < 0) return '';
+            return normalizeSeed(new URLSearchParams(str.slice(q)).get('seed'));
+        } catch (err) { return ''; }
+    };
+    let s = take(location.search ? '?' + location.search.slice(1) : '');
+    // Запасной путь для площадок, где игра открывается в рамке: параметры
+    // остаются на внешней странице, и внутрь рамки их не передают. Иногда
+    // внешний адрес виден через referrer — но браузеры по умолчанию режут
+    // его до домена, так что рассчитывать на это нельзя, только пробовать.
+    if (s.length !== SEED_LEN && document.referrer) s = take(document.referrer);
+    if (s.length === SEED_LEN) { seedFromLink = s; seedMode = 'link'; }
     return seedFromLink;
 }
 
@@ -115,10 +132,13 @@ function updateSeedHud() {
 }
 
 function seedLink(code) {
-    const base = location.origin === 'null'
-        ? 'index.html'                       // открыто с диска: адрес не собрать
-        : location.origin + location.pathname;
-    return `${base}?seed=${code}`;
+    if (!code) return GAME_URL || '';
+    if (GAME_URL) return GAME_URL + (GAME_URL.indexOf('?') < 0 ? '?' : '&') + 'seed=' + code;
+    // Открыто двойным щелчком по файлу: ссылка вида file:///C:/Users/... ведёт
+    // на диск самого игрока и у получателя не откроется. Проверяем протокол,
+    // а не origin: у file:// он в разных браузерах то 'null', то 'file://'.
+    if (location.protocol === 'file:') return '';
+    return location.origin + location.pathname + '?seed=' + code;
 }
 
 // Готовый блок для комментария: результат и сид, по которому его можно
@@ -129,9 +149,12 @@ function runCardText() {
     const lines = [
         `NEON TIDES: ZERO — ${score.toString().padStart(4, '0')} очков, оценка ${g}`,
         `глубина ${runDepth}, цепь x${chainBest}, боссов ${currentBossIndex}`,
-        `сид ${runSeed} — попробуй обойти`,
-        seedLink(runSeed)
+        `сид ${runSeed} — попробуй обойти`
     ];
+    // Пустую строку вместо ссылки не добавляем: в карточке это выглядит
+    // как оборванный текст, а не как «ссылки нет».
+    const link = seedLink(runSeed);
+    if (link) lines.push(link);
     return lines.join('\n');
 }
 
