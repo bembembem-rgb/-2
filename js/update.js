@@ -480,7 +480,7 @@ function update(dt) {
                 spawnSpriteFX(fxBoomBoss, e.x, e.y, { size: 280, frameInterval: 55, ...FX_BOSS_CUT });
                 // Цветной росчерк убран: поверх взрыва читался грязными полосами.
                 // Цвет босса несёт руна на появлении. bossFx(e, 'slash') остаётся рабочим.
-                if (e.name === 'VOID WRAITH') triggerFinalCutscene();
+                if (e.name === 'VOID WRAITH') triggerVictory();
             } else { 
                 spawnParticles(e.x, e.y); spawnSpriteFX(fxKill, e.x, e.y, { size: 86, frameInterval: 38 }); addScore(10, CREDITS.enemy); playEnemyDeathSFX();
             } 
@@ -626,7 +626,7 @@ function update(dt) {
                 spawnSpriteFX(fxBoomBoss, e.x, e.y, { size: 280, frameInterval: 55, ...FX_BOSS_CUT });
                 // Цветной росчерк убран: поверх взрыва читался грязными полосами.
                 // Цвет босса несёт руна на появлении. bossFx(e, 'slash') остаётся рабочим.
-                if (e.name === 'VOID WRAITH') triggerFinalCutscene();
+                if (e.name === 'VOID WRAITH') triggerVictory();
             } else { 
                 spawnParticles(e.x, e.y); spawnSpriteFX(fxKill, e.x, e.y, { size: 86, frameInterval: 38 }); playEnemyDeathSFX();
                 dailyEvent('kill', 1);

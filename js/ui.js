@@ -36,7 +36,6 @@ function initHTMLUI() {
     
     ui.innerHTML = `
         <div id="fade-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#000; opacity:0; pointer-events:none; z-index:500; transition:opacity 150ms linear;"></div>
-        <button id="cutscene-skip-btn" onclick="window.endFinalCutscene ? window.endFinalCutscene() : null" style="display:none; position:absolute; bottom:32px; right:32px; z-index:501; pointer-events:auto; font-family:'JetBrains Mono', monospace; font-size:10px; padding:10px 16px; background:var(--panel); border:1px solid var(--line); color:var(--cyan); cursor:pointer;">ПРОПУСТИТЬ</button>
 
         <div id="joystick-container" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
             <div id="touch-pad">
@@ -231,6 +230,27 @@ function initHTMLUI() {
                 <button class="menu-btn primary" onclick="resumeGameBtn()">ОБРАТНО В ВОДУ</button>
                 <button class="menu-btn muted" onclick="abandonRunBtn()">БРОСИТЬ ЗАБЕГ</button>
                 <div class="pause-warn" id="pause-warn"></div>
+            </div>
+        </div>
+
+        <div id="win-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center; overflow-y:auto; padding:24px; box-sizing:border-box;">
+            <div class="menu-panel win-panel">
+                <div class="menu-eyebrow">ЧАСТЬ 1 · ЗАТОПЛЕННЫЕ ГЛУБИНЫ</div>
+                <h1 class="menu-title">ИГРА ПРОЙДЕНА</h1>
+                <div id="win-stats" class="menu-stats"></div>
+                <div class="menu-divider"></div>
+
+                <div class="win-note">
+                    <div class="win-note-head">ОТ АВТОРА</div>
+                    <p>Спасибо, что доиграл до конца. Игру я делал один, и этот экран — последнее, что в ней есть.</p>
+                    <p>Вторая часть пока лежит в заметках. Возьмусь за неё, когда у первой появятся игроки: делать продолжение для пустого зала смысла нет.</p>
+                    <p>Если игра зашла, скинь её кому-нибудь. Кнопка ниже копирует твой результат вместе со ссылкой на этот сид.</p>
+                </div>
+
+                <div class="menu-divider"></div>
+                <button class="menu-btn primary" onclick="copyRunCardBtn(this)">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
+                <button class="menu-btn" onclick="startGameBtn()">СНОВА ВНИЗ [R]</button>
+                <button class="menu-btn muted" onclick="winToMenuBtn()">В МЕНЮ</button>
             </div>
         </div>
 
@@ -1028,7 +1048,7 @@ function abandonRun() {
 const MENU_SCREENS = [
     'levelup-screen', 'pause-screen', 'coming-soon-screen', 'part-select-screen', 'shop-screen',
     'achievements-screen', 'daily-screen', 'keys-screen', 'coop-device-panel', 'lore-screen',
-    'game-over-screen', 'main-menu-screen'
+    'game-over-screen', 'win-screen', 'main-menu-screen'
 ];
 
 const MENU_ESCAPE = {
@@ -1039,7 +1059,8 @@ const MENU_ESCAPE = {
     'daily-screen': 'hideDailyBtn',
     'keys-screen': 'hideKeysBtn',
     'coop-device-panel': 'hideCoopPanelBtn',
-    'lore-screen': 'hideLoreBtn'
+    'lore-screen': 'hideLoreBtn',
+    'win-screen': 'winToMenuBtn'
 };
 
 let _kbIndex = -1;
@@ -1068,6 +1089,31 @@ function closeAllScreens() {
 // draw() каждый кадр возвращает экран поражения, если тот скрыт. Пока сверху
 // открыт магазин или достижения, делать этого нельзя: экран поражения всплывал
 // поверх них и прятал магазин под собой.
+// Экран победы. Цифры те же, что на разборе погружения: игрок только что
+// закрыл забег, и ему интересно, чем именно.
+function renderWinScreen(banked, isNewBest) {
+    const st = document.getElementById('win-stats');
+    if (st) {
+        const g = runGrade();
+        st.innerHTML = `SCORE <b>${score.toString().padStart(4, '0')}</b>`
+            + (isNewBest ? ' <b style="color:var(--gold);">NEW BEST</b>' : '')
+            + ` · ОЦЕНКА <b class="${g.css}">${g.letter}</b><br>`
+            + `В ВОДЕ <b>${formatRunTime(worldTimer)}</b> · ЛУЧШАЯ ЦЕПЬ <b>x${chainBest}</b><br>`
+            + `ГЛУБИНА <b>${runDepth} · ${DEPTH_NAMES[runDepth]}</b> · СИД <b>${runSeed || '—'}</b><br>`
+            + (banked > 0 ? `ВЫВЕЗЕНО <b style="color:var(--green);">${banked} CR</b> · ` : '')
+            + `ЯДРА <b style="color:var(--gold);">+${runCores}</b>`;
+    }
+    const scr = document.getElementById('win-screen');
+    if (scr) scr.style.display = 'flex';
+    resetMenuFocus();
+}
+
+window.winToMenuBtn = function () {
+    const scr = document.getElementById('win-screen');
+    if (scr) scr.style.display = 'none';
+    goToMenuBtn();
+};
+
 function gameOverScreenBlocked() {
     return MENU_SCREENS.some(id => id !== 'game-over-screen' && screenShown(id));
 }

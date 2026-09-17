@@ -608,11 +608,6 @@ function draw() {
         return;
     }
 
-    if (gameState === 'final_cutscene') {
-        drawFinalCutscene(time);
-        return;
-    }
-
     if (glitchTimer > 0) { drawChromaticGlitch(time); return; }
 
     drawWorld(time);

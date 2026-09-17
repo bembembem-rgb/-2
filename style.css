@@ -1488,3 +1488,37 @@ body.is-mobile #p2-ui-container { display: none !important; }
 /* Сид виден в забеге: без него строка «сид ABCDE» в скопированном
    результате взялась бы неизвестно откуда. */
 #seed-display { color: var(--txt-mute); letter-spacing: 1px; }
+
+/* ============================================================
+   ЭКРАН ПОБЕДЫ
+   Единственное место в игре, где с игроком говорит человек, а не
+   система. Поэтому текст здесь набран обычными строчными буквами
+   и выровнен по левому краю: капслок остального интерфейса — это
+   голос машины, и обращение автора им звучало бы так же казённо.
+   ============================================================ */
+
+.win-panel {
+    width: 92vw;
+    max-width: 620px;
+    margin: auto;
+    --acc: var(--gold);
+}
+.win-panel .menu-title { color: var(--gold); text-shadow: 0 0 24px rgba(240, 196, 25, 0.45); }
+
+.win-note { text-align: left; }
+.win-note-head {
+    font-size: var(--fs-sm);
+    letter-spacing: 2px;
+    color: var(--txt-mute);
+    margin-bottom: 12px;
+}
+.win-note p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--txt-dim);
+    margin-bottom: 12px;
+    max-width: 62ch;
+}
+.win-note p:last-child { margin-bottom: 0; color: var(--txt); }
+
+#win-screen .menu-btn.primary { animation: againPulse 1800ms ease-in-out infinite alternate; }

@@ -55,7 +55,6 @@ function initGameCore() {
     runEscaped = false;
     _lastPlayerX = null; _lastPlayerY = null;
     glitchTimer = 0;
-    cutsceneStartTime = 0;
     obstacles = new Map(); 
     customObstacles = []; 
     destroyedObstacles = new Set();
@@ -140,6 +139,29 @@ function finishRunEscaped() {
     const isNewBest = recordRunEnd(score, true);
     recordDepthRun(score, true);
     renderGameOverStats(isNewBest, 0, banked);
+}
+
+// Последний босс повержен. Раньше отсюда стартовала катсцена, и забег
+// не закрывался вообще: кредиты на кону сгорали, результат не попадал
+// ни в таблицу, ни в статистику глубины, а подменённый сидом Math.random
+// оставался подменённым до следующей смерти. Победа идёт тем же путём,
+// что и уход через эвакуацию, — с той разницей, что показывает свой экран.
+function triggerVictory() {
+    if (gameState !== 'playing') return;
+    endSeededRun();
+    runEscaped = true;
+    gameState = 'gameover';
+    document.body.classList.remove('is-critical');
+    cancelQuestRespawn();
+    resetInputState();
+    if (currentBGM) { currentBGM.pause(); currentBGM.currentTime = 0; currentBGM = null; }
+    playBGM(bgmFinale);
+    playSFX(sfxAchievement, 0.9);
+    const banked = bankCredits();
+    const isNewBest = recordRunEnd(score, true);
+    recordDepthRun(score, true);
+    dailyEvent('run', 1);
+    renderWinScreen(banked, isNewBest);
 }
 
 function triggerGameOver() { 

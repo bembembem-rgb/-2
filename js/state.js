@@ -53,7 +53,6 @@ let casings = [], smokePuffs = [], sparks = [], shockRings = [];
 let glitchTimer = 0; const GLITCH_DURATION = 480;
 let glitchSnapCanvas = null, glitchSnapCtx = null;
 let glitchChR = null, glitchChG = null, glitchChB = null;
-let cutsceneStartTime = 0; const CUTSCENE_DURATION = 12600;
 let destroyedObstacles = new Set();
 
 const bossThresholds = [3000, 6000, 9000];

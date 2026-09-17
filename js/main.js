@@ -206,7 +206,7 @@ function gameFrame(currentTime) {
         // Кадр перерисовывается, но не обновляется: под панелью паузы
         // остаётся живая картинка мира, а не заморозка последнего кадра.
         draw();
-    } else if (gameState === 'loading' || gameState === 'menu' || gameState === 'lore' || gameState === 'click_to_start' || gameState === 'final_cutscene') {
+    } else if (gameState === 'loading' || gameState === 'menu' || gameState === 'lore' || gameState === 'click_to_start') {
         draw();
     }
 }
