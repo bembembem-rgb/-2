@@ -254,8 +254,9 @@ function initHTMLUI() {
                     <p>Эта игра началась с голубого квадратика, который я гонял по пустому экрану. Всё остальное появилось уже вокруг него.</p>
                     <p>Квадратик никуда не делся. Ты им и играл: у дайвера с тех пор тот же цвет.</p>
                     <p class="hi">Между тем экраном и этим — пять боссов, мастерская, ко-оп и очень много вечеров. Когда делаешь всё это один, перестаёшь верить, что кто-то дойдёт до конца. Сейчас дошёл ты.</p>
-                    <p>Вторая часть пока в заметках. Возьмусь, если у первой появятся игроки: писать продолжение в пустоту я не вытяну.</p>
-                    <p>Хочешь, чтобы она была? Покажи игру кому-нибудь. Кнопка ниже копирует твой результат и ссылку на этот сид.</p>
+                    <p>Если играть подряд, приедается, и я это вижу сам. Вторая часть нужна как раз затем: разобрать, что здесь не работает, и сделать интересно не только первые полчаса. Будет активность — доберусь и до настоящего онлайна.</p>
+                    <p>Но всё это только если у первой части появятся игроки. Это не фигура речи: писать продолжение в пустоту я не вытяну. Покажи игру кому-нибудь. Кнопка ниже копирует твой результат и ссылку на этот сид.</p>
+                    <p class="win-credits">Два звука и часть эффектов — чужие. Переделаю в следующем обновлении.</p>
                 </div>
 
                 <div class="menu-divider"></div>
@@ -419,8 +420,11 @@ function initHTMLUI() {
         renderCoopDeviceList();
         coopPanelInterval = setInterval(renderCoopDeviceList, 700);
     };
-    window.hideCoopPanelBtn = function() {
+    window.stopCoopPolling = function() {
         if (coopPanelInterval) { clearInterval(coopPanelInterval); coopPanelInterval = null; }
+    };
+    window.hideCoopPanelBtn = function() {
+        stopCoopPolling();
         document.getElementById('coop-device-panel').style.display = 'none';
         document.getElementById('main-menu-screen').style.display = 'flex';
         updateCoopToggleLabel();
@@ -766,7 +770,6 @@ function initHTMLUI() {
         const el = document.getElementById(id);
         if (el) el.addEventListener('touchstart', (e) => { e.preventDefault(); tapKey(code); });
     };
-    bindTouchBtn('btn-dash', 'ShiftLeft');
     bindTouchBtn('btn-swap', 'KeyF');
     bindTouchBtn('btn-interact', 'KeyE');
     bindTouchBtn('btn-pulse', 'KeyQ');
@@ -1103,6 +1106,10 @@ function screenShown(id) {
 // поверх игры после «перезагрузки».
 function closeAllScreens() {
     MENU_SCREENS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+    // Панель устройств опрашивает геймпады каждые 700 мс своим таймером.
+    // Спрятать её мало: таймер продолжал перерисовывать невидимый список
+    // до перезагрузки страницы.
+    if (typeof stopCoopPolling === 'function') stopCoopPolling();
     resetMenuFocus();
 }
 

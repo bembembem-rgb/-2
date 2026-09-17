@@ -1530,3 +1530,13 @@ body.is-mobile #p2-ui-container { display: none !important; }
 
 /* Кнопки выбора раздачи шире цифр глубины: в них слова, а не числа */
 .depth-picker .seed-btn { width: auto; padding: 12px 16px; }
+
+/* Строка о чужих звуках стоит тише всего остального: это сноска,
+   а не часть обращения, и перебивать ею последний абзац нельзя. */
+.win-credits {
+    font-size: 11px;
+    color: var(--txt-mute);
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-dim);
+}
