@@ -1519,6 +1519,11 @@ body.is-mobile #p2-ui-container { display: none !important; }
     margin-bottom: 12px;
     max-width: 62ch;
 }
-.win-note p:last-child { margin-bottom: 0; color: var(--txt); }
+.win-note p:last-child { margin-bottom: 0; }
+
+/* Светлее ровно одна строка — та, ради которой экран и написан.
+   Если подсветить и её, и просьбу поделиться, обе перестанут
+   читаться как главные. */
+.win-note p.hi { color: var(--txt); }
 
 #win-screen .menu-btn.primary { animation: againPulse 1800ms ease-in-out infinite alternate; }
