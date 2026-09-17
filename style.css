@@ -1484,3 +1484,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
     .menu-panel > *, .lore-entry, .levelup-cards > * { animation: none; }
 }
+
+/* Сид виден в забеге: без него строка «сид ABCDE» в скопированном
+   результате взялась бы неизвестно откуда. */
+#seed-display { color: var(--txt-mute); letter-spacing: 1px; }

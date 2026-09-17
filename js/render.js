@@ -159,16 +159,16 @@ function drawBossCutscene(timeLeft, maxTime) {
     const padX = Math.max(48, (w - 900) / 2);
 
     // Строка угрозы — статичная, без мигания и без эмодзи
-    ctx.font = "10px var(--font-pixel)"; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.font = "10px 'JetBrains Mono', monospace"; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = UI.amber;
     ctx.fillText('УГРОЗА ОБНАРУЖЕНА', padX, 44);
 
     // Имя босса — единственный дисплейный размер на экране
-    ctx.font = "32px var(--font-pixel)"; ctx.textBaseline = 'middle';
+    ctx.font = "32px 'JetBrains Mono', monospace"; ctx.textBaseline = 'middle';
     ctx.fillStyle = UI.txt;
     ctx.fillText(currentBossName, padX, bannerHeight / 2 + 6);
 
-    ctx.font = "12px var(--font-pixel)"; ctx.textBaseline = 'alphabetic';
+    ctx.font = "12px 'JetBrains Mono', monospace"; ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = UI.txtDim;
     ctx.fillText('НЕЙТРАЛИЗОВАТЬ ЦЕЛЬ', padX, bannerHeight - 42);
 
@@ -245,7 +245,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         if (deepVault.sealed) {
             ctx.strokeStyle = '#74838c'; ctx.lineWidth = 3; ctx.setLineDash([12, 10]);
             ctx.beginPath(); ctx.arc(0, 0, deepVault.radius, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-            ctx.font = "10px var(--font-pixel)"; ctx.textAlign = 'center'; ctx.fillStyle = '#74838c';
+            ctx.font = "10px 'JetBrains Mono', monospace"; ctx.textAlign = 'center'; ctx.fillStyle = '#74838c';
             ctx.fillText('ЗАПЕЧАТАНО', 0, 4);
         } else {
             const live = questState === 'heat';
@@ -254,7 +254,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             ctx.beginPath(); ctx.arc(0, 0, deepVault.radius, 0, Math.PI * 2); ctx.stroke();
             if (live) { ctx.globalAlpha = 0.18; ctx.fillStyle = '#c46dff'; ctx.fill(); ctx.globalAlpha = 1; }
             ctx.shadowBlur = 0;
-            ctx.font = "10px var(--font-pixel)"; ctx.textAlign = 'center'; ctx.fillStyle = '#c46dff';
+            ctx.font = "10px 'JetBrains Mono', monospace"; ctx.textAlign = 'center'; ctx.fillStyle = '#c46dff';
             ctx.fillText('ШЛЮЗ x2', 0, 4);
         }
         ctx.restore();
@@ -578,15 +578,21 @@ function draw() {
 
     if (gameState === 'loading') {
         ctx.fillStyle = UI.bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "20px var(--font-pixel)"; ctx.fillStyle = UI.cyan; ctx.textAlign = 'center';
+        ctx.font = "20px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.cyan; ctx.textAlign = 'center';
         ctx.fillText(`СИНХРОНИЗАЦИЯ БАЗ ДАННЫХ... ${loadedAssets} / ${totalAssets}`, canvas.width / 2, canvas.height / 2);
         return;
     }
 
     if (gameState === 'click_to_start') {
         ctx.fillStyle = UI.bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "20px var(--font-pixel)"; ctx.fillStyle = UI.cyan; ctx.textAlign = 'center';
+        ctx.font = "20px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.cyan; ctx.textAlign = 'center';
         ctx.fillText(isMobile ? "ТАПНИТЕ ДЛЯ ПОДКЛЮЧЕНИЯ" : "КЛИКНИТЕ ДЛЯ ПОДКЛЮЧЕНИЯ", canvas.width / 2, canvas.height / 2);
+        if (seedFromLink) {
+            ctx.font = "12px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.gold;
+            ctx.fillText("ВЫЗОВ НА СИДЕ " + seedFromLink, canvas.width / 2, canvas.height / 2 + 36);
+            ctx.fillStyle = UI.txtMute;
+            ctx.fillText("СРАЗУ В ЗАБЕГ, БЕЗ МЕНЮ", canvas.width / 2, canvas.height / 2 + 58);
+        }
         return;
     }
 

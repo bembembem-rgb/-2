@@ -17,7 +17,7 @@ function showControlHints() {
     host.style.cssText = 'position:fixed; bottom:32px; left:50%; transform:translateX(-50%); z-index:150; pointer-events:none; display:flex; gap:16px; opacity:0; transition:opacity 150ms linear;';
     const items = [['WASD', 'ХОД'], ['SHIFT', 'РЫВОК'], ['ЛКМ', 'ОГОНЬ'], ['F', 'СТВОЛ'], ['E', 'ВЗЛОМ']];
     host.innerHTML = items.map(([key, label]) => `
-        <div style="text-align:center; font-family:var(--font-pixel);">
+        <div style="text-align:center; font-family:'JetBrains Mono', monospace;">
             <div class="hint-key">${key}</div>
             <div class="hint-label">${label}</div>
         </div>`).join('');
@@ -36,7 +36,7 @@ function initHTMLUI() {
     
     ui.innerHTML = `
         <div id="fade-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:#000; opacity:0; pointer-events:none; z-index:500; transition:opacity 150ms linear;"></div>
-        <button id="cutscene-skip-btn" onclick="window.endFinalCutscene ? window.endFinalCutscene() : null" style="display:none; position:absolute; bottom:32px; right:32px; z-index:501; pointer-events:auto; font-family:var(--font-pixel); font-size:10px; padding:10px 16px; background:var(--panel); border:1px solid var(--line); color:var(--cyan); cursor:pointer;">ПРОПУСТИТЬ</button>
+        <button id="cutscene-skip-btn" onclick="window.endFinalCutscene ? window.endFinalCutscene() : null" style="display:none; position:absolute; bottom:32px; right:32px; z-index:501; pointer-events:auto; font-family:'JetBrains Mono', monospace; font-size:10px; padding:10px 16px; background:var(--panel); border:1px solid var(--line); color:var(--cyan); cursor:pointer;">ПРОПУСТИТЬ</button>
 
         <div id="joystick-container" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
             <div id="touch-pad">
@@ -59,7 +59,6 @@ function initHTMLUI() {
                 <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">ЗАДАНИЯ ДНЯ</button>
                 <button class="menu-btn" onclick="showKeysBtn()">РАСКЛАДКА</button>
                 <button class="menu-btn" onclick="showAchievementsBtn()">ТРОФЕИ</button>
-                <button class="menu-btn" onclick="showLoreBtn()">АРХИВ</button>
             </div>
         </div>
 
@@ -136,23 +135,23 @@ function initHTMLUI() {
         
         <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; overflow-y:auto;">
             <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
-            <h2 style="font-family:var(--font-pixel); font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
-            <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Один? Выбери себе устройство и закрой панель — ко-оп так и останется выключенным.</div>
+            <h2 style="font-family:'JetBrains Mono', monospace; font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
+            <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Играешь один — выбери себе устройство и закрой панель, ко-оп останется выключенным.</div>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Геймпада нет в списке — нажми на нём любую кнопку. Браузер замечает устройство только после первого сигнала.</div>
 
             <div style="width:90vw; max-width:520px; margin-bottom:16px;">
-                <div style="font-family:var(--font-pixel); font-size:12px; color:var(--cyan); margin-bottom:8px;">ИГРОК 1 (ты)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--cyan); margin-bottom:8px;">ИГРОК 1 (ты)</div>
                 <div id="p1-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
                 <div class="dev-note" style="margin-top:8px;">Геймпад для P1: стик — движение, прицел и огонь автоматические. Кнопки (Xbox/PlayStation определяются автоматически, для прочих — берётся стандартная раскладка): A/Cross — рывок, B/Circle — парирование, X/Square — смена оружия, Y/Triangle — импульс, LB/L1 — транспорт. Если раскладка не подходит под конкретное устройство — номер зажатой кнопки виден в списке ниже.</div>
                 <div class="dev-note" style="margin-top:8px;">P2 на клавиатуре: стрелки — движение, Enter — рывок, Quote (') — огонь (удерживать), Backslash (\) — транспорт, Right Ctrl — парирование, Slash (/) — альт. дробовик, Period (.) — импульс. P2 на геймпаде: та же раскладка, что у P1 (A/Cross — рывок, RT/R2 — огонь, LB/L1 — транспорт, B/Circle — парирование, X/Square — альт. дробовик).</div>
             </div>
 
             <div style="width:90vw; max-width:520px; margin-bottom:16px;">
-                <div style="font-family:var(--font-pixel); font-size:12px; color:var(--blue); margin-bottom:8px;">ИГРОК 2 (друг)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--blue); margin-bottom:8px;">ИГРОК 2 (друг)</div>
                 <div id="coop-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
 
-            <div id="coop-selected-note" style="font-family:var(--font-pixel); font-size:10px; color:var(--green); min-height:16px; margin-bottom:16px;"></div>
+            <div id="coop-selected-note" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--green); min-height:16px; margin-bottom:16px;"></div>
             <button class="menu-btn red" onclick="disableCoopBtn()" style="width:auto; padding:12px 20px; text-align:center;">ИДУ ОДИН</button>
         </div>
 
@@ -162,7 +161,7 @@ function initHTMLUI() {
                 <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ТРОФЕИ</button>
                 <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ЗАКРЫТЫЕ ДАННЫЕ</button>
             </div>
-            <div id="ach-progress" style="font-family:var(--font-pixel); font-size:10px; color:var(--txt-dim); margin-bottom:16px;"></div>
+            <div id="ach-progress" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--txt-dim); margin-bottom:16px;"></div>
             <div id="ach-list" style="width:90vw; max-width:800px; max-height:60vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); padding:24px;"></div>
         </div>
 
@@ -177,7 +176,7 @@ function initHTMLUI() {
         </div>
 
         <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
-            <div class="menu-eyebrow" style="margin-bottom:8px;">БОЙ ОСТАНОВЛЕН НА ВЫБОР</div>
+            <div class="menu-eyebrow" style="margin-bottom:8px;">БОЙ ОСТАНОВЛЕН</div>
             <h1 id="levelup-head" class="menu-title" style="font-size:20px; margin-bottom:8px;">УРОВЕНЬ 1</h1>
             <div class="levelup-sub">ОДНО УЛУЧШЕНИЕ ДО КОНЦА ЗАБЕГА, ЗАМЕНИТЬ ПОТОМ НЕЛЬЗЯ</div>
             <div id="levelup-cards" class="levelup-cards"></div>
@@ -259,6 +258,7 @@ function initHTMLUI() {
             <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
                 <button class="menu-btn primary" onclick="startGameBtn()" style="width:auto; min-width:240px; text-align:center;">СНОВА ВНИЗ [R]</button>
                 <button class="menu-btn" onclick="showShopBtn('gameover')" style="width:auto; min-width:240px; text-align:center;">МАСТЕРСКАЯ</button>
+                <button class="menu-btn" onclick="copyRunCardBtn(this)" style="width:auto; min-width:240px; text-align:center;">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
                 <button class="menu-btn muted" onclick="goToMenuBtn()" style="width:auto; min-width:240px; text-align:center;">ОТКЛЮЧИТЬСЯ</button>
             </div>
             <div class="go-hint">[R] — вниз сразу, без меню</div>
@@ -770,6 +770,7 @@ function updateMenuStats() {
     const s = `ЛУЧШИЙ СЧЁТ <b>${saveData.bestScore.toString().padStart(4, '0')}</b><br>`
             + `ЗАБЕГОВ <b>${saveData.runs.length}</b> · ОТКРЫТО <b>${done}/${ids.length}</b><br>`
             + `КОШЕЛЁК <b>${w} CR</b> · ЯДРА <b>${saveData.cores || 0}</b><br>`
+            + `СИД ДНЯ <b>${todaySeed()}</b> · У ВСЕХ ОДИН<br>`
             + `ДЕРЕВО <b>${unlocksProgress().have}/${unlocksProgress().total}</b>`
             + (goal ? ` · ДО АПГРЕЙДА <b>${Math.min(w, goal.cost)}/${goal.cost}</b>` : ' · КУПЛЕНО ВСЁ');
     if (s !== _menuStatsCache) { el.innerHTML = s; _menuStatsCache = s; }
@@ -891,6 +892,7 @@ function renderGameOverStats(isNewBest, lostCredits = 0, bankedCredits = 0) {
             ['ЛУЧШАЯ ЦЕПЬ', `x${chainBest}${chainRecord ? ' ★' : ''}`, chainRecord],
             ['ГЛУБИНА', `${runDepth} · ${DEPTH_NAMES[runDepth]}`, runDepth >= DEPTH_LEGENDARY_FROM],
             ['РЕКОРД ГЛУБИНЫ', depthBest(runDepth).toString().padStart(4, '0'), score >= depthBest(runDepth)],
+            ['СИД', runSeed || '—', false],
             ['БОССОВ', String(currentBossIndex), false],
             ['ТРАНСПОРТА', String(vehicleKillsThisRun), false]
         ];

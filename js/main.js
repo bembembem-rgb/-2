@@ -49,7 +49,7 @@ function joyUp(joy) {
 }
 
 window.addEventListener('touchstart', (e) => {
-    if (gameState === 'click_to_start') { try { window.focus(); } catch (err) {} unlockAudio(); playBGM(bgmMenu); gameState = 'menu'; return; }
+    if (gameState === 'click_to_start') { enterFromStartGate(); return; }
     if (gameState !== 'playing') return;
     for (let t of e.changedTouches) {
         if (t.target.id && t.target.id.startsWith('btn')) continue;
@@ -78,7 +78,7 @@ window.addEventListener('touchend', (e) => {
 });
 
 window.addEventListener('mousedown', (e) => { 
-    if (gameState === 'click_to_start') { try { window.focus(); } catch (err) {} unlockAudio(); playBGM(bgmMenu); gameState = 'menu'; return; }
+    if (gameState === 'click_to_start') { enterFromStartGate(); return; }
     if (gameState === 'loading' || gameState === 'menu' || gameState === 'lore' || gameState === 'gameover') return; 
     if (e.button === 0) isShooting = true; 
     if (e.button === 2 && player && !player.inVehicle && player.altReady) executeAltAttack(); 
@@ -212,6 +212,19 @@ function gameFrame(currentTime) {
 }
 
 // Запуск HTML интерфейса и игрового цикла
+// Пришли по ссылке с сидом — первый клик обязан сажать в воду, а не в
+// меню. Каждый экран между роликом и игрой отсекает часть зрителей,
+// а звук всё равно требует от браузера первого касания, и этот клик
+// уже происходит.
+function enterFromStartGate() {
+    try { window.focus(); } catch (err) {}
+    unlockAudio();
+    if (readLinkSeed()) { startGameBtn(); return; }
+    playBGM(bgmMenu);
+    gameState = 'menu';
+}
+
+readLinkSeed();
 initHTMLUI();
 requestAnimationFrame(gameLoop);
 

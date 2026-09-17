@@ -117,10 +117,10 @@ function showSecretCutscene(secret) {
     }
     const box = document.createElement('div');
     box.style.cssText = 'max-width:600px; margin:0 24px; padding:24px; background:var(--panel); border:1px solid var(--gold); box-shadow:var(--shadow); text-align:center; opacity:0; transition:opacity 150ms linear;';
-    box.innerHTML = `<div style="font-family:var(--font-pixel); font-size:10px; color:var(--txt-dim); margin-bottom:16px;">СЕКРЕТНЫЕ ДАННЫЕ ВОССТАНОВЛЕНЫ</div>
-        <div style="font-family:var(--font-pixel); font-size:12px; color:var(--gold); margin-bottom:16px; line-height:1.6;">${secret.title}</div>
+    box.innerHTML = `<div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--txt-dim); margin-bottom:16px;">СЕКРЕТНЫЕ ДАННЫЕ ВОССТАНОВЛЕНЫ</div>
+        <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--gold); margin-bottom:16px; line-height:1.6;">${secret.title}</div>
         <div style="font-family:var(--font-ui); font-size:15px; color:var(--txt-dim); line-height:1.6; margin-bottom:16px; text-align:left;">${secret.cutscene}</div>
-        <div style="font-family:var(--font-pixel); font-size:10px; color:var(--cyan);">${secret.reward}</div>`;
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--cyan);">${secret.reward}</div>`;
     host.appendChild(box);
     host.style.background = 'rgba(5,8,14,0.92)';
     requestAnimationFrame(() => { box.style.opacity = '1'; });

@@ -18,131 +18,156 @@ function endFinalCutscene() {
     playBGM(bgmMenu);
 }
 
-function drawMatrixRain(time, alpha, speedMult) {
-    const w = canvas.width, h = canvas.height;
-    const seed = (i, salt) => { const s = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453; return s - Math.floor(s); };
-    const colW = 18;
-    const cols = Math.ceil(w / colW);
-    ctx.save();
-    ctx.font = "14px monospace"; ctx.textAlign = 'center';
-    for (let i = 0; i < cols; i++) {
-        const colSeed = seed(i, 21);
-        const speed = (140 + colSeed * 260) * speedMult;
-        const x = i * colW + colW / 2;
-        const headY = (time * speed * 0.001 + colSeed * h * 5) % (h + 220) - 110;
-        const len = 6 + Math.floor(colSeed * 10);
-        for (let j = 0; j < len; j++) {
-            const y = headY - j * 18;
-            if (y < -20 || y > h + 20) continue;
-            const glyphAlpha = Math.max(0, 1 - j / len) * alpha;
-            const isHead = j === 0;
-            ctx.globalAlpha = glyphAlpha;
-            ctx.fillStyle = isHead ? '#ffffff' : '#00ff99';
-            ctx.shadowBlur = isHead ? 10 : 0; ctx.shadowColor = '#00ff99';
-            const ch = String.fromCharCode(33 + Math.floor(seed(i * 97 + j, Math.floor(time / 90)) * 90));
-            ctx.fillText(ch, x, y);
-        }
-    }
-    ctx.restore();
+// Финал: хит-стоп -> распад -> тишина -> архивная запись -> подъём.
+// Прежняя версия шла пятнадцать секунд через портал, цифровой дождь и
+// вспышку. Всё это были абстрактные частицы: дайвер лез вниз за ответом,
+// а получал заставку. Теперь в центре финала сама запись из архива —
+// она отвечает на вопрос, с которого игра начиналась.
+
+const FIN_A = 900;    // хит-стоп
+const FIN_B = 3400;   // распад тела босса на строки
+const FIN_C = 5200;   // тишина, оседающие обломки
+const FIN_D = 9600;   // запись набирается построчно
+const FIN_E = 11600;  // подъём
+
+// Запись читается как выписка из системы, а не как речь автора: должность,
+// время последнего входа, права. Ответ в последней строке — сеть держала
+// этот аккаунт, потому что права root с него никто не снял.
+const FIN_RECORD = [
+    ['УЧАСТНИК #0', '#00e0ff'],
+    ['ДОЛЖНОСТЬ: ИНЖЕНЕР СМЕНЫ', '#7e9fb0'],
+    ['ПОСЛЕДНИЙ ВХОД: ЗА 6 МИНУТ ДО ПОТОПА', '#7e9fb0'],
+    ['ПРАВА: ROOT. НЕ ОТОЗВАНЫ.', '#f0c419']
+];
+
+function finText(str, x, y, size, color, revealed, glow) {
+    const shown = str.slice(0, Math.max(0, Math.floor(revealed * str.length)));
+    if (!shown) return;
+    ctx.font = size + "px 'JetBrains Mono', monospace";
+    ctx.fillStyle = color;
+    if (glow) { ctx.shadowBlur = glow; ctx.shadowColor = color; }
+    ctx.fillText(shown, x, y);
+    ctx.shadowBlur = 0;
 }
 
-// Единая 15-секундная катсцена: хит-стоп -> аннигиляция -> воронка-портал -> цифровая чистка -> вспышка
 function drawFinalCutscene(time) {
     const elapsed = time - cutsceneStartTime;
     if (elapsed >= CUTSCENE_DURATION) { endFinalCutscene(); return; }
     const w = canvas.width, h = canvas.height, cx = w / 2, cy = h / 2 - 50;
     const seed = (i, salt) => { const s = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453; return s - Math.floor(s); };
 
-    ctx.fillStyle = '#02020a'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#02040a'; ctx.fillRect(0, 0, w, h);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
 
-    if (elapsed < 1200) {
-        // ФАЗА A: ХИТ-СТОП — финальный удар застывает во времени
-        const t = elapsed / 1200;
-        ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0, 0, w, h);
+    if (elapsed < FIN_A) {
+        // Хит-стоп: удар уже нанесён, время ещё не пошло дальше
+        const t = elapsed / FIN_A;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0, 0, w, h);
         if (boss5Img && boss5Img.complete && boss5Img.naturalWidth > 0) {
             const fw = Math.floor(boss5Img.naturalWidth / 5), fh = Math.floor(boss5Img.naturalHeight / 4);
-            const jitter = (1 - t) * 4;
-            ctx.save(); ctx.translate(cx + (Math.random() - 0.5) * jitter, cy + (Math.random() - 0.5) * jitter); ctx.scale(2.6, 2.6);
-            ctx.shadowBlur = 25; ctx.shadowColor = '#b026ff'; ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(boss5Img, 0, 0, fw, fh, -fw / 2, -fh / 2, fw, fh);
+            const jitter = (1 - t) * 5;
+            // Каналы разъезжаются: картинка держится, а сигнал уже рвётся
+            for (const [dx, tint] of [[-jitter, '#ff2fd0'], [jitter, '#00e0ff'], [0, null]]) {
+                ctx.save();
+                ctx.translate(cx + dx, cy);
+                ctx.scale(2.6, 2.6);
+                ctx.imageSmoothingEnabled = false;
+                if (tint) { ctx.globalAlpha = 0.55; ctx.globalCompositeOperation = 'lighter'; ctx.shadowBlur = 18; ctx.shadowColor = tint; }
+                ctx.drawImage(boss5Img, 0, 0, fw, fh, -fw / 2, -fh / 2, fw, fh);
+                ctx.restore();
+            }
+        }
+        drawCutscenePlayer(cx, cy + 170, 2.6, elapsed);
+        if (t < 0.18) { ctx.fillStyle = `rgba(255,255,255,${1 - t / 0.18})`; ctx.fillRect(0, 0, w, h); }
+
+    } else if (elapsed < FIN_B) {
+        // Распад: тело расходится не во все стороны, а вниз, столбцами.
+        // Змей был свит из кода — он и осыпается строками, а не осколками.
+        const t = (elapsed - FIN_A) / (FIN_B - FIN_A);
+        ctx.textAlign = 'center';
+        for (let i = 0; i < 46; i++) {
+            const colX = cx + (seed(i, 1) - 0.5) * 420;
+            const delay = seed(i, 3) * 0.35;
+            const lt = Math.max(0, (t - delay) / (1 - delay));
+            if (lt <= 0) continue;
+            const fall = lt * lt * (h * 0.9);
+            const alpha = Math.max(0, 1 - lt * 1.1);
+            const glyphs = 3 + Math.floor(seed(i, 5) * 6);
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.font = "13px 'JetBrains Mono', monospace";
+            for (let j = 0; j < glyphs; j++) {
+                const y = cy - 60 + fall + j * 16;
+                if (y < -20 || y > h + 20) continue;
+                ctx.fillStyle = j === 0 ? '#dbeef7' : (i % 3 === 0 ? '#ff2fd0' : '#00e0ff');
+                ctx.fillText(SEED_CHARS[(i * 7 + j * 3 + Math.floor(lt * 20)) % SEED_CHARS.length], colX, y);
+            }
             ctx.restore();
         }
-        drawCutscenePlayer(cx, cy + 160, 2.6, elapsed);
-        if (t < 0.15) { ctx.fillStyle = `rgba(255,255,255,${1 - t / 0.15})`; ctx.fillRect(0, 0, w, h); }
+        drawCutscenePlayer(cx, cy + 170, 2.6, elapsed, 1 - t);
+        if (t < 0.08) { ctx.fillStyle = `rgba(255,255,255,${1 - t / 0.08})`; ctx.fillRect(0, 0, w, h); }
 
-    } else if (elapsed < 4200) {
-        // ФАЗА B: АННИГИЛЯЦИЯ — босс разлетается на осколки, ударные кольца
-        const t = (elapsed - 1200) / 3000;
+    } else if (elapsed < FIN_C) {
+        // Тишина: ни врага, ни звука. Только оседающая взвесь и дайвер,
+        // которому впервые за игру некуда двигаться.
+        const t = (elapsed - FIN_B) / (FIN_C - FIN_B);
         for (let i = 0; i < 70; i++) {
-            const ph = seed(i, 1) * Math.PI * 2;
-            const spd = 50 + seed(i, 2) * 260;
-            const localT = Math.max(0, t - seed(i, 3) * 0.1);
-            const dist = localT * spd * 8;
-            const alpha = Math.max(0, 1 - localT * 1.3);
-            if (alpha <= 0) continue;
-            const sx = cx + Math.cos(ph) * dist, sy = cy + Math.sin(ph) * dist;
-            const size = 3 + seed(i, 4) * 10;
-            ctx.save(); ctx.translate(sx, sy); ctx.rotate(ph + localT * 8);
-            ctx.fillStyle = i % 2 === 0 ? '#b026ff' : '#39ff14'; ctx.globalAlpha = alpha; ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle;
-            ctx.fillRect(-size / 2, -size / 2, size, size);
-            ctx.restore();
+            const px = seed(i, 11) * w;
+            const py = ((seed(i, 12) * h) + t * 40 * (0.4 + seed(i, 13))) % h;
+            ctx.globalAlpha = 0.10 + seed(i, 14) * 0.18;
+            ctx.fillStyle = '#7e9fb0';
+            ctx.fillRect(px, py, 2, 2);
         }
-        for (let r = 0; r < 4; r++) {
-            const ringT = (t * 4 - r * 0.35);
-            if (ringT <= 0 || ringT >= 1) continue;
-            ctx.save(); ctx.globalAlpha = (1 - ringT) * 0.6; ctx.strokeStyle = '#b026ff'; ctx.lineWidth = 6; ctx.shadowBlur = 20; ctx.shadowColor = '#b026ff';
-            ctx.beginPath(); ctx.arc(cx, cy, ringT * w * 0.55, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+        ctx.globalAlpha = 1;
+        drawCutscenePlayer(cx, cy + 120, 2.2, elapsed);
+
+    } else if (elapsed < FIN_D) {
+        // Запись: четыре строки набираются по очереди. Смысл финала здесь,
+        // поэтому всё остальное на экране выключено.
+        const t = (elapsed - FIN_C) / (FIN_D - FIN_C);
+        ctx.globalAlpha = 0.5;
+        drawCutscenePlayer(cx, h - 110, 1.5, elapsed);
+        ctx.globalAlpha = 1;
+
+        const top = cy - 60;
+        finText('АРХИВ AETHERNET', cx, top - 42, 11, '#48626f', Math.min(1, t * 6));
+
+        const per = 1 / FIN_RECORD.length;
+        FIN_RECORD.forEach(([line, color], i) => {
+            const lt = Math.max(0, Math.min(1, (t - i * per) / (per * 0.72)));
+            finText(line, cx, top + i * 34, i === 0 ? 20 : 14, color, lt, i === 0 ? 18 : 10);
+        });
+
+        // Курсор стоит в конце последней набранной строки
+        const lastIdx = Math.min(FIN_RECORD.length - 1, Math.floor(t / per));
+        if (Math.floor(elapsed / 400) % 2 === 0) {
+            const line = FIN_RECORD[lastIdx][0];
+            const size = lastIdx === 0 ? 20 : 14;
+            ctx.font = size + "px 'JetBrains Mono', monospace";
+            const lt = Math.max(0, Math.min(1, (t - lastIdx * per) / (per * 0.72)));
+            const shown = line.slice(0, Math.floor(lt * line.length));
+            ctx.fillStyle = '#00e0ff';
+            ctx.fillRect(cx + ctx.measureText(shown).width / 2 + 3, top + lastIdx * 34 - size * 0.8, size * 0.5, size);
         }
-        if (t < 0.06) { ctx.fillStyle = `rgba(255,255,255,${1 - t / 0.06})`; ctx.fillRect(0, 0, w, h); }
-
-    } else if (elapsed < 9200) {
-        // ФАЗА C: ВОРОНКА — раскрывается портал, осколки закручиваются и втягиваются
-        const t = (elapsed - 4200) / 5000;
-        ctx.save(); ctx.translate(cx, cy); ctx.rotate(Math.sin(t * Math.PI) * 0.03); ctx.translate(-cx, -cy);
-
-        const portalR = 6 + t * 140;
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, portalR);
-        grad.addColorStop(0, 'rgba(255,255,255,0.9)'); grad.addColorStop(0.4, 'rgba(140,80,255,0.6)'); grad.addColorStop(1, 'rgba(140,80,255,0)');
-        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.ellipse(cx, cy, portalR * 0.4, portalR, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 2; ctx.stroke();
-        ctx.restore();
-
-        for (let i = 0; i < 70; i++) {
-            const ph = seed(i, 1) * Math.PI * 2 + t * 6;
-            const baseDist = (1 - t) * (60 + seed(i, 2) * 300);
-            const sx = cx + Math.cos(ph) * baseDist, sy = cy + Math.sin(ph) * baseDist;
-            const alpha = Math.max(0, 1 - t * 1.2);
-            if (alpha <= 0) continue;
-            const size = 2 + seed(i, 4) * 7;
-            ctx.save(); ctx.translate(sx, sy); ctx.rotate(ph);
-            ctx.fillStyle = i % 2 === 0 ? '#b026ff' : '#39ff14'; ctx.globalAlpha = alpha * 0.8; ctx.shadowBlur = 8; ctx.shadowColor = ctx.fillStyle;
-            ctx.fillRect(-size / 2, -size / 2, size, size);
-            ctx.restore();
-        }
-        ctx.restore();
-
-    } else if (elapsed < 13200) {
-        // ФАЗА D: ЦИФРОВАЯ ЧИСТКА — ускоряющийся дождь символов поглощает портал
-        const t = (elapsed - 9200) / 4000;
-        drawMatrixRain(time, 0.85, 1 + t * 3);
-        const portalR = Math.max(1, 20 * (1 - t));
-        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.beginPath(); ctx.arc(cx, cy, portalR, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-        if (t > 0.7) { ctx.fillStyle = `rgba(0,0,0,${(t - 0.7) / 0.3 * 0.6})`; ctx.fillRect(0, 0, w, h); }
 
     } else {
-        // ФАЗА E: ВСПЫШКА — короткая надпись и полный уайтаут-катаут
-        const t = (elapsed - 13200) / 1800;
-        ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, w, h);
-        if (t < 0.6) {
-            ctx.save(); ctx.globalAlpha = Math.sin((t / 0.6) * Math.PI); ctx.textAlign = 'center';
-            ctx.font = "18px var(--font-pixel)"; ctx.fillStyle = '#00ffff'; ctx.shadowBlur = 20; ctx.shadowColor = '#00ffff';
-            ctx.fillText('СИСТЕМА СТАБИЛЬНА', cx, cy);
-            ctx.restore();
+        // Подъём: свет приходит сверху — впервые за всю игру. Слогана нет,
+        // финал закрывает одна отправленная команда.
+        const t = (elapsed - FIN_D) / (FIN_E - FIN_D);
+        const lift = Math.min(1, t);
+        const glow = ctx.createLinearGradient(0, 0, 0, h);
+        glow.addColorStop(0, `rgba(210,240,255,${0.10 + lift * 0.5})`);
+        glow.addColorStop(0.6, 'rgba(210,240,255,0)');
+        ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+
+        drawCutscenePlayer(cx, h - 110 - lift * (h * 0.75), 1.5 + lift * 0.6, elapsed, lift);
+
+        if (t > 0.45) {
+            const ft = Math.min(1, (t - 0.45) / 0.35);
+            finText('ЗАПРОС НА ОТКЛЮЧЕНИЕ СЕТИ ОТПРАВЛЕН', cx, cy + 30, 14, '#ff2d55', ft, 16);
         }
-        const flashA = Math.max(0, (t - 0.6) / 0.4);
-        ctx.fillStyle = `rgba(255,255,255,${Math.min(1, flashA)})`; ctx.fillRect(0, 0, w, h);
+        if (t > 1) { ctx.fillStyle = `rgba(0,0,0,${Math.min(1, (t - 1) * 3)})`; ctx.fillRect(0, 0, w, h); }
     }
 }
 

@@ -172,7 +172,7 @@ function drawBigMap() {
     if (typeof questVehicle !== 'undefined' && questVehicle && questState === 'seeking') goals.push([questVehicle, UI.gold, 'КВЕСТ']);
     if (activeBoss) goals.push([activeBoss, UI.red, 'БОСС']);
     ctx.save();
-    ctx.font = "9px var(--font-pixel)"; ctx.textAlign = 'center';
+    ctx.font = "9px 'JetBrains Mono', monospace"; ctx.textAlign = 'center';
     const mx = ox + side / 2, my = oy + side / 2, lim = side / 2 - 22;
     for (const [g, color, label] of goals) {
         const gx = toX(g.x), gy = toY(g.y);
@@ -203,9 +203,9 @@ function drawBigMap() {
     ctx.save();
     ctx.strokeStyle = UI.line; ctx.lineWidth = 1;
     ctx.strokeRect(ox + 0.5, oy + 0.5, side - 1, side - 1);
-    ctx.font = "12px var(--font-pixel)"; ctx.fillStyle = UI.txt; ctx.textAlign = 'left';
+    ctx.font = "12px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.txt; ctx.textAlign = 'left';
     ctx.fillText('ТАКТИЧЕСКАЯ КАРТА', ox, oy - 14);
-    ctx.textAlign = 'right'; ctx.fillStyle = UI.txtDim; ctx.font = "10px var(--font-pixel)";
+    ctx.textAlign = 'right'; ctx.fillStyle = UI.txtDim; ctx.font = "10px 'JetBrains Mono', monospace";
     ctx.fillText('[R1] / [M] — ЗАКРЫТЬ', ox + side, oy - 14);
 
     // Линейка масштаба: без неё квадрат карты не говорит, далеко ли
@@ -217,11 +217,11 @@ function drawBigMap() {
     ctx.beginPath();
     ctx.moveTo(bx, by - 5); ctx.lineTo(bx, by); ctx.lineTo(bx + barPx, by); ctx.lineTo(bx + barPx, by - 5);
     ctx.stroke();
-    ctx.textAlign = 'center'; ctx.fillStyle = UI.txtDim; ctx.font = "9px var(--font-pixel)";
+    ctx.textAlign = 'center'; ctx.fillStyle = UI.txtDim; ctx.font = "9px 'JetBrains Mono', monospace";
     ctx.fillText(Math.round(barWorld / MAP_PX_PER_M) + 'М', bx + barPx / 2, by - 8);
 
     const legend = [[UI.cyan, 'P1'], [UI.blue, 'P2'], [UI.gold, 'КВЕСТ'], [UI.amber, 'ТРАНСПОРТ'], [UI.green, 'ЭВАКУАЦИЯ'], [UI.magenta, 'ШЛЮЗ'], [UI.red, 'БОСС']];
-    ctx.textAlign = 'left'; ctx.font = "10px var(--font-pixel)";
+    ctx.textAlign = 'left'; ctx.font = "10px 'JetBrains Mono', monospace";
     let lx = ox, ly = oy + side + 22;
     legend.forEach(([c, label]) => {
         ctx.fillStyle = c; ctx.fillRect(lx, ly - 8, 8, 8);

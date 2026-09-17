@@ -1,5 +1,6 @@
 // --- ИНИЦИАЛИЗАЦИЯ И КВЕСТЫ ---
 function initGameCore() {
+    beginSeededRun();
     runDepth = selectedDepth();
     if (isMobile) { touchHintUntil = performance.now() + TOUCH_HINT_MS; document.body.classList.remove('hint-done'); }
     player = { 
@@ -127,6 +128,7 @@ function initGameCore() {
 let runEscaped = false;
 function finishRunEscaped() {
     if (gameState !== 'playing') return;
+    endSeededRun();
     runEscaped = true;
     gameState = 'gameover';
     document.body.classList.remove('is-critical');
@@ -141,6 +143,7 @@ function finishRunEscaped() {
 }
 
 function triggerGameOver() { 
+    endSeededRun();
     runEscaped = false;
     gameState = 'gameover'; 
     document.body.classList.remove('is-critical');
