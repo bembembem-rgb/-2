@@ -1527,3 +1527,6 @@ body.is-mobile #p2-ui-container { display: none !important; }
 .win-note p.hi { color: var(--txt); }
 
 #win-screen .menu-btn.primary { animation: againPulse 1800ms ease-in-out infinite alternate; }
+
+/* Кнопки выбора раздачи шире цифр глубины: в них слова, а не числа */
+.depth-picker .seed-btn { width: auto; padding: 12px 16px; }

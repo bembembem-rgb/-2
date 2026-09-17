@@ -71,6 +71,10 @@ function initHTMLUI() {
                 <div id="depth-picker" class="depth-picker"></div>
                 <div id="depth-info" class="depth-info"></div>
                 <div class="menu-divider"></div>
+                <div class="menu-eyebrow" style="text-align:center;">РАЗДАЧА</div>
+                <div id="seed-picker" class="depth-picker"></div>
+                <div id="seed-info" class="depth-info"></div>
+                <div class="menu-divider"></div>
                 <button class="menu-btn primary" style="text-align:center;" onclick="startGameBtn()">ЧАСТЬ 1 · ЗАТОПЛЕННЫЕ ГЛУБИНЫ</button>
                 <button class="menu-btn muted" style="text-align:center;" onclick="showComingSoonBtn()">ЧАСТЬ 2 · ЗАПЕРТО</button>
                 <button class="menu-btn muted" style="text-align:center;" onclick="hidePartSelectBtn()">НАЗАД</button>
@@ -248,8 +252,8 @@ function initHTMLUI() {
                 <div class="win-note">
                     <div class="win-note-head">ОТ АВТОРА</div>
                     <p>Эта игра началась с голубого квадратика, который я гонял по пустому экрану. Всё остальное появилось уже вокруг него.</p>
-                    <p>Квадратик, кстати, никуда не делся. Ты им и играл: цвет у дайвера с тех пор ни разу не поменялся.</p>
-                    <p class="hi">Между тем экраном и этим — пять боссов, мастерская, ко-оп и очень много вечеров. Когда делаешь всё это один, перестаёшь верить, что по ту сторону кто-то окажется. Сейчас там ты.</p>
+                    <p>Квадратик никуда не делся. Ты им и играл: у дайвера с тех пор тот же цвет.</p>
+                    <p class="hi">Между тем экраном и этим — пять боссов, мастерская, ко-оп и очень много вечеров. Когда делаешь всё это один, перестаёшь верить, что кто-то дойдёт до конца. Сейчас дошёл ты.</p>
                     <p>Вторая часть пока в заметках. Возьмусь, если у первой появятся игроки: писать продолжение в пустоту я не вытяну.</p>
                     <p>Хочешь, чтобы она была? Покажи игру кому-нибудь. Кнопка ниже копирует твой результат и ссылку на этот сид.</p>
                 </div>
@@ -358,6 +362,7 @@ function initHTMLUI() {
         document.getElementById('part-select-screen').style.display = 'flex';
         renderPoolBanner();
         renderDepthPicker();
+        renderSeedPicker();
     };
     window.hidePartSelectBtn = function() {
         document.getElementById('part-select-screen').style.display = 'none';
@@ -375,6 +380,7 @@ function initHTMLUI() {
     window.startGameBtn = function() {
         const fade = document.getElementById('fade-overlay');
         fade.style.opacity = '1';
+        fade.style.pointerEvents = 'auto';
         setTimeout(() => {
             closeAllScreens();
             markUnlocksSeen();
@@ -385,6 +391,7 @@ function initHTMLUI() {
             playBGM(bgmFight);
             triggerStartGlitch();
             showControlHints();
+            fade.style.pointerEvents = 'none';
             requestAnimationFrame(() => { fade.style.opacity = '0'; });
         }, 550);
     };
@@ -687,6 +694,10 @@ function initHTMLUI() {
         currentAchTab = tab;
         renderAchievementsScreen();
     };
+    // На window, а не просто в области initHTMLUI: её зовёт unlockAchievement
+    // из save.js, чтобы обновить открытый список. Объявления внутри функции
+    // снаружи не видно, и такой вызов падал с ReferenceError.
+    window.renderAchievementsScreen = renderAchievementsScreen;
     function renderAchievementsScreen() {
         const src = currentAchTab === 'main' ? ACHIEVEMENTS : SECRETS;
         const tabMain = document.getElementById('ach-tab-main');
@@ -736,12 +747,14 @@ function initHTMLUI() {
     window.goToMenuBtn = function() {
         const fade = document.getElementById('fade-overlay');
         fade.style.opacity = '1';
+        fade.style.pointerEvents = 'auto';
         setTimeout(() => {
             closeAllScreens();
             document.getElementById('main-menu-screen').style.display = 'flex';
             cancelQuestRespawn();
             resetInputState();
             gameState = 'menu'; playBGM(bgmMenu);
+            fade.style.pointerEvents = 'none';
             requestAnimationFrame(() => { fade.style.opacity = '0'; });
         }, 550);
     };

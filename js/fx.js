@@ -40,8 +40,8 @@ function spawnHitFX(x, y) {
     if (_hitFxThisFrame >= 3) return;
     if (_hitFxThisFrame === 0) _lastHitFx = now;
     _hitFxThisFrame++;
-    spawnSpriteFX(fxHit, x, y, { size: 58, frameInterval: 32, angle: Math.random() * Math.PI * 2 });
-    spawnSparks(x, y, Math.random() * Math.PI * 2, 3, '#7fe9ff', Math.PI * 2);
+    spawnSpriteFX(fxHit, x, y, { size: 58, frameInterval: 32, angle: fxRandom() * Math.PI * 2 });
+    spawnSparks(x, y, fxRandom() * Math.PI * 2, 3, '#7fe9ff', Math.PI * 2);
 }
 
 // Вспышка у дула. Живёт 90 мс, рисуется штрихами из точки выстрела:
@@ -67,7 +67,7 @@ function flashFromShooter(h, angle, size, color) {
 
 function spawnMuzzleFlash(x, y, angle, size, color) {
     if (muzzleFlashes.length >= MUZZLE_MAX) muzzleFlashes.shift();
-    muzzleFlashes.push({ x, y, angle, size, color, life: MUZZLE_LIFE, seed: Math.random() * 6.28 });
+    muzzleFlashes.push({ x, y, angle, size, color, life: MUZZLE_LIFE, seed: fxRandom() * 6.28 });
 }
 
 function updateMuzzleFlashes(dt) {
@@ -104,56 +104,56 @@ function drawMuzzleFlashes() {
 }
 
 function spawnParticles(x, y, color = '#00ced1', amount = null) { 
-    const count = amount || (Math.floor(Math.random() * 4) + 5); 
+    const count = amount || (Math.floor(fxRandom() * 4) + 5); 
     for (let i = 0; i < count; i++) { 
-        const angle = Math.random() * Math.PI * 2, speed = Math.random() * 4 + 2; 
-        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: Math.random() * 4 + 2, alpha: 1, decay: Math.random() * 0.02 + 0.01, color }); 
+        const angle = fxRandom() * Math.PI * 2, speed = fxRandom() * 4 + 2; 
+        particles.push({ x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: fxRandom() * 4 + 2, alpha: 1, decay: fxRandom() * 0.02 + 0.01, color }); 
     } 
 }
 
 function spawnBubbles(x, y, amount = 5) { 
     for (let i = 0; i < amount; i++) { 
-        bubbles.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 30, vx: (Math.random() - 0.5) * 2, vy: -Math.random() * 3 - 1, size: Math.random() * 6 + 2, alpha: 0.8, life: Math.random() * 60 + 40 }); 
+        bubbles.push({ x: x + (fxRandom() - 0.5) * 30, y: y + (fxRandom() - 0.5) * 30, vx: (fxRandom() - 0.5) * 2, vy: -fxRandom() * 3 - 1, size: fxRandom() * 6 + 2, alpha: 0.8, life: fxRandom() * 60 + 40 }); 
     } 
 }
 
 function spawnShatterParticles(x, y, width, height, color) { 
-    const count = 15 + Math.floor(Math.random() * 6); 
+    const count = 15 + Math.floor(fxRandom() * 6); 
     for (let i = 0; i < count; i++) { 
-        const px = x + Math.random() * width, py = y + Math.random() * height;
-        const angle = Math.random() * Math.PI * 2, speed = Math.random() * 5 + 3; 
-        particles.push({ x: px, y: py, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: Math.random() * 8 + 4, alpha: 1, decay: Math.random() * 0.015 + 0.01, color: color, friction: 0.92 }); 
+        const px = x + fxRandom() * width, py = y + fxRandom() * height;
+        const angle = fxRandom() * Math.PI * 2, speed = fxRandom() * 5 + 3; 
+        particles.push({ x: px, y: py, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, size: fxRandom() * 8 + 4, alpha: 1, decay: fxRandom() * 0.015 + 0.01, color: color, friction: 0.92 }); 
     } 
 }
 
 function spawnExplosion(x, y, size) { 
     shakeTime = Math.max(shakeTime, size * 5); 
     scorches.push({ x, y, size: size * 1.5, alpha: 0.8 }); 
-    for(let i = 0; i < 30; i++) spawnParticles(x, y, ['#00ffff', '#1e90ff', '#00ced1', '#ffffff'][Math.floor(Math.random()*4)], 1); 
+    for(let i = 0; i < 30; i++) spawnParticles(x, y, ['#00ffff', '#1e90ff', '#00ced1', '#ffffff'][Math.floor(fxRandom()*4)], 1); 
     spawnBubbles(x, y, 20); 
     spawnShockRing(x, y, size * 8, { width: 4, life: 380, color: '#ffffff' });
-    spawnSparks(x, y, Math.random() * Math.PI * 2, 14, '#ffd98a', Math.PI * 2);
+    spawnSparks(x, y, fxRandom() * Math.PI * 2, 14, '#ffd98a', Math.PI * 2);
     for (let i = 0; i < 4; i++) spawnSmoke(x, y, { r0: 6, r1: size * 4, life: 800, alpha: 0.28 });
     // Обломки: тяжёлые, крутятся и тормозят о воду
     for (let i = 0; i < 10; i++) {
-        const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 5;
-        particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, size: 3 + Math.random() * 5,
-            alpha: 1, decay: 0.008 + Math.random() * 0.008, color: '#374654', friction: 0.93 });
+        const a = fxRandom() * Math.PI * 2, sp = 3 + fxRandom() * 5;
+        particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, size: 3 + fxRandom() * 5,
+            alpha: 1, decay: 0.008 + fxRandom() * 0.008, color: '#374654', friction: 0.93 });
     }
 }
 
 function explode(x, y, radius = 100, damage = 15) {
     playBoomSFX(0.6);
     spawnSpriteFX(fxBoomRoc, x, y, { size: 180, frameInterval: 45 });
-    spawnSpriteFX(tintFx(fxSlashBase, '#ff9f1c'), x, y, { size: radius * 2.2, frameInterval: 26, angle: Math.random() * Math.PI * 2, alpha: 0.6 });
+    spawnSpriteFX(tintFx(fxSlashBase, '#ff9f1c'), x, y, { size: radius * 2.2, frameInterval: 26, angle: fxRandom() * Math.PI * 2, alpha: 0.6 });
     shakeTime = Math.max(shakeTime, radius * 1.5); 
     scorches.push({ x, y, size: radius, alpha: 1.0 }); 
     spawnBubbles(x, y, 15);
     // Два кольца: узкое и быстрое — фронт, широкое и вялое — вытесненная вода
     spawnShockRing(x, y, radius * 1.15, { width: 5, life: 340, color: '#ffd98a' });
     spawnShockRing(x, y, radius * 1.9, { width: 2, life: 560, color: '#9fd6e4' });
-    spawnSparks(x, y, Math.random() * Math.PI * 2, 18, '#ffd98a', Math.PI * 2);
-    for (let i = 0; i < 5; i++) spawnSmoke(x, y, { r0: 8, r1: radius * 0.8, life: 700 + Math.random() * 400, alpha: 0.3 });
+    spawnSparks(x, y, fxRandom() * Math.PI * 2, 18, '#ffd98a', Math.PI * 2);
+    for (let i = 0; i < 5; i++) spawnSmoke(x, y, { r0: 8, r1: radius * 0.8, life: 700 + fxRandom() * 400, alpha: 0.3 });
     for(let i = 0; i < 20; i++) spawnParticles(x, y, '#ff4400', 3); 
     for(let i = 0; i < 10; i++) spawnParticles(x, y, '#ffffff', 2);
     for (let i = 0; i < enemies.length; i++) { 
@@ -177,14 +177,14 @@ const CASING_MAX = 40, SMOKE_MAX = 64, SPARK_MAX = 140, RING_MAX = 12;
 // от направления выстрела — как у настоящего оружия, а не веером.
 function spawnCasing(x, y, angle, scale = 1) {
     if (casings.length >= CASING_MAX) casings.shift();
-    const side = angle + Math.PI / 2 + (Math.random() - 0.5) * 0.5;
-    const speed = (1.6 + Math.random() * 1.4) * scale;
+    const side = angle + Math.PI / 2 + (fxRandom() - 0.5) * 0.5;
+    const speed = (1.6 + fxRandom() * 1.4) * scale;
     casings.push({
         x, y,
         vx: Math.cos(side) * speed - Math.cos(angle) * 0.6,
         vy: Math.sin(side) * speed - Math.sin(angle) * 0.6,
-        angle: Math.random() * Math.PI * 2,
-        spin: (Math.random() - 0.5) * 0.5,
+        angle: fxRandom() * Math.PI * 2,
+        spin: (fxRandom() - 0.5) * 0.5,
         len: 5 * scale, wide: 2 * scale,
         life: 900, maxLife: 900
     });
@@ -198,8 +198,8 @@ function spawnSmoke(x, y, opts = {}) {
     const drift = opts.drift || 0;
     smokePuffs.push({
         x, y,
-        vx: (Math.random() - 0.5) * 0.6 + Math.cos(drift) * (opts.push || 0),
-        vy: (Math.random() - 0.5) * 0.6 + Math.sin(drift) * (opts.push || 0) - 0.25,
+        vx: (fxRandom() - 0.5) * 0.6 + Math.cos(drift) * (opts.push || 0),
+        vy: (fxRandom() - 0.5) * 0.6 + Math.sin(drift) * (opts.push || 0) - 0.25,
         r0: opts.r0 || 5, r1: opts.r1 || 18,
         color: opts.color || '#9fd6e4',
         alpha: opts.alpha !== undefined ? opts.alpha : 0.35,
@@ -212,9 +212,9 @@ function spawnSmoke(x, y, opts = {}) {
 function spawnSparks(x, y, angle, amount = 6, color = '#ffd98a', spread = 1.2) {
     for (let i = 0; i < amount; i++) {
         if (sparks.length >= SPARK_MAX) sparks.shift();
-        const a = angle + (Math.random() - 0.5) * spread;
-        const speed = 3 + Math.random() * 6;
-        const life = 160 + Math.random() * 220;
+        const a = angle + (fxRandom() - 0.5) * spread;
+        const speed = 3 + fxRandom() * 6;
+        const life = 160 + fxRandom() * 220;
         sparks.push({ x, y, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, color, life, maxLife: life });
     }
 }
@@ -235,7 +235,7 @@ function spawnShockRing(x, y, r1, opts = {}) {
 // Попадание в броню, камень, корпус — не мясо: брызг крови нет, есть
 // сноп искр обратно в сторону стрелявшего и облачко пыли.
 function spawnImpactSparks(x, y, angle, color = '#ffd98a') {
-    spawnSparks(x, y, angle + Math.PI, 5 + Math.floor(Math.random() * 4), color, 1.6);
+    spawnSparks(x, y, angle + Math.PI, 5 + Math.floor(fxRandom() * 4), color, 1.6);
     spawnSmoke(x, y, { r0: 3, r1: 11, life: 300, alpha: 0.22 });
 }
 

@@ -101,7 +101,10 @@ function playSFX(sound, volume = 0.5, startAt = 0, vary = 0) {
     if (vary > 0 || rate !== 1) {
         if ('preservesPitch' in clone) clone.preservesPitch = false;
         if ('mozPreservesPitch' in clone) clone.mozPreservesPitch = false;
-        clone.playbackRate = Math.max(0.25, rate * (1 + (Math.random() * 2 - 1) * vary));
+        // fxRandom, а не Math.random: разброс высоты звука на игру не влияет,
+        // но звуков за забег сотни, и один пропущенный из-за просадки кадров
+        // сдвигал бы весь игровой поток случайных чисел вслед за собой.
+        clone.playbackRate = Math.max(0.25, rate * (1 + (fxRandom() * 2 - 1) * vary));
     }
     if (!startAt) { clone.play().catch(() => {}); return clone; }
     const start = () => {

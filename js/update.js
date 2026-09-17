@@ -269,7 +269,7 @@ function update(dt) {
             
             v.x += Math.cos(v.angle) * v.speed; 
             v.y += Math.sin(v.angle) * v.speed;
-            if (Math.abs(v.speed) > 2 && Math.random() < 0.3) spawnBubbles(v.x, v.y, 2);
+            if (Math.abs(v.speed) > 2 && fxRandom() < 0.3) spawnBubbles(v.x, v.y, 2);
         }
         
         // С геймпада мыши нет — турель наводится на ближайшего врага (как и пеший автоприцел)
@@ -492,7 +492,7 @@ function update(dt) {
         let target = getEnemyTarget(e);
         if (e.type === 'boss') { 
             e.update(dt, target); 
-            if (Math.abs(e.vx) > 0.5 || Math.abs(e.vy) > 0.5) if (Math.random() < 0.2) spawnBubbles(e.x, e.y, 1); 
+            if (Math.abs(e.vx) > 0.5 || Math.abs(e.vy) > 0.5) if (fxRandom() < 0.2) spawnBubbles(e.x, e.y, 1); 
         } else {
             const angleToTarget = Math.atan2(target.y - e.y, target.x - e.x); e.angle = angleToTarget; 
             let moveX = Math.cos(e.angle) * e.speed, moveY = Math.sin(e.angle) * e.speed;
@@ -642,16 +642,16 @@ function update(dt) {
                 rollDrop('enemy', e.x, e.y);
                 if (e.type === 'husk') {
                     for (let m = 0; m < 2; m++) {
-                        const a = Math.random() * Math.PI * 2, f = Math.random() * 5 + 4;
+                        const a = fxRandom() * Math.PI * 2, f = fxRandom() * 5 + 4;
                         enemies.push({ x: e.x, y: e.y, type: 'neon', hp: 3, speed: 4.2, size: 40, color: '#3d8bff',
                             angle: 0, turretAngle: 0, rotorAngle: 0, fireTimer: 1500,
                             vx: Math.cos(a) * f, vy: Math.sin(a) * f });
                     }
                 }
                 if (e.type === 'sniper') { 
-                    const microCount = Math.floor(Math.random() * 2) + 2; 
+                    const microCount = Math.floor(fxRandom() * 2) + 2; 
                     for (let m = 0; m < microCount; m++) { 
-                        const randomAngle = Math.random() * Math.PI * 2, randomForce = Math.random() * 6 + 5; 
+                        const randomAngle = fxRandom() * Math.PI * 2, randomForce = fxRandom() * 6 + 5; 
                         enemies.push({ x: e.x, y: e.y, type: 'micro', hp: 1, speed: e.speed * 1.8, size: e.size * 0.5, color: '#ffffff', angle: 0, vx: Math.cos(randomAngle) * randomForce, vy: Math.sin(randomAngle) * randomForce, animFrame: 0, frameTimer: 0, frameInterval: 80, row: 0 }); 
                     } 
                 } 

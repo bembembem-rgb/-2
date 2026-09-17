@@ -16,8 +16,21 @@ const SEED_LEN = 5;
 
 let runSeed = '';          // сид текущего забега
 let seedFromLink = '';     // сид, пришедший из адреса
+// Как выбирается сид следующего забега. По умолчанию случайный: сид дня
+// одинаковый у всех, и если ставить его на каждый забег, вся игра за сутки
+// проходит по одной и той же раздаче. Общий забег — это добровольный вызов,
+// а не режим по умолчанию.
+let seedMode = 'random';   // 'random' | 'daily' | 'link'
 let _mathRandom = Math.random;
 let _seedActive = false;
+
+// Отдельный поток для эффектов. Частицы, тряска экрана и пузыри рисуются
+// каждый кадр, а кадров у всех разное количество: на медленной машине их
+// вдвое меньше. Пока эффекты тянули числа из общего потока, сид у двух
+// игроков расходился за первые же секунды, и обещание «одна раздача на
+// всех» не выполнялось. Здесь всегда настоящий Math.random — эффекты
+// на игру не влияют, и совпадать им незачем.
+function fxRandom() { return _mathRandom(); }
 
 function seedHash(str) {
     let h = 2166136261 >>> 0;
@@ -70,7 +83,7 @@ function readLinkSeed() {
     try {
         const p = new URLSearchParams(location.search);
         const s = normalizeSeed(p.get('seed'));
-        if (s.length === SEED_LEN) seedFromLink = s;
+        if (s.length === SEED_LEN) { seedFromLink = s; seedMode = 'link'; }
     } catch (err) { /* адрес без параметров — обычный случай */ }
     return seedFromLink;
 }
@@ -81,7 +94,9 @@ function readLinkSeed() {
 // и фон рисуются своим генератором и сидом связаны быть не должны.
 function beginSeededRun() {
     if (_seedActive) endSeededRun();
-    runSeed = seedFromLink || todaySeed();
+    if (seedMode === 'link' && seedFromLink) runSeed = seedFromLink;
+    else if (seedMode === 'daily') runSeed = todaySeed();
+    else runSeed = randomSeed();
     Math.random = mulberry32(seedHash(runSeed));
     _seedActive = true;
     updateSeedHud();
@@ -149,3 +164,27 @@ function fallbackCopy(text, done) {
 }
 
 window.copyRunCardBtn = function (el) { copyRunCard(el); };
+
+// Выбор режима на экране спуска. Ссылка остаётся доступной, пока она была:
+// игрок пришёл именно за этим забегом, и отобрать его у него нельзя.
+window.pickSeedModeBtn = function (mode) {
+    if (mode === 'link' && !seedFromLink) return;
+    seedMode = mode;
+    if (typeof playSFX === 'function' && typeof sfxUiNav !== 'undefined') playSFX(sfxUiNav, 0.4);
+    renderSeedPicker();
+};
+
+function renderSeedPicker() {
+    const wrap = document.getElementById('seed-picker');
+    const info = document.getElementById('seed-info');
+    if (!wrap) return;
+    const modes = [['random', 'СЛУЧАЙНЫЙ'], ['daily', 'ЗАБЕГ ДНЯ']];
+    if (seedFromLink) modes.push(['link', 'ИЗ ССЫЛКИ']);
+    wrap.innerHTML = modes.map(([m, label]) =>
+        `<button class="menu-btn seed-btn${m === seedMode ? ' is-on' : ''}" onclick="pickSeedModeBtn('${m}')">${label}</button>`
+    ).join('');
+    if (!info) return;
+    if (seedMode === 'daily') info.innerHTML = `СИД <b>${todaySeed()}</b> · ОДИН И ТОТ ЖЕ У ВСЕХ ДО ПОЛУНОЧИ`;
+    else if (seedMode === 'link') info.innerHTML = `СИД <b>${seedFromLink}</b> · ЗАБЕГ ИЗ ССЫЛКИ`;
+    else info.innerHTML = 'СИД ВЫДАЁТСЯ ЗАНОВО НА КАЖДЫЙ ЗАБЕГ';
+}

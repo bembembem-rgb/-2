@@ -107,7 +107,7 @@ function updatePlayer2(dt) {
             if (v.speed > v.maxSpeed) v.speed = v.maxSpeed;
             if (v.speed < -v.maxSpeed / 2) v.speed = -v.maxSpeed / 2;
             v.x += Math.cos(v.angle) * v.speed; v.y += Math.sin(v.angle) * v.speed;
-            if (Math.abs(v.speed) > 2 && Math.random() < 0.3) spawnBubbles(v.x, v.y, 2);
+            if (Math.abs(v.speed) > 2 && fxRandom() < 0.3) spawnBubbles(v.x, v.y, 2);
         }
 
         // За рулём легковой техник продолжает стрелять из пистолета: у неё
