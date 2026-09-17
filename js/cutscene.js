@@ -1,4 +1,9 @@
 function triggerFinalCutscene() {
+    // Меню и прочие экраны — это DOM поверх канваса, сами они не гаснут.
+    // В обычном ходе игры открытых экранов нет, но финал вызывают ещё и
+    // из консоли, чтобы снять его на видео, и там панель меню закрывала
+    // половину кадра.
+    if (typeof closeAllScreens === 'function') closeAllScreens();
     gameState = 'final_cutscene';
     cutsceneStartTime = performance.now();
     if (currentBGM) currentBGM.pause();
