@@ -17,7 +17,7 @@
 // Пусто — ссылка соберётся из текущего адреса. На itch.io так нельзя:
 // игра там живёт в рамке на служебном домене, её внутренний адрес
 // меняется при каждой перезаливке, и все разосланные ссылки протухнут.
-const GAME_URL = '';
+const GAME_URL = 'https://bembembem-rgb.github.io/-2/';
 
 const SEED_CHARS = 'ACDEFGHJKMNPQRTUVWXY2346789';
 const SEED_LEN = 5;
