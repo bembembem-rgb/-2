@@ -1540,3 +1540,85 @@ body.is-mobile #p2-ui-container { display: none !important; }
     padding-top: 12px;
     border-top: 1px solid var(--line-dim);
 }
+
+.ui-screen, #main-menu-screen, #levelup-screen {
+    overflow-y: auto;
+    overflow-x: hidden;
+    justify-content: safe center;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ui-screen > *, #main-menu-screen > *, #levelup-screen > * { flex-shrink: 0; }
+
+@media (max-height: 760px) {
+    .menu-panel { padding: 18px 22px 20px; }
+    .menu-title { font-size: 21px; }
+    #main-menu-screen .menu-title { font-size: 24px; }
+    .menu-divider { margin: 10px 0 12px; }
+    .menu-stats { line-height: 1.7; }
+    .menu-btn { font-size: 12px; padding: 8px 12px 8px 26px; }
+    #main-menu-screen .menu-btn, #pause-screen .menu-btn { padding-left: 40px; }
+    .menu-btn.primary { padding-top: 11px; padding-bottom: 11px; margin-bottom: 8px; }
+    .win-note p, .shop-desc, .ach-desc, .keymap dd { font-size: 12px; line-height: 1.6; }
+    .levelup-cards { gap: 10px; }
+    .menu-btn.perk-card { width: 180px; min-height: 230px; padding: 14px 12px; }
+    .perk-emblem { width: 24px; height: 24px; margin: 12px 0; }
+    .go-verdict, .go-sheet, .go-board { padding: 14px; }
+    #go-grade { font-size: 52px; }
+    #go-title { font-size: 24px !important; margin-bottom: 12px !important; }
+    .go-body { gap: 12px; margin-bottom: 12px; }
+    .lore-container { height: 66vh; }
+}
+
+@media (max-height: 560px) {
+    .menu-panel { padding: 12px 16px 14px; }
+    .menu-title, #main-menu-screen .menu-title { font-size: 17px; }
+    .menu-btn { font-size: 11px; padding: 6px 10px 6px 22px; margin-bottom: 2px; }
+    #main-menu-screen .menu-btn, #pause-screen .menu-btn { padding-left: 34px; }
+    .menu-eyebrow { margin-bottom: 8px; }
+    .menu-divider { margin: 8px 0 8px; }
+    #go-grade { font-size: 38px; }
+}
+
+@media (max-height: 760px) {
+    #go-title { order: -2; }
+    #game-over-screen .go-actions { order: -1; margin-bottom: 14px; }
+    #game-over-screen .go-unlocks { order: 1; margin-bottom: 12px; }
+    .win-note { max-height: 32vh; overflow-y: auto; padding-right: 10px; }
+}
+
+.ui-screen, #main-menu-screen, #levelup-screen {
+    padding: 18px 16px;
+    box-sizing: border-box;
+}
+
+@media (max-height: 760px) {
+    #game-over-screen .go-actions .menu-btn { min-width: 0 !important; flex: 1 1 auto; padding-left: 14px; padding-right: 14px; }
+    #game-over-screen .go-actions { flex-wrap: nowrap; width: 100%; max-width: 900px; }
+}
+
+@media (max-width: 720px) {
+    #game-over-screen .go-actions { flex-wrap: wrap; }
+    #game-over-screen .go-actions .menu-btn { flex: 1 1 45%; }
+}
+
+@media (max-width: 620px) {
+    #main-menu-screen {
+        left: 0 !important;
+        right: 0 !important;
+        width: auto !important;
+        align-items: stretch;
+    }
+    #main-menu-screen .menu-panel { width: 100%; }
+    .lore-container { flex-direction: column; height: auto; max-height: 72vh; overflow-y: auto; }
+    .shop-tabs { flex-wrap: wrap; }
+    .shop-tabs .menu-btn { flex: 1 1 40%; }
+    .depth-picker { flex-wrap: wrap; }
+    .go-body { flex-direction: column; }
+}
+
+@media (max-width: 620px) {
+    .menu-panel { min-width: 0 !important; max-width: 100%; }
+    #part-select-screen .menu-panel, #coming-soon-screen .menu-panel { width: 100%; }
+    .ui-screen .menu-btn { min-width: 0 !important; }
+}

@@ -46,7 +46,7 @@ function initHTMLUI() {
             <div id="touch-hint">ЛЕВО: ХОД · ДВА ТАПА — РЫВОК<br>ПРАВО: ОГОНЬ · ДВА ТАПА — ЩИТ</div>
         </div>
 
-        <div id="main-menu-screen" style="display:none; pointer-events:auto; position:absolute; top:0; right:8%; width:500px; height:100vh; flex-direction:column; justify-content:center; text-align:right;">
+        <div id="main-menu-screen" style="display:none; pointer-events:auto; position:absolute; top:0; right:8%; width:500px; height:100vh; flex-direction:column;  text-align:right;">
             <div class="menu-panel">
                 <h1 class="menu-title">NEON<br>TIDES:<br><span>ZERO</span></h1>
                 <div id="menu-stats" class="menu-stats"></div>
@@ -61,7 +61,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="part-select-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
+        <div id="part-select-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; ">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
                 <div class="menu-eyebrow" style="text-align:center;">ЧЕМ ГЛУБЖЕ, ТЕМ БОЛЬШЕ ЯДЕР И ВРАГОВ</div>
                 <h1 class="menu-title" style="font-size:20px; text-align:center;">СПУСК</h1>
@@ -81,7 +81,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="coming-soon-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
+        <div id="coming-soon-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; ">
             <div class="menu-panel" style="text-align:center; min-width:420px;">
                 <div class="menu-eyebrow" style="text-align:center;">ЧАСТЬ 2</div>
                 <h1 class="menu-title" style="font-size:20px; text-align:center;">ЕЩЁ НЕ СДЕЛАНА</h1>
@@ -90,7 +90,7 @@ function initHTMLUI() {
             </div>
         </div>
         
-        <div id="lore-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
+        <div id="lore-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button id="lang-toggle-btn" class="menu-btn" onclick="toggleLangBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">EN / RU</button>
             <div class="lore-container">
                 <div class="lore-col">
@@ -136,7 +136,7 @@ function initHTMLUI() {
             <button class="menu-btn" onclick="hideLoreBtn()" data-ru="ЗАКРЫТЬ АРХИВ" data-en="CLOSE ARCHIVE" style="margin-top:24px; width:auto; min-width:280px; text-align:center;">ЗАКРЫТЬ АРХИВ</button>
         </div>
         
-        <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; overflow-y:auto;">
+        <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box; overflow-y:auto;">
             <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <h2 style="font-family:'JetBrains Mono', monospace; font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Играешь один — выбери себе устройство и закрой панель, ко-оп останется выключенным.</div>
@@ -158,7 +158,7 @@ function initHTMLUI() {
             <button class="menu-btn red" onclick="disableCoopBtn()" style="width:auto; padding:12px 20px; text-align:center;">ИДУ ОДИН</button>
         </div>
 
-        <div id="achievements-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
+        <div id="achievements-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideAchievementsBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div style="display:flex; gap:8px; margin-bottom:16px;">
                 <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ТРОФЕИ</button>
@@ -168,7 +168,7 @@ function initHTMLUI() {
             <div id="ach-list" style="width:90vw; max-width:800px; max-height:60vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); padding:24px;"></div>
         </div>
 
-        <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
+        <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:560px;">
                 <div class="menu-eyebrow">ЭТА ЖЕ РАСКЛАДКА ЕСТЬ В ПАУЗЕ</div>
@@ -178,7 +178,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
+        <div id="levelup-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box; background:rgba(5,8,14,0.9);">
             <div class="menu-eyebrow" style="margin-bottom:8px;">БОЙ ОСТАНОВЛЕН</div>
             <h1 id="levelup-head" class="menu-title" style="font-size:20px; margin-bottom:8px;">УРОВЕНЬ 1</h1>
             <div class="levelup-sub">ОДНО УЛУЧШЕНИЕ ДО КОНЦА ЗАБЕГА, ЗАМЕНИТЬ ПОТОМ НЕЛЬЗЯ</div>
@@ -186,7 +186,7 @@ function initHTMLUI() {
             <div class="levelup-hint">&larr; &rarr; ВЫБРАТЬ · ENTER ВЗЯТЬ · 1 2 3 БЫСТРО</div>
         </div>
 
-        <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center; padding:24px; box-sizing:border-box;">
+        <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
@@ -223,7 +223,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center;">
+        <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; ">
             <div class="menu-panel pause-panel">
                 <div class="menu-eyebrow">ТАЙМЕР ЗАБЕГА ОСТАНОВЛЕН</div>
                 <h1 class="menu-title" style="font-size:20px;">ПАУЗА</h1>
@@ -237,7 +237,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="win-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; justify-content:center; overflow-y:auto; padding:24px; box-sizing:border-box;">
+        <div id="win-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center;  overflow-y:auto; padding:24px; box-sizing:border-box;">
             <div class="menu-panel win-panel">
                 <div class="menu-eyebrow">ЧАСТЬ 1 · ЗАТОПЛЕННЫЕ ГЛУБИНЫ</div>
                 <h1 class="menu-title">ИГРА ПРОЙДЕНА</h1>
@@ -266,7 +266,7 @@ function initHTMLUI() {
             </div>
         </div>
 
-        <div id="game-over-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:center;">
+        <div id="game-over-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; ">
             <h1 id="go-title" class="menu-title" style="font-size:32px; color:var(--red); margin-bottom:24px; text-align:center;">CRITICAL ERROR</h1>
             <div id="go-unlocks" class="go-unlocks" style="display:none;"></div>
             <div class="go-body">
@@ -287,7 +287,7 @@ function initHTMLUI() {
                     <div id="go-leaderboard"></div>
                 </div>
             </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            <div class="go-actions" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
                 <button class="menu-btn primary" onclick="startGameBtn()" style="width:auto; min-width:240px; text-align:center;">СНОВА ВНИЗ [R]</button>
                 <button class="menu-btn" onclick="showShopBtn('gameover')" style="width:auto; min-width:240px; text-align:center;">МАСТЕРСКАЯ</button>
                 <button class="menu-btn" onclick="copyRunCardBtn(this)" style="width:auto; min-width:240px; text-align:center;">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
