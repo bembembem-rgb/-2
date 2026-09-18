@@ -1,5 +1,5 @@
 // --- ЗАГРУЗЧИК АССЕТОВ ---
-let totalAssets = 38;
+let totalAssets = 45;   // +7 листов из vfx/, см. tools/make_vfx.py
 let loadedAssets = 0;
 let isImageLoaded = false, isSlimeLoaded = false, isSlimeWhiteLoaded = false;
 
@@ -81,6 +81,17 @@ const fxDown       = loadImg('fx_down_48x48.png');
 
 // Серая база под тонировку: цвет накладывается в рантайме
 const fxRuneBase  = loadImg('fx_rune_48x48.png');
+
+// Листы из vfx/ — нарисованы генератором tools/make_vfx.py. Каждый лист
+// горизонтальная полоса квадратных кадров, размер кадра стоит в имени,
+// spawnSpriteFX режет её сам.
+const fxBubbleBurst = loadImg('vfx/fx_bubble_burst_32x32.png');
+const fxShockRing   = loadImg('vfx/fx_shock_ring_64x64.png');
+const fxArc         = loadImg('vfx/fx_arc_48x48.png');
+const fxInk         = loadImg('vfx/fx_ink_48x48.png');
+const fxSparkBurst  = loadImg('vfx/fx_spark_burst_24x24.png');
+const fxHeal        = loadImg('vfx/fx_heal_32x32.png');
+const fxCharge      = loadImg('vfx/fx_charge_48x48.png');
 const fxRingBase  = loadImg('fx_ring_64x64.png');
 const fxSlashBase = loadImg('fx_slash_48x48.png');
 const fxShellBase = loadImg('fx_shell_48x48.png');

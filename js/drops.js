@@ -88,6 +88,7 @@ function rollDrop(source, x, y) {
         const id = ids[Math.floor(Math.random() * ids.length)] || 'warden';
         name = ARTIFACTS[id].name;
         equipArtifact(slot, id, px, py);
+        spawnSpriteFX(fxCharge, px, py, { size: 150, frameInterval: 34, alpha: 0.95 });
     } else {
         const o = OVERLOADS[Math.floor(Math.random() * OVERLOADS.length)];
         runOverload = o;

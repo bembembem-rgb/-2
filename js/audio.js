@@ -20,37 +20,45 @@ function sfxBank(files) {
     return list[0];
 }
 
-const sfxPistol = new Audio('Laser_Shoot4.mp3');
-const sfxShotgun = new Audio('shotgunshot.mp3');
-const sfxEnemyShot = sfxBank(['enemyshoot.mp3', 'enemyshoot_v2.mp3']);
-const sfxAlt = new Audio('Laser_Shoot5.mp3');          // альт-залп
-const sfxRocket = new Audio('rocketlaunchtankorheli.mp3');
-const sfxVehicleBoom = new Audio('rocketexplodeheliortank.mp3');
+// Звуки собраны синтезом, исходник рецептов — tools/make_sfx.py.
+// У каждого действия несколько вариантов: ухо ловит повтор по одинаковой
+// атаке, и разброс высоты (vary в playSFX) её не прячет — спасает только
+// другой файл. Варианты отличаются и длиной, и яркостью, потому что
+// одинаковая длина выдаёт повтор быстрее всего остального.
+const sfxPistol      = sfxBank(['sfx/shot_pistol_1.mp3', 'sfx/shot_pistol_2.mp3',
+                                'sfx/shot_pistol_3.mp3', 'sfx/shot_pistol_4.mp3']);
+const sfxShotgun     = sfxBank(['sfx/shot_shotgun_1.mp3', 'sfx/shot_shotgun_2.mp3', 'sfx/shot_shotgun_3.mp3']);
+const sfxEnemyShot   = sfxBank(['sfx/shot_enemy_1.mp3', 'sfx/shot_enemy_2.mp3', 'sfx/shot_enemy_3.mp3']);
+const sfxAlt         = sfxBank(['sfx/shot_alt_1.mp3', 'sfx/shot_alt_2.mp3', 'sfx/shot_alt_3.mp3']);
+const sfxRocket      = sfxBank(['sfx/rocket_launch_1.mp3', 'sfx/rocket_launch_2.mp3']);
+const sfxVehicleBoom = sfxBank(['sfx/boom_1.mp3', 'sfx/boom_2.mp3', 'sfx/boom_3.mp3']);
 
-const sfxAchievement = new Audio('achivment.mp3');
-const sfxParryShield = new Audio('parrypushon.mp3');   // щит поднят
-const sfxParryDone = new Audio('parrypushout.mp3');    // удар отражён
-const sfxDash = new Audio('dash.mp3');
-const sfxWeapon = new Audio('item_equip.mp3');
-const sfxUiNav = new Audio('Blip_Select2.mp3');
-const sfxBossSpawn = new Audio('bossspawn.mp3');
-const sfxHurt = sfxBank(['hurt.mp3', 'hurttwo.mp3']);
-const sfxEnemyDeath = sfxBank(['slimedeath.mp3', 'slimedeath2.mp3']);
-const sfxLose = new Audio('lose.mp3');
+const sfxAchievement = new Audio('sfx/achievement_1.mp3');
+const sfxParryShield = sfxBank(['sfx/parry_up_1.mp3', 'sfx/parry_up_2.mp3']);     // щит поднят
+const sfxParryDone   = sfxBank(['sfx/parry_hit_1.mp3', 'sfx/parry_hit_2.mp3']);   // удар отражён
+const sfxDash        = sfxBank(['sfx/dash_1.mp3', 'sfx/dash_2.mp3', 'sfx/dash_3.mp3']);
+const sfxWeapon      = sfxBank(['sfx/weapon_1.mp3', 'sfx/weapon_2.mp3']);
+const sfxUiNav       = sfxBank(['sfx/ui_1.mp3', 'sfx/ui_2.mp3', 'sfx/ui_3.mp3']);
+const sfxHurt        = sfxBank(['sfx/hurt_1.mp3', 'sfx/hurt_2.mp3', 'sfx/hurt_3.mp3']);
+const sfxEnemyDeath  = sfxBank(['sfx/enemy_death_1.mp3', 'sfx/enemy_death_2.mp3',
+                                'sfx/enemy_death_3.mp3', 'sfx/enemy_death_4.mp3']);
+const sfxLose        = new Audio('sfx/lose_1.mp3');
+const sfxSurge       = sfxBank(['sfx/surge_1.mp3', 'sfx/surge_2.mp3']);
+const sfxPulse       = sfxBank(['sfx/pulse_1.mp3', 'sfx/pulse_2.mp3']);
+const sfxGlitch      = sfxBank(['sfx/glitch_1.mp3', 'sfx/glitch_2.mp3']);
 
 // Подмена на случай отсутствующего файла. Немая способность читается как
 // поломка: игрок жмёт Q, экран дрожит, а звука нет. Ошибку загрузки ловим
-// один раз и дальше играем заменой с пониженной высотой — это слышно как
-// «свой» звук, а не как тишина. Появится настоящий файл — подмена не сработает.
+// один раз и дальше играем заменой с пониженной высотой.
 const SFX_FALLBACK = new Map();
 function sfxFallback(src, alt, rate = 1) {
     const a = new Audio(src);
     a.addEventListener('error', () => SFX_FALLBACK.set(a, { alt, rate }), { once: true });
     return a;
 }
-const sfxSurge = sfxFallback('sfx_surge.wav', sfxRocket, 0.55);
-const sfxPulse = sfxFallback('pulse.mp3', sfxParryDone, 0.7);
-const sfxGlitch = sfxFallback('glitch_crackle.mp3', sfxParryShield, 0.55);
+// Единственный звук, оставшийся от прежнего набора. Подмена тут только на
+// случай, если файла не окажется рядом: сам звук не тронут.
+const sfxBossSpawn = sfxFallback('bossspawn.mp3', sfxSurge, 0.8);
 
 let currentBGM = null;
 

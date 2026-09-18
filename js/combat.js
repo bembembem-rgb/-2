@@ -29,6 +29,7 @@ function triggerParrySuccess(entity = player) {
             entity.hp = Math.min(entity.maxHpRun || maxHp(), entity.hp + 1);
             if (entity === player) updateHpUI();
             spawnFloatText(entity.x, entity.y - 50, '+1 HP', '#3fdd4a', 12, 'heal');
+            spawnSpriteFX(fxHeal, entity.x, entity.y, { size: 96, frameInterval: 46, alpha: 0.95 });
         }
     }
 
@@ -61,6 +62,7 @@ function executePulse(entity = player) {
     const pulseStatus = document.getElementById(entity === player2 ? 'p2-pulse-status' : 'pulse-status');
     if (pulseStatus) { pulseStatus.className = 'status-line pulse-cooldown'; pulseStatus.innerText = 'PULSE: COOLDOWN'; }
     playSFX(sfxPulse, 0.6, 0, 0.03);
+    spawnSpriteFX(fxShockRing, entity.x, entity.y, { size: 700, frameInterval: 34, alpha: 0.8 });
     dailyEvent('pulse', 1);
     contractEvent('pulse', 1);
 

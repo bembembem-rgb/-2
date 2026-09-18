@@ -41,6 +41,9 @@ function spawnHitFX(x, y) {
     if (_hitFxThisFrame === 0) _lastHitFx = now;
     _hitFxThisFrame++;
     spawnSpriteFX(fxHit, x, y, { size: 58, frameInterval: 32, angle: fxRandom() * Math.PI * 2 });
+    // Искры сверху и мельче: попадание без убийства должно читаться как
+    // «броня выдержала», а не как та же вспышка, что и при добивании.
+    spawnSpriteFX(fxSparkBurst, x, y, { size: 40, frameInterval: 26, alpha: 0.9, angle: fxRandom() * Math.PI * 2 });
     spawnSparks(x, y, fxRandom() * Math.PI * 2, 3, '#7fe9ff', Math.PI * 2);
 }
 
@@ -150,6 +153,7 @@ function explode(x, y, radius = 100, damage = 15) {
     scorches.push({ x, y, size: radius, alpha: 1.0 }); 
     spawnBubbles(x, y, 15);
     // Два кольца: узкое и быстрое — фронт, широкое и вялое — вытесненная вода
+    spawnSpriteFX(fxShockRing, x, y, { size: radius * 2.6, frameInterval: 30, alpha: 0.75 });
     spawnShockRing(x, y, radius * 1.15, { width: 5, life: 340, color: '#ffd98a' });
     spawnShockRing(x, y, radius * 1.9, { width: 2, life: 560, color: '#9fd6e4' });
     spawnSparks(x, y, fxRandom() * Math.PI * 2, 18, '#ffd98a', Math.PI * 2);

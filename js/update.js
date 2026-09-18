@@ -633,6 +633,13 @@ function update(dt) {
                 contractEvent('kill', 1);
                 artOnEnemyKilled(e.x, e.y);
                 if (lvl('chainbolt') > 0 && ++chainBoltCount >= 5) {
+                    // Разряд бьёт по площади, но лист рисует одну дугу:
+                    // разворачиваем несколько под случайными углами, иначе
+                    // видно ровно один луч в никуда.
+                    for (let q = 0; q < 3; q++) {
+                        spawnSpriteFX(fxArc, e.x, e.y, { size: 260, frameInterval: 28,
+                            alpha: 0.9, angle: fxRandom() * Math.PI * 2 });
+                    }
                     chainBoltCount = 0;
                     const r = 220 + 60 * lvl('chainbolt');
                     for (const t of enemies) if (Math.hypot(t.x - e.x, t.y - e.y) < r) t.hp -= 4 * lvl('chainbolt');

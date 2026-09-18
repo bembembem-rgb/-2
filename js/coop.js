@@ -46,6 +46,7 @@ function updateRevives(dt) {
                 fallen.reviveProgress = (fallen.reviveProgress || 0) + dt * (helper === player2 ? 2 : 1);
                 beingRevived = true;
                 if (fallen.reviveProgress >= REVIVE_TIME) {
+                    spawnSpriteFX(fxHeal, fallen.x, fallen.y, { size: 120, frameInterval: 46, alpha: 1 });
                     fallen.downed = false; fallen.hp = 2; fallen.iFrames = 2000; fallen.reviveProgress = 0;
                     if (fallen === player) updateHpUI();
                     spawnParticles(fallen.x, fallen.y, '#39ff14', 25);

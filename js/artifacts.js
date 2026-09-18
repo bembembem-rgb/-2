@@ -259,6 +259,7 @@ function dropArtifact(boss) {
 }
 
 function equipArtifact(slot, id, x, y) {
+    spawnSpriteFX(fxBubbleBurst, x, y, { size: 110, frameInterval: 30, alpha: 0.85 });
     const a = ARTIFACTS[id], prev = ARTIFACTS[weaponArtifacts[slot]];
     const where = (WEAPONS[slot] && WEAPONS[slot].name) || 'ОРУЖИЕ';
     weaponArtifacts[slot] = id;

@@ -228,6 +228,7 @@ class VoidWraith {
             // Телепорт рывком рядом с целью + разрыв пустоты на старой позиции
             if (this.timer <= dt) {
                 customObstacles.push({ x: this.x - 60, y: this.y - 60, w: 120, h: 120, color: '#8000ff', isGeyser: true, isVoid: true, life: 1200 });
+                spawnSpriteFX(fxInk, this.x, this.y, { size: 260, frameInterval: 44, alpha: 0.9 });
                 spawnSpriteFX(fxVoidRift, this.x, this.y, { size: 140, frameInterval: 45, alpha: 0.9 });
                 this.blinkAlpha = 0;
                 // Точка, откуда ушёл: в фазе 2 из неё бьёт второй поток
