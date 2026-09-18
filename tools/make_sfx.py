@@ -19,6 +19,37 @@ from synth import (SR, n_of, noise, sweep, osc, env, lowpass, highpass,
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'sfx')
 
+# Целевая громкость по ролям. Нормировка по пику тут не работает: у щелчка
+# пик такой же, как у взрыва, а слышно его вдвое тише — ухо считает энергию,
+# а не вершину. Без этих чисел разброс между самым тихим и самым громким
+# звуком доходил до пяти с половиной раз, и смена ствола тонула в бою.
+LEVELS = {
+    'boom': 0.50, 'pulse': 0.45,
+    'hurt': 0.42, 'parry_hit': 0.40, 'parry_up': 0.38,
+    'shot_shotgun': 0.38, 'shot_pistol': 0.36, 'shot_alt': 0.36, 'shot_enemy': 0.32,
+    'rocket_launch': 0.34, 'enemy_death': 0.33, 'dash': 0.33,
+    'surge': 0.33, 'glitch': 0.32, 'lose': 0.36, 'achievement': 0.32,
+    'weapon': 0.28, 'ui': 0.20,
+}
+
+def loudness(x, win=0.05):
+    """Громкость самого громкого окна. Среднее по всему файлу занижает
+    короткие звуки: у щелчка половина длины — тишина после него, и по
+    среднему он выходит втрое тише взрыва, хотя слышно его нормально."""
+    w = int(SR * win)
+    if len(x) <= w:
+        return float(np.sqrt((x ** 2).mean()))
+    e = np.convolve(x ** 2, np.ones(w) / w, mode='valid')
+    return float(np.sqrt(e.max()))
+
+def level(x, target):
+    """Выводим на заданную громкость, не выпуская пик за единицу."""
+    lo = loudness(x)
+    if lo < 1e-9: return x
+    y = x * (target / lo)
+    pk = float(np.abs(y).max())
+    return y * (0.97 / pk) if pk > 0.97 else y
+
 # --- Рецепты. v — номер варианта, r — генератор случайных чисел ---
 
 def shot_pistol(v, r):
@@ -41,13 +72,17 @@ def shot_alt(v, r):
     return water(sweep_lowpass(x, 5200, 700, res=0.18), 0.6)
 
 def shot_shotgun(v, r):
-    """Дробовик: широкий шумовой фронт плюс низкий толчок."""
+    """Дробовик: широкий шумовой фронт плюс низкий толчок.
+    Толчок нарочно тише фронта: в первой версии он забирал 97% энергии,
+    и выстрел звучал глухим ударом вместо залпа."""
     n = n_of((0.28, 0.34, 0.41)[v % 3])
     burst = noise(n, r) * env(n, 0.001, curve=5.0 + v*0.6)
-    burst = sweep_lowpass(burst, 4800 + v*400, 500, res=0.1)
-    thump = osc(sweep(150, 48, n, 2.4), 'sine') * env(n, 0.002, curve=3.0)
-    x = softclip(burst*0.9 + thump*1.1, 1.9)
-    return water(x, 0.55)
+    # Срез не уходит в самый низ: середина держит характер выстрела
+    burst = sweep_lowpass(burst, 6500 + v*500, 1700, res=0.1)
+    crack = highpass(noise(n, r), 2500) * env(n, 0.0006, curve=16) * 0.7
+    thump = osc(sweep(150, 48, n, 2.4), 'sine') * env(n, 0.002, curve=3.4) * 0.45
+    x = softclip(burst*1.0 + crack + thump, 1.9)
+    return water(x, 0.3)
 
 def shot_enemy(v, r):
     """Чужой выстрел: глуше игрока, чтобы не путать на слух."""
@@ -78,8 +113,9 @@ def boom(v, r):
         p = int(r.uniform(0.06, 0.6) * n); ln = n_of(0.03)
         if p + ln >= n: continue
         deb[p:p+ln] += noise(ln, r) * env(ln, 0.001, curve=12) * r.uniform(0.15, 0.4)
-    x = softclip(sub + body*0.95 + highpass(deb, 900), 1.7)
-    return water(x, 0.7)
+    mid = sweep_lowpass(noise(n, r), 7000, 1800, res=0.18) * env(n, 0.002, curve=4.5) * 0.55
+    x = softclip(sub + body*0.95 + mid + highpass(deb, 900), 1.7)
+    return water(x, 0.4)
 
 def hurt(v, r):
     """Удар по игроку: глухой толчок и короткий нисходящий тон.
@@ -144,13 +180,16 @@ def pulse(v, r):
     """Импульс: саб выталкивает воду, сверху идёт мерцание."""
     dur = (0.62, 0.86)[v % 2]
     n = n_of(dur)
-    sub = osc(sweep(110 - v*28, 30, n, 1.9 + v*0.6), 'sine') * env(n, 0.004, curve=1.7 + v*0.5) * 1.3
+    sub = osc(sweep(110 - v*28, 34, n, 1.9 + v*0.6), 'sine') * env(n, 0.004, curve=2.4 + v*0.5) * 0.85
     shim = np.zeros(n)
     for k in range(4 + v*3):
         f = 620 + k*(380 + v*160)
         shim += osc(sweep(f*0.65, f*(1.4 + v*0.4), n, 1.2), 'sine') * env(n, 0.03 + k*0.012, curve=2.6) * (0.3 - k*0.035)
-    ring = sweep_lowpass(noise(n, r), 5000, 700 + v*500, res=0.2) * env(n, 0.002, curve=3.5) * (0.45 - v*0.15)
-    return water(softclip(sub + shim + ring, 1.4 + v*0.4), 0.6)
+    ring = sweep_lowpass(noise(n, r), 6000, 1500 + v*500, res=0.2) * env(n, 0.002, curve=3.5) * (0.6 - v*0.15)
+    # Саб оставлен взрыву: если низ занимают оба, при одновременном
+    # срабатывании они складываются в кашу и оба теряют опознаваемость.
+    body = highpass(shim * 1.6 + ring * 1.3, 320)
+    return water(softclip(sub * 0.7 + body, 1.4 + v*0.4), 0.25)
 
 def surge(v, r):
     """Накачка: нарастающий гул с биением. Скорость биения у вариантов
@@ -193,8 +232,8 @@ def weapon(v, r):
         clk = noise(ln, r) * env(ln, 0.0004, curve=17)
         clk = highpass(sweep_lowpass(clk, 5200, 1400, res=0.25), 600)
         tone = osc(np.arange(ln) * 2*np.pi*(260 + i*220 + v*190)/SR, 'sine') * env(ln, 0.001, curve=9) * 0.55
-        x[p:p+ln] += clk*0.8 + tone
-    return water(x, 0.4)
+        x[p:p+ln] += clk*1.0 + tone
+    return water(x, 0.25)
 
 def ui(v, r):
     """Навигация по меню: тихий короткий блип."""
@@ -249,7 +288,7 @@ def main():
         for v in range(count):
             rng = np.random.default_rng(abs(hash((name, v))) % (2**32))
             path = os.path.join(OUT, f'{name}_{v+1}.mp3')
-            ok = save_mp3(path, fn(v, rng))
+            ok = save_mp3(path, level(fn(v, rng), LEVELS.get(name, 0.2)))
             made.append((path, ok))
     mp3 = sum(1 for _, ok in made if ok)
     print(f'записано файлов: {len(made)} (mp3: {mp3}, wav: {len(made)-mp3})')
