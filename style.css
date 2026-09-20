@@ -1216,7 +1216,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
 #storage-warning span { display: block; margin-top: 6px; font-size: 12px; color: var(--txt-dim); }
 
 /* --- Архив --- */
-.lore-container { display: flex; gap: 20px; width: 92vw; max-width: 1120px; height: 76vh; }
+.lore-container { display: flex; gap: 20px; width: min(92vw, 100%); max-width: 1120px; height: 76vh; }
 .lore-col {
     flex: 1; padding: 22px; overflow-y: auto;
     background: rgba(2, 10, 16, 0.94); border: 1px solid var(--line-dim);
@@ -1409,7 +1409,8 @@ body.is-mobile #p2-ui-container { display: none !important; }
 
 /* Кнопки внутри строк списка и карточек — компактные, маркер «>» им
    не нужен: строка и так короткая, а маркер съезжает на текст. */
-.shop-buy .menu-btn::before, .skin-item .menu-btn::before { content: none; }
+.shop-buy .menu-btn::before, .skin-item .menu-btn::before,
+.seed-btn::before, .menu-btn.tab::before, .depth-btn::before { content: none; }
 .shop-buy .menu-btn:hover, .skin-item .menu-btn:hover { padding-left: 16px; }
 
 /* Кнопка «назад» стоит под статусной строкой деки, а не в её углу */
@@ -1845,4 +1846,21 @@ body.is-mobile #go-title { font-size: 22px !important; margin-bottom: 12px !impo
     .menu-btn:active { background: var(--cyan); color: #02080c; }
     .menu-btn.primary:active { background: var(--magenta); color: #0a0210; }
     .back-btn { background: rgba(0, 224, 255, 0.09); border-left-width: 3px; }
+}
+
+/* Экран с кнопкой возврата: она висит поверх, поэтому содержимому
+   нужен отступ — иначе первая строка уезжает под неё. */
+@media (pointer: coarse) {
+    .ui-screen:has(> .back-btn) { padding-top: 72px !important; }
+}
+
+@media (pointer: coarse) {
+    .seed-btn, .menu-btn.tab, .depth-btn { padding-left: 14px; }
+}
+
+/* Полоса прокрутки в 8 пикселей отъедала ширину на телефоне и висела
+   всегда: на сенсоре её просто нет, а прокрутка и так делается пальцем. */
+@media (pointer: coarse) {
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    * { scrollbar-width: none; }
 }

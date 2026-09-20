@@ -133,6 +133,7 @@ function finishRunEscaped() {
     document.body.classList.remove('is-critical');
     cancelQuestRespawn();
     resetInputState();
+    closeRunCards();
     if (currentBGM) { currentBGM.pause(); currentBGM.currentTime = 0; currentBGM = null; }
     playSFX(sfxAchievement, 0.9);
     const banked = bankCredits();
@@ -154,6 +155,7 @@ function triggerVictory() {
     document.body.classList.remove('is-critical');
     cancelQuestRespawn();
     resetInputState();
+    closeRunCards();
     if (currentBGM) { currentBGM.pause(); currentBGM.currentTime = 0; currentBGM = null; }
     playBGM(bgmFinale);
     playSFX(sfxAchievement, 0.9);
@@ -164,6 +166,17 @@ function triggerVictory() {
     renderWinScreen(banked, isNewBest);
 }
 
+// Карточки погружения и контракта живут в забеге и прячутся из update.
+// Забег кончился — update не идёт, и они остаются висеть под экраном
+// итогов с живым pointer-events.
+function closeRunCards() {
+    diveOpen = false;
+    for (const id of ['dive-choice', 'contract-offer']) {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    }
+}
+
 function triggerGameOver() { 
     endSeededRun();
     runEscaped = false;
@@ -171,6 +184,7 @@ function triggerGameOver() {
     document.body.classList.remove('is-critical');
     cancelQuestRespawn();
     resetInputState();
+    closeRunCards();
     // Без обнуления playBGM(bgmFight) на рестарте видит тот же трек и
     // продолжает его с середины вместо старта.
     if (currentBGM) { currentBGM.pause(); currentBGM.currentTime = 0; currentBGM = null; }

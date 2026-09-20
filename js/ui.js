@@ -143,14 +143,14 @@ function initHTMLUI() {
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Играешь один — выбери себе устройство и закрой панель, ко-оп останется выключенным.</div>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Геймпада нет в списке — нажми на нём любую кнопку. Браузер замечает устройство только после первого сигнала.</div>
 
-            <div style="width:90vw; max-width:520px; margin-bottom:16px;">
+            <div style="width:min(90vw, 100%); max-width:520px; margin-bottom:16px;">
                 <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--cyan); margin-bottom:8px;">ИГРОК 1 (ты)</div>
                 <div id="p1-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
                 <div class="dev-note" style="margin-top:8px;">Геймпад для P1: стик — движение, прицел и огонь автоматические. Кнопки (Xbox/PlayStation определяются автоматически, для прочих — берётся стандартная раскладка): A/Cross — рывок, B/Circle — парирование, X/Square — смена оружия, Y/Triangle — импульс, LB/L1 — транспорт. Если раскладка не подходит под конкретное устройство — номер зажатой кнопки виден в списке ниже.</div>
                 <div class="dev-note" style="margin-top:8px;">P2 на клавиатуре: стрелки — движение, Enter — рывок, Quote (') — огонь (удерживать), Backslash (\) — транспорт, Right Ctrl — парирование, Slash (/) — альт. дробовик, Period (.) — импульс. P2 на геймпаде: та же раскладка, что у P1 (A/Cross — рывок, RT/R2 — огонь, LB/L1 — транспорт, B/Circle — парирование, X/Square — альт. дробовик).</div>
             </div>
 
-            <div style="width:90vw; max-width:520px; margin-bottom:16px;">
+            <div style="width:min(90vw, 100%); max-width:520px; margin-bottom:16px;">
                 <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--blue); margin-bottom:8px;">ИГРОК 2 (друг)</div>
                 <div id="coop-device-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
@@ -166,12 +166,12 @@ function initHTMLUI() {
                 <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ЗАКРЫТЫЕ ДАННЫЕ</button>
             </div>
             <div id="ach-progress" style="font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--txt-dim); margin-bottom:16px;"></div>
-            <div id="ach-list" style="width:90vw; max-width:800px; max-height:60vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); padding:24px;"></div>
+            <div id="ach-list" style="width:min(90vw, 100%); max-width:800px; max-height:60vh; overflow-y:auto; background:var(--panel); border:1px solid var(--line); padding:24px;"></div>
         </div>
 
         <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button class="menu-btn back-btn" onclick="hideKeysBtn()">НАЗАД</button>
-            <div class="menu-panel" style="width:90vw; max-width:560px;">
+            <div class="menu-panel" style="width:min(90vw, 100%); max-width:560px;">
                 <div class="menu-eyebrow">ЭТА ЖЕ РАСКЛАДКА ЕСТЬ В ПАУЗЕ</div>
                 <h1 class="menu-title" style="font-size:20px;">РАСКЛАДКА</h1>
                 <div class="menu-divider"></div>
@@ -189,7 +189,7 @@ function initHTMLUI() {
 
         <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
             <button class="menu-btn back-btn" onclick="hideDailyBtn()">НАЗАД</button>
-            <div class="menu-panel" style="width:90vw; max-width:640px;">
+            <div class="menu-panel" style="width:min(90vw, 100%); max-width:640px;">
                 <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
                 <h1 class="menu-title" style="font-size:20px;">ЗАДАНИЯ ДНЯ</h1>
                 <div id="daily-head" class="menu-stats"></div>
@@ -200,7 +200,7 @@ function initHTMLUI() {
 
         <div id="shop-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding:24px; box-sizing:border-box;">
             <button class="menu-btn back-btn" onclick="hideShopBtn()">НАЗАД</button>
-            <div class="menu-panel" style="width:90vw; max-width:640px;">
+            <div class="menu-panel" style="width:min(90vw, 100%); max-width:640px;">
                 <div class="menu-eyebrow">КРЕДИТЫ ТРАТЯТСЯ ТОЛЬКО МЕЖДУ ЗАБЕГАМИ</div>
                 <h1 class="menu-title" style="font-size:20px;">МАСТЕРСКАЯ</h1>
                 <div id="shop-wallet" class="shop-wallet"></div>
