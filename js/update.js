@@ -1,9 +1,55 @@
+
 // --- ОСНОВНАЯ ЛОГИКА (UPDATE) ---
 
 // Дульный срез танковой пушки в мировых пикселях от центра машины.
 // Спрайт башни 96 пикселей рисуется высотой 192, центр вращения в середине,
 // сам срез — на шестом пикселе кадра: (48 - 6) / 96 * 192.
 const TANK_MUZZLE = 84;
+
+// Смерть рядового врага приходит двумя путями: от пули игрока и без неё
+// (импульс, цепной разряд, взрыв, кислота). Вторая ветка раньше выдавала
+// только очки: убийства способностями не давали ни лута, ни прогресса
+// заданий и контрактов, ни срабатывания артефактов, и прибавка кредитов
+// от уровней их не касалась. Теперь обе ветки зовут это.
+function onEnemyKilled(e, byPlayer) {
+    spawnParticles(e.x, e.y);
+    spawnSpriteFX(fxKill, e.x, e.y, { size: 86, frameInterval: 38 });
+    playEnemyDeathSFX();
+    if (byPlayer) addScore(10, (CREDITS.enemy + levelKillBonus()) * levelKillMult());
+    dailyEvent('kill', 1);
+    contractEvent('kill', 1);
+    artOnEnemyKilled(e.x, e.y);
+    if (lvl('chainbolt') > 0 && ++chainBoltCount >= 5) {
+        // Разряд бьёт по площади, но лист рисует одну дугу:
+        // разворачиваем несколько под случайными углами, иначе
+        // видно ровно один луч в никуда.
+        for (let q = 0; q < 3; q++) {
+            spawnSpriteFX(fxArc, e.x, e.y, { size: 260, frameInterval: 28,
+                alpha: 0.9, angle: fxRandom() * Math.PI * 2 });
+        }
+        chainBoltCount = 0;
+        const r = 220 + 60 * lvl('chainbolt');
+        for (const t of enemies) if (Math.hypot(t.x - e.x, t.y - e.y) < r) t.hp -= 4 * lvl('chainbolt');
+        spawnSpriteFX(tintFx(fxRingBase, '#f0c419'), e.x, e.y, { size: r * 2, frameInterval: 28, alpha: 0.8 });
+        playSFX(sfxPulse, 0.45, 0, 0.05);
+    }
+    rollDrop('enemy', e.x, e.y);
+    if (e.type === 'husk') {
+        for (let m = 0; m < 2; m++) {
+            const a = fxRandom() * Math.PI * 2, f = fxRandom() * 5 + 4;
+            enemies.push({ x: e.x, y: e.y, type: 'neon', hp: 3, speed: 4.2, size: 40, color: '#3d8bff',
+                angle: 0, turretAngle: 0, rotorAngle: 0, fireTimer: 1500,
+                vx: Math.cos(a) * f, vy: Math.sin(a) * f });
+        }
+    }
+    if (e.type === 'sniper') {
+        const microCount = Math.floor(fxRandom() * 2) + 2;
+        for (let m = 0; m < microCount; m++) {
+            const randomAngle = fxRandom() * Math.PI * 2, randomForce = fxRandom() * 6 + 5;
+            enemies.push({ x: e.x, y: e.y, type: 'micro', hp: 1, speed: e.speed * 1.8, size: e.size * 0.5, color: '#ffffff', angle: 0, vx: Math.cos(randomAngle) * randomForce, vy: Math.sin(randomAngle) * randomForce, animFrame: 0, frameTimer: 0, frameInterval: 80, row: 0 });
+        }
+    }
+}
 
 function update(dt) {
     if (gameState !== 'playing') return;
@@ -482,7 +528,7 @@ function update(dt) {
                 // Цвет босса несёт руна на появлении. bossFx(e, 'slash') остаётся рабочим.
                 if (e.name === 'VOID WRAITH') triggerVictory();
             } else { 
-                spawnParticles(e.x, e.y); spawnSpriteFX(fxKill, e.x, e.y, { size: 86, frameInterval: 38 }); addScore(10, CREDITS.enemy); playEnemyDeathSFX();
+                onEnemyKilled(e, true);
             } 
             updateStyleRank(); 
             enemies.splice(i, 1); 
@@ -536,7 +582,10 @@ function update(dt) {
             }
         }
 
-        let hit = false;
+        // hit — «врага убрать в этом кадре», а не «убит выстрелом»: столкновение
+        // с игроком и таран машиной тоже снимают врага. Очки за выстрел
+        // начисляет только byPlayer, иначе таран считался бы дважды.
+        let hit = false, byPlayer = false;
         if (!player.inVehicle && player.iFrames <= 0) { 
             if (Math.hypot(player.x - e.x, player.y - e.y) < (e.size/2 + player.size/2)) { 
                 if (!artAbsorbHit(player)) {
@@ -613,7 +662,8 @@ function update(dt) {
                     if (e.type === 'boss') { spawnParticles(e.x, e.y, '#ffffff', 1); hitStopTimer = 40; }
                     if (e.hp <= 0) { 
                         hit = true; 
-                        if (p.comboBonus > 0) { if (e.type === 'boss') addScore(1000, CREDITS.boss); else addScore(10, (CREDITS.enemy + levelKillBonus()) * levelKillMult()); } 
+                        byPlayer = p.comboBonus > 0;
+                        if (byPlayer && e.type === 'boss') addScore(1000, CREDITS.boss);
                     } 
                     break; 
                 }
@@ -628,40 +678,7 @@ function update(dt) {
                 // Цвет босса несёт руна на появлении. bossFx(e, 'slash') остаётся рабочим.
                 if (e.name === 'VOID WRAITH') triggerVictory();
             } else { 
-                spawnParticles(e.x, e.y); spawnSpriteFX(fxKill, e.x, e.y, { size: 86, frameInterval: 38 }); playEnemyDeathSFX();
-                dailyEvent('kill', 1);
-                contractEvent('kill', 1);
-                artOnEnemyKilled(e.x, e.y);
-                if (lvl('chainbolt') > 0 && ++chainBoltCount >= 5) {
-                    // Разряд бьёт по площади, но лист рисует одну дугу:
-                    // разворачиваем несколько под случайными углами, иначе
-                    // видно ровно один луч в никуда.
-                    for (let q = 0; q < 3; q++) {
-                        spawnSpriteFX(fxArc, e.x, e.y, { size: 260, frameInterval: 28,
-                            alpha: 0.9, angle: fxRandom() * Math.PI * 2 });
-                    }
-                    chainBoltCount = 0;
-                    const r = 220 + 60 * lvl('chainbolt');
-                    for (const t of enemies) if (Math.hypot(t.x - e.x, t.y - e.y) < r) t.hp -= 4 * lvl('chainbolt');
-                    spawnSpriteFX(tintFx(fxRingBase, '#f0c419'), e.x, e.y, { size: r * 2, frameInterval: 28, alpha: 0.8 });
-                    playSFX(sfxPulse, 0.45, 0, 0.05);
-                }
-                rollDrop('enemy', e.x, e.y);
-                if (e.type === 'husk') {
-                    for (let m = 0; m < 2; m++) {
-                        const a = fxRandom() * Math.PI * 2, f = fxRandom() * 5 + 4;
-                        enemies.push({ x: e.x, y: e.y, type: 'neon', hp: 3, speed: 4.2, size: 40, color: '#3d8bff',
-                            angle: 0, turretAngle: 0, rotorAngle: 0, fireTimer: 1500,
-                            vx: Math.cos(a) * f, vy: Math.sin(a) * f });
-                    }
-                }
-                if (e.type === 'sniper') { 
-                    const microCount = Math.floor(fxRandom() * 2) + 2; 
-                    for (let m = 0; m < microCount; m++) { 
-                        const randomAngle = fxRandom() * Math.PI * 2, randomForce = fxRandom() * 6 + 5; 
-                        enemies.push({ x: e.x, y: e.y, type: 'micro', hp: 1, speed: e.speed * 1.8, size: e.size * 0.5, color: '#ffffff', angle: 0, vx: Math.cos(randomAngle) * randomForce, vy: Math.sin(randomAngle) * randomForce, animFrame: 0, frameTimer: 0, frameInterval: 80, row: 0 }); 
-                    } 
-                } 
+                onEnemyKilled(e, byPlayer);
             } 
             enemies.splice(i, 1); 
         }

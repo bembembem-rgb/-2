@@ -1820,3 +1820,29 @@ body.is-mobile #contract-offer {
     background: rgba(10, 16, 28, 0.6);
     pointer-events: auto;
 }
+
+/* Итоги забега на телефоне. Кнопки стояли после оценки, сводки и таблицы
+   рекордов — до «снова вниз» игрок пролистывал почти экран и не знал,
+   что там вообще что-то есть. */
+body.is-mobile #go-title { order: -2; }
+body.is-mobile #game-over-screen .go-actions { order: -1; margin-bottom: 16px; width: 100%; }
+body.is-mobile #game-over-screen .go-unlocks { order: 1; margin-bottom: 12px; }
+body.is-mobile #game-over-screen .go-actions .menu-btn { min-width: 0 !important; flex: 1 1 45%; }
+body.is-mobile #go-title { font-size: 22px !important; margin-bottom: 12px !important; }
+
+/* Кнопка без курсора. На десктопе её рисует наведение, а на телефоне
+   наведения нет: пункты меню выглядели строчками текста, и половина
+   из них читалась как надпись, а не как кнопка. */
+@media (pointer: coarse) {
+    .menu-btn {
+        background: rgba(0, 224, 255, 0.05);
+        border-left: 2px solid var(--line);
+        color: var(--txt);
+        padding-left: 30px;
+    }
+    .menu-btn::before { opacity: 0.55; left: 12px; }
+    .menu-btn.muted { color: var(--txt-dim); border-left-color: var(--line-dim); }
+    .menu-btn:active { background: var(--cyan); color: #02080c; }
+    .menu-btn.primary:active { background: var(--magenta); color: #0a0210; }
+    .back-btn { background: rgba(0, 224, 255, 0.09); border-left-width: 3px; }
+}

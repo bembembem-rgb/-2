@@ -1,4 +1,10 @@
 window.addEventListener('resize', resizeCanvas);
+// Поворот телефона: Safari шлёт resize не всегда и не сразу, поэтому
+// пересчитываем ещё и по самому повороту, с запасом на анимацию.
+window.addEventListener('orientationchange', () => {
+    resizeCanvas();
+    setTimeout(resizeCanvas, 300);
+});
 resizeCanvas();
 
 // --- ОБРАБОТЧИКИ СОБЫТИЙ МЫШИ И КЛАВИАТУРЫ ---
