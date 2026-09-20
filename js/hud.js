@@ -110,11 +110,21 @@ function setCdBar(el, ratio) {
 // HUD принадлежит забегу. Вне его панели висели поверх меню и магазина
 // и показывали пустые строки: заполнить их нечем, игрока нет.
 let _runUiShown = null;
+let _touchUiShown = null;
 function updateHudVisibility() {
     const on = gameState === 'playing' || gameState === 'paused';
-    if (on === _runUiShown) return;
-    _runUiShown = on;
-    document.body.classList.toggle('in-run', on);
+    if (on !== _runUiShown) {
+        _runUiShown = on;
+        document.body.classList.toggle('in-run', on);
+    }
+    // Кнопки способностей живут только в бою. Иначе они висят поверх выбора
+    // перка и паузы, и тап по карточке уходит в «импульс».
+    if (!isMobile) return;
+    const fight = gameState === 'playing';
+    if (fight === _touchUiShown) return;
+    _touchUiShown = fight;
+    const jc = document.getElementById('joystick-container');
+    if (jc) jc.style.display = fight ? 'block' : 'none';
 }
 
 // Одна функция на строку способности: и текст, и класс, и полоса. Раньше
@@ -183,15 +193,25 @@ function updateTouchHint() {
     document.body.classList.add('hint-done');
 }
 
+let _pulseCold = null;
 function updateTouchButtons() {
     if (!isMobile) return;
     updateTouchHint();
+    const pulseBtn = document.getElementById('btn-pulse');
+    if (pulseBtn) {
+        // Серая кнопка честнее молчаливой: тап по неготовому импульсу
+        // иначе читается как «игра не увидела палец».
+        const cold = !(player && player.pulseReady);
+        if (cold !== _pulseCold) { _pulseCold = cold; pulseBtn.classList.toggle('is-cold', cold); }
+    }
     const btn = document.getElementById('btn-interact');
     if (!btn) return;
     const on = !!nearVehicleNow;
     if (on === _interactShown) return;
     _interactShown = on;
-    btn.style.display = on ? 'flex' : 'none';
+    // Кнопка не появляется и не исчезает из ряда: соседние уехали бы
+    // в сторону прямо под пальцем.
+    btn.classList.toggle('is-off', !on);
     btn.innerText = (player && player.inVehicle) ? 'ВЫЙТИ' : 'ВХОД';
 }
 
@@ -199,12 +219,12 @@ function updateCooldownBars() {
     updateTouchButtons();
     updateRoleLabel();
     if (!player) return;
-    // Клавиша, которой нет на экране, не существует: на телефоне подписи
-    // называют жест, а не кнопку клавиатуры.
-    setAbility(dashStatus, 'DASH', isMobile ? '(2 ТАПА)' : '', player.dashCooldown, player.dashCooldownTime || 2000, player.dashCooldown <= 0);
+    // На телефоне подсказка про клавишу не значит ничего, а жест написан
+    // и внизу экрана, и в паузе: в строке он только ломает её на три.
+    setAbility(dashStatus, 'DASH', '', player.dashCooldown, player.dashCooldownTime || 2000, player.dashCooldown <= 0);
     setAbility(altStatus, 'ALT', '', player.altTimer, player.altCooldownTime, player.altReady);
     setAbility(document.getElementById('pulse-status'), 'PULSE', pulseHint(player, isMobile ? '' : '(Q)'), player.pulseTimer, player.pulseCooldownTime, player.pulseReady);
-    setAbility(document.getElementById('parry-status'), 'PARRY', isMobile ? '(2 ТАПА)' : '(SPACE)', player.parryTimer, player.parryCooldownTime, player.parryReady);
+    setAbility(document.getElementById('parry-status'), 'PARRY', isMobile ? '' : '(SPACE)', player.parryTimer, player.parryCooldownTime, player.parryReady);
     if (coopMode && player2) {
         updateP2TargetLine();
         setAbility(p2DashStatus, 'DASH', '', player2.dashCooldown, player2.dashCooldownTime || 2000, player2.dashCooldown <= 0);

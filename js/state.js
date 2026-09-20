@@ -1,4 +1,5 @@
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches);
 
 // --- ГЛОБАЛЬНЫЕ СОСТОЯНИЯ ---
 let gameState = 'loading'; 

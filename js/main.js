@@ -52,7 +52,7 @@ window.addEventListener('touchstart', (e) => {
     if (gameState === 'click_to_start') { enterFromStartGate(); return; }
     if (gameState !== 'playing') return;
     for (let t of e.changedTouches) {
-        if (t.target.id && t.target.id.startsWith('btn')) continue;
+        if (t.target.closest && t.target.closest('button, .tap-btn, .touch-btn')) continue;
         if (t.clientX < window.innerWidth / 2 && !leftJoy.active) {
             if (joyDown(leftJoy, t) && player && !player.downed && !player.inVehicle && player.dashCooldown <= 0) tapKey('ShiftLeft');
         } else if (t.clientX >= window.innerWidth / 2 && !rightJoy.active) {
@@ -70,12 +70,17 @@ window.addEventListener('touchmove', (e) => {
     }
 }, {passive: false});
 
-window.addEventListener('touchend', (e) => {
+// touchcancel обязателен наравне с touchend: систему интересует свой
+// сценарий (звонок, шторка, ладонь на экране), и тогда touchend не придёт
+// вовсе — палец «залипает», герой бежит и стреляет сам по себе.
+function releaseTouches(e) {
     for (let t of e.changedTouches) {
         if (leftJoy.active && t.identifier === leftJoy.touchId) joyUp(leftJoy);
         if (rightJoy.active && t.identifier === rightJoy.touchId) { joyUp(rightJoy); isShooting = false; }
     }
-});
+}
+window.addEventListener('touchend', releaseTouches);
+window.addEventListener('touchcancel', releaseTouches);
 
 window.addEventListener('mousedown', (e) => { 
     if (gameState === 'click_to_start') { enterFromStartGate(); return; }
@@ -87,7 +92,17 @@ window.addEventListener('mousedown', (e) => {
 window.addEventListener('mouseup', (e) => { if (e.button === 0) isShooting = false; });
 
 window.addEventListener('blur', resetInputState);
-document.addEventListener('visibilitychange', () => { if (document.hidden) resetInputState(); });
+// Свернули игру — забег встаёт на паузу. На телефоне уведомление или
+// звонок иначе возвращают игрока в бой, который шёл без него.
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        resetInputState();
+        if (gameState === 'playing') pauseGame();
+        if (currentBGM) currentBGM.pause();
+    } else if (currentBGM && audioUnlocked) {
+        currentBGM.play().catch(() => {});
+    }
+});
 
 window.addEventListener('mousemove', (e) => { 
     mouse.screenX = e.clientX; mouse.screenY = e.clientY; 

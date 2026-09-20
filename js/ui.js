@@ -39,8 +39,8 @@ function initHTMLUI() {
 
         <div id="joystick-container" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
             <div id="touch-pad">
-                <div id="btn-interact" class="touch-btn c-green" style="display:none;">ВХОД</div>
                 <div id="btn-pulse" class="touch-btn c-magenta">ИМПУЛЬС</div>
+                <div id="btn-interact" class="touch-btn c-green is-off">ВХОД</div>
                 <div id="btn-swap" class="touch-btn c-amber">СТВОЛ</div>
             </div>
             <div id="touch-hint">ЛЕВО: ХОД · ДВА ТАПА — РЫВОК<br>ПРАВО: ОГОНЬ · ДВА ТАПА — ЩИТ</div>
@@ -48,7 +48,7 @@ function initHTMLUI() {
 
         <div id="main-menu-screen" style="display:none; pointer-events:auto; position:absolute; top:0; right:8%; width:500px; height:100vh; flex-direction:column;  text-align:right;">
             <div class="menu-panel">
-                <h1 class="menu-title">NEON<br>TIDES:<br><span>ZERO</span></h1>
+                <h1 class="menu-title">NEON <br>TIDES: <br><span>ZERO</span></h1>
                 <div id="menu-stats" class="menu-stats"></div>
                 <div id="storage-warning" style="display:none;"></div>
                 <div class="menu-divider"></div>
@@ -91,7 +91,7 @@ function initHTMLUI() {
         </div>
         
         <div id="lore-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
-            <button id="lang-toggle-btn" class="menu-btn" onclick="toggleLangBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">EN / RU</button>
+            <button id="lang-toggle-btn" class="menu-btn back-btn" onclick="toggleLangBtn()">EN / RU</button>
             <div class="lore-container">
                 <div class="lore-col">
                     <h3 data-ru="СУЩНОСТИ ГЛУБИНЫ" data-en="ENTITIES OF THE DEEP"></h3>
@@ -137,7 +137,7 @@ function initHTMLUI() {
         </div>
         
         <div id="coop-device-panel" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box; overflow-y:auto;">
-            <button class="menu-btn" onclick="hideCoopPanelBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn back-btn" onclick="hideCoopPanelBtn()">НАЗАД</button>
             <h2 style="font-family:'JetBrains Mono', monospace; font-size:20px; color:var(--blue); margin-bottom:16px;">КТО ЧЕМ ИГРАЕТ</h2>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt); margin-bottom:8px; max-width:520px; text-align:center;">Играешь один — выбери себе устройство и закрой панель, ко-оп останется выключенным.</div>
             <div style="font-family:var(--font-ui); font-size:14px; color:var(--txt-dim); margin-bottom:24px; max-width:520px; text-align:center;">Геймпада нет в списке — нажми на нём любую кнопку. Браузер замечает устройство только после первого сигнала.</div>
@@ -159,7 +159,7 @@ function initHTMLUI() {
         </div>
 
         <div id="achievements-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideAchievementsBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn back-btn" onclick="hideAchievementsBtn()">НАЗАД</button>
             <div style="display:flex; gap:8px; margin-bottom:16px;">
                 <button id="ach-tab-main" class="menu-btn tab" onclick="switchAchTab('main')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ТРОФЕИ</button>
                 <button id="ach-tab-secret" class="menu-btn tab" onclick="switchAchTab('secret')" style="width:auto; text-align:center; padding:10px 16px; margin:0;">ЗАКРЫТЫЕ ДАННЫЕ</button>
@@ -169,7 +169,7 @@ function initHTMLUI() {
         </div>
 
         <div id="keys-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideKeysBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn back-btn" onclick="hideKeysBtn()">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:560px;">
                 <div class="menu-eyebrow">ЭТА ЖЕ РАСКЛАДКА ЕСТЬ В ПАУЗЕ</div>
                 <h1 class="menu-title" style="font-size:20px;">РАСКЛАДКА</h1>
@@ -187,7 +187,7 @@ function initHTMLUI() {
         </div>
 
         <div id="daily-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center;  padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideDailyBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn back-btn" onclick="hideDailyBtn()">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">СГОРАЮТ В ПОЛНОЧЬ · ПЛАТЯТ СРАЗУ В КОШЕЛЁК</div>
                 <h1 class="menu-title" style="font-size:20px;">ЗАДАНИЯ ДНЯ</h1>
@@ -198,7 +198,7 @@ function initHTMLUI() {
         </div>
 
         <div id="shop-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; padding:24px; box-sizing:border-box;">
-            <button class="menu-btn" onclick="hideShopBtn()" style="position:absolute; top:62px; left:56px; width:auto; padding:10px 16px; margin:0; text-align:center;">НАЗАД</button>
+            <button class="menu-btn back-btn" onclick="hideShopBtn()">НАЗАД</button>
             <div class="menu-panel" style="width:90vw; max-width:640px;">
                 <div class="menu-eyebrow">КРЕДИТЫ ТРАТЯТСЯ ТОЛЬКО МЕЖДУ ЗАБЕГАМИ</div>
                 <h1 class="menu-title" style="font-size:20px;">МАСТЕРСКАЯ</h1>
@@ -995,6 +995,14 @@ const PAUSE_KEYS_P1 = [
     ['ESC', 'пауза']
 ];
 
+const PAUSE_TOUCH = [
+    ['ЛЕВО', 'ход, стоять нельзя'],
+    ['ЛЕВО, 2 ТАПА', 'рывок сквозь пули'],
+    ['ПРАВО', 'прицел и огонь'],
+    ['ПРАВО, 2 ТАПА', 'парировать'],
+    ['КНОПКИ ВНИЗУ', 'импульс, ствол, транспорт']
+];
+
 const PAUSE_KEYS_P2 = [
     ['СТРЕЛКИ', 'ход'],
     ['—', 'стреляет сам по ближайшей цели'],
@@ -1007,8 +1015,10 @@ const PAUSE_KEYS_P2 = [
 function renderPauseScreen() {
     const km = document.getElementById('pause-keymap');
     if (km) {
-        let rows = PAUSE_KEYS_P1.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
-        if (coopMode && player2) {
+        // На телефоне список клавиш не значит ничего, а панель от него
+        // вырастает так, что в ландшафте не видно самой кнопки «продолжить».
+        let rows = (isMobile ? PAUSE_TOUCH : PAUSE_KEYS_P1).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+        if (!isMobile && coopMode && player2) {
             rows += '<div class="km-sep"></div>';
             rows += PAUSE_KEYS_P2.map(([k, v]) => `<dt>${k}</dt><dd>P2 · ${v}</dd>`).join('');
         }
@@ -1041,7 +1051,7 @@ function resumeGame() {
     if (gameState !== 'paused') return;
     const scr = document.getElementById('pause-screen');
     if (scr) scr.style.display = 'none';
-    if (currentBGM) currentBGM.volume = 0.5;
+    if (currentBGM) { currentBGM.volume = 0.5; currentBGM.play().catch(() => {}); }
     // lastFrameTime отстал на всю паузу; потолок dt в gameLoop гасит скачок,
     // но честнее начать отсчёт заново.
     lastFrameTime = performance.now();
