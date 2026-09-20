@@ -20,11 +20,7 @@ function sfxBank(files) {
     return list[0];
 }
 
-// Звуки собраны синтезом, исходник рецептов — tools/make_sfx.py.
-// У каждого действия несколько вариантов: ухо ловит повтор по одинаковой
-// атаке, и разброс высоты (vary в playSFX) её не прячет — спасает только
-// другой файл. Варианты отличаются и длиной, и яркостью, потому что
-// одинаковая длина выдаёт повтор быстрее всего остального.
+// Звуки собраны синтезом, рецепты — tools/make_sfx.py.
 const sfxPistol      = sfxBank(['sfx/shot_pistol_1.mp3', 'sfx/shot_pistol_2.mp3',
                                 'sfx/shot_pistol_3.mp3', 'sfx/shot_pistol_4.mp3']);
 const sfxShotgun     = sfxBank(['sfx/shot_shotgun_1.mp3', 'sfx/shot_shotgun_2.mp3', 'sfx/shot_shotgun_3.mp3']);
@@ -34,8 +30,8 @@ const sfxRocket      = sfxBank(['sfx/rocket_launch_1.mp3', 'sfx/rocket_launch_2.
 const sfxVehicleBoom = sfxBank(['sfx/boom_1.mp3', 'sfx/boom_2.mp3', 'sfx/boom_3.mp3']);
 
 const sfxAchievement = new Audio('sfx/achievement_1.mp3');
-const sfxParryShield = sfxBank(['sfx/parry_up_1.mp3', 'sfx/parry_up_2.mp3']);     // щит поднят
-const sfxParryDone   = sfxBank(['sfx/parry_hit_1.mp3', 'sfx/parry_hit_2.mp3']);   // удар отражён
+const sfxParryShield = sfxBank(['sfx/parry_up_1.mp3', 'sfx/parry_up_2.mp3']);
+const sfxParryDone   = sfxBank(['sfx/parry_hit_1.mp3', 'sfx/parry_hit_2.mp3']);
 const sfxDash        = sfxBank(['sfx/dash_1.mp3', 'sfx/dash_2.mp3', 'sfx/dash_3.mp3']);
 const sfxWeapon      = sfxBank(['sfx/weapon_1.mp3', 'sfx/weapon_2.mp3']);
 const sfxUiNav       = sfxBank(['sfx/ui_1.mp3', 'sfx/ui_2.mp3', 'sfx/ui_3.mp3']);

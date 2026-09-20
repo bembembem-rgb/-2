@@ -1399,6 +1399,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
     .go-verdict, .go-sheet, .go-board,
     #game-over-screen .menu-btn.primary, .achievement-toast,
     .depth-picker .depth-btn.is-on { animation: none; }
+    .win-more { animation: none !important; opacity: 0.9 !important; }
     .ui-screen::before, #levelup-screen::before { opacity: 0.5; }
     .ui-screen::after,  #levelup-screen::after  { opacity: 0.25; }
 }
@@ -1485,8 +1486,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
     .menu-panel > *, .lore-entry, .levelup-cards > * { animation: none; }
 }
 
-/* Сид виден в забеге: без него строка «сид ABCDE» в скопированном
-   результате взялась бы неизвестно откуда. */
+/* Сид виден в забеге: по нему игрок повторяет удачный спуск. */
 #seed-display { color: var(--txt-mute); letter-spacing: 1px; }
 
 /* ============================================================
@@ -1505,7 +1505,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
 }
 .win-panel .menu-title { color: var(--gold); text-shadow: 0 0 24px rgba(240, 196, 25, 0.45); }
 
-.win-note { text-align: left; }
+.win-note { text-align: left; max-height: 42vh; overflow-y: auto; padding-right: 10px; }
 .win-note-head {
     font-size: var(--fs-sm);
     letter-spacing: 2px;
@@ -1584,7 +1584,7 @@ body.is-mobile #p2-ui-container { display: none !important; }
     #go-title { order: -2; }
     #game-over-screen .go-actions { order: -1; margin-bottom: 14px; }
     #game-over-screen .go-unlocks { order: 1; margin-bottom: 12px; }
-    .win-note { max-height: 32vh; overflow-y: auto; padding-right: 10px; }
+    .win-note { max-height: 34vh; }
 }
 
 .ui-screen, #main-menu-screen, #levelup-screen {
@@ -1621,4 +1621,23 @@ body.is-mobile #p2-ui-container { display: none !important; }
     .menu-panel { min-width: 0 !important; max-width: 100%; }
     #part-select-screen .menu-panel, #coming-soon-screen .menu-panel { width: 100%; }
     .ui-screen .menu-btn { min-width: 0 !important; }
+}
+
+.win-more {
+    margin: 6px 0 2px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    opacity: 0.85;
+    animation: winMore 1.6s ease-in-out infinite;
+}
+
+@keyframes winMore {
+    0%, 100% { opacity: 0.35; transform: translateY(0); }
+    50%      { opacity: 0.95; transform: translateY(2px); }
+}
+
+.win-note.is-cut {
+    -webkit-mask-image: linear-gradient(180deg, #000 76%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 76%, transparent 100%);
 }

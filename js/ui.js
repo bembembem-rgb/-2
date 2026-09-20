@@ -244,24 +244,20 @@ function initHTMLUI() {
                 <div id="win-stats" class="menu-stats"></div>
                 <div class="menu-divider"></div>
 
-                <!-- ТЕКСТ АВТОРА. Первый абзац — правда: игра начиналась
-                     с голубого квадратика, и цвет дайвера (#00f0ff в run.js)
-                     с тех пор не менялся. Остальное правь под себя: работает
-                     только то, что было на самом деле. Общие слова вроде
-                     «спасибо за это путешествие» не значат ничего. -->
+                <!-- Правь под себя. Работает только то, что было на самом деле. -->
                 <div class="win-note">
                     <div class="win-note-head">ОТ АВТОРА</div>
                     <p>Эта игра началась с голубого квадратика, который я гонял по пустому экрану. Всё остальное появилось уже вокруг него.</p>
                     <p>Квадратик никуда не делся. Ты им и играл: у дайвера с тех пор тот же цвет.</p>
                     <p class="hi">Между тем экраном и этим — пять боссов, мастерская, ко-оп и очень много вечеров. Когда делаешь всё это один, перестаёшь верить, что кто-то дойдёт до конца. Сейчас дошёл ты.</p>
                     <p>Если играть подряд, приедается, и я это вижу сам. Вторая часть нужна как раз затем: разобрать, что здесь не работает, и сделать интересно не только первые полчаса. Будет активность — доберусь и до настоящего онлайна.</p>
-                    <p>Но всё это только если у первой части появятся игроки. Это не фигура речи: писать продолжение в пустоту я не вытяну. Покажи игру кому-нибудь. Кнопка ниже копирует твой результат и ссылку на этот сид.</p>
+                    <p>Но всё это только если у первой части появятся игроки. Это не фигура речи: писать продолжение в пустоту я не вытяну. Покажи игру кому-нибудь.</p>
                     <p class="win-credits">Два звука и часть эффектов — чужие. Переделаю в следующем обновлении.</p>
                 </div>
+                <div id="win-more" class="win-more" style="display:none;">↓ НИЖЕ ЕЩЁ</div>
 
                 <div class="menu-divider"></div>
-                <button class="menu-btn primary" onclick="copyRunCardBtn(this)">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
-                <button class="menu-btn" onclick="startGameBtn()">СНОВА ВНИЗ [R]</button>
+                <button class="menu-btn primary" onclick="startGameBtn()">СНОВА ВНИЗ [R]</button>
                 <button class="menu-btn muted" onclick="winToMenuBtn()">В МЕНЮ</button>
             </div>
         </div>
@@ -290,7 +286,6 @@ function initHTMLUI() {
             <div class="go-actions" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
                 <button class="menu-btn primary" onclick="startGameBtn()" style="width:auto; min-width:240px; text-align:center;">СНОВА ВНИЗ [R]</button>
                 <button class="menu-btn" onclick="showShopBtn('gameover')" style="width:auto; min-width:240px; text-align:center;">МАСТЕРСКАЯ</button>
-                <button class="menu-btn" onclick="copyRunCardBtn(this)" style="width:auto; min-width:240px; text-align:center;">СКОПИРОВАТЬ РЕЗУЛЬТАТ</button>
                 <button class="menu-btn muted" onclick="goToMenuBtn()" style="width:auto; min-width:240px; text-align:center;">ОТКЛЮЧИТЬСЯ</button>
             </div>
             <div class="go-hint">[R] — вниз сразу, без меню</div>
@@ -1133,6 +1128,25 @@ function renderWinScreen(banked, isNewBest) {
     const scr = document.getElementById('win-screen');
     if (scr) scr.style.display = 'flex';
     resetMenuFocus();
+    syncWinNote();
+}
+
+function syncWinNote() {
+    const note = document.querySelector('#win-screen .win-note');
+    const hint = document.getElementById('win-more');
+    if (!note || !hint) return;
+    const update = () => {
+        const left = note.scrollHeight - note.clientHeight - note.scrollTop;
+        const on = left > 8;
+        hint.style.display = on ? 'block' : 'none';
+        note.classList.toggle('is-cut', on);
+    };
+    if (!note.dataset.bound) {
+        note.addEventListener('scroll', update);
+        window.addEventListener('resize', update);
+        note.dataset.bound = '1';
+    }
+    requestAnimationFrame(update);
 }
 
 window.winToMenuBtn = function () {

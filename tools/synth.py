@@ -103,8 +103,15 @@ def edges(x, ms=3):
     x[:k] *= np.linspace(0, 1, k); x[-k:] *= np.linspace(1, 0, k)
     return x
 
-def finish(x, peak=0.9):
-    return edges(norm(np.nan_to_num(x), peak))
+def limit(x, ceil=0.88):
+    return np.tanh(x / ceil) * ceil
+
+
+def finish(x, peak=None):
+    y = edges(np.nan_to_num(x))
+    if peak is not None:
+        return norm(y, peak)
+    return limit(y) if np.max(np.abs(y)) > 0.9 else y
 
 def save(path, x):
     import wave, struct
@@ -130,3 +137,48 @@ def save_mp3(path, x, bitrate=96):
     with open(path, 'wb') as f:
         f.write(bytes(enc.encode(pcm)) + bytes(enc.flush()))
     return True
+
+
+def note(n):
+    return 440.0 * (2.0 ** ((n - 69) / 12.0))
+
+
+def pulse_osc(phase, duty=0.5):
+    return np.where((phase / (2 * np.pi)) % 1.0 < duty, 1.0, -1.0)
+
+
+def steps(f0, f1, n, count=8, curve=1.0):
+    k = np.linspace(0, 1, n) ** curve
+    q = np.floor(k * count) / max(1, count - 1)
+    f = f0 + (f1 - f0) * np.clip(q, 0, 1)
+    return np.cumsum(2 * np.pi * f / SR)
+
+
+def tone(freq, n, kind='square', duty=0.5, vib=0.0, vibrate=6.0):
+    t = np.arange(n) / SR
+    f = freq * (1.0 + vib * np.sin(2 * np.pi * vibrate * t))
+    ph = np.cumsum(2 * np.pi * f / SR)
+    return pulse_osc(ph, duty) if kind == 'pulse' else osc(ph, kind)
+
+
+def arp(notes, each, n, kind='square', duty=0.5, curve=3.0, gap=0.85):
+    out = np.zeros(n)
+    ln = n_of(each)
+    for i, nn in enumerate(notes):
+        p = int(SR * each * i)
+        if p >= n:
+            break
+        m = min(ln, n - p)
+        seg = tone(note(nn), m, kind, duty) * env(m, 0.002, curve=curve)
+        out[p:p + m] += seg * gap
+    return out
+
+
+def dry(x, bright=1.0):
+    y = highpass(x, 90)
+    y = lowpass(y, 9000 * bright, res=0.02)
+    return y
+
+
+def crush(x, bits=8, hold=1):
+    return bitcrush(x, bits, hold)
