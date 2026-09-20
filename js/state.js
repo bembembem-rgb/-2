@@ -1,6 +1,13 @@
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches);
 
+// Свечение на канвасе — самая дорогая вещь в кадре: с ним телефон
+// среднего класса отдаёт 17 кадров вместо 60. Мелочи (пули, частицы,
+// рядовые враги) его лишаются, крупное (игрок, босс, точка эвакуации)
+// оставляет: их на экране единицы, и именно они держат картинку.
+const GLOW_MANY = isMobile ? 0 : 1;
+const GLOW_BIG = 1;
+
 // --- ГЛОБАЛЬНЫЕ СОСТОЯНИЯ ---
 let gameState = 'loading'; 
 let audioUnlocked = false;

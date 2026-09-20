@@ -61,7 +61,7 @@ function renderVehicle(v) {
     }
     
     if (v.isQuestVehicle && questState === 'seeking') { 
-        ctx.save(); ctx.translate(v.x, v.y); ctx.shadowBlur = 20 + Math.sin(performance.now() / 150) * 10; ctx.shadowColor = '#00f0ff'; 
+        ctx.save(); ctx.translate(v.x, v.y); ctx.shadowBlur = (20 + Math.sin(performance.now() / 150) * 10) * GLOW_BIG; ctx.shadowColor = '#00f0ff'; 
         ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, v.size, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); 
     }
     
@@ -107,7 +107,7 @@ function drawWhiteSlime(ctx, x, y, size, row, animFrame, isSniper, e) {
         ctx.imageSmoothingEnabled = false; 
         ctx.drawImage(slimeWhiteImg, animFrame * fw, row * fh, fw, fh, Math.floor(-renderSize / 2), Math.floor(-renderSize / 2), renderSize, renderSize); 
     } else { 
-        ctx.shadowBlur = 10; ctx.shadowColor = '#ffffff'; ctx.fillStyle = '#ffffff'; ctx.fillRect(-size / 2, -size / 2, size, size); 
+        ctx.shadowBlur = 10 * GLOW_MANY; ctx.shadowColor = '#ffffff'; ctx.fillStyle = '#ffffff'; ctx.fillRect(-size / 2, -size / 2, size, size); 
     }
     
     if (isSniper) { 
@@ -128,7 +128,7 @@ function drawSlimeEnemy(ctx, x, y, size, angle, time) {
         ctx.shadowBlur = 0; ctx.imageSmoothingEnabled = false; 
         ctx.drawImage(slimeRedImg, frameIndex * fw, row * fh, fw, fh, -renderSize/2, -renderSize/2, renderSize, renderSize); 
     } else { 
-        ctx.shadowBlur = 10; ctx.shadowColor = '#00ced1'; ctx.fillStyle = '#00ced1'; ctx.fillRect(-size/2, -size/2, size, size); 
+        ctx.shadowBlur = 10 * GLOW_MANY; ctx.shadowColor = '#00ced1'; ctx.fillStyle = '#00ced1'; ctx.fillRect(-size/2, -size/2, size, size); 
     } 
     ctx.restore();
 }
@@ -210,7 +210,7 @@ function drawTargetLock(enemy, color, lockAt, pad = 0) {
     ctx.translate(enemy.x, enemy.y);
     ctx.globalAlpha = 0.35 + 0.65 * ease;
     ctx.strokeStyle = color; ctx.lineWidth = 2.5;
-    ctx.shadowBlur = 12; ctx.shadowColor = color;
+    ctx.shadowBlur = 12 * GLOW_MANY; ctx.shadowColor = color;
     ctx.beginPath();
     ctx.moveTo(-r, -r + arm); ctx.lineTo(-r, -r); ctx.lineTo(-r + arm, -r);
     ctx.moveTo(r - arm, -r); ctx.lineTo(r, -r); ctx.lineTo(r, -r + arm);
@@ -250,7 +250,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         } else {
             const live = questState === 'heat';
             ctx.strokeStyle = '#c46dff'; ctx.lineWidth = live ? 5 : 3;
-            if (live) { ctx.shadowBlur = 16 + Math.sin(time / 150) * 8; ctx.shadowColor = '#c46dff'; }
+            if (live) { ctx.shadowBlur = (16 + Math.sin(time / 150) * 8) * GLOW_BIG; ctx.shadowColor = '#c46dff'; }
             ctx.beginPath(); ctx.arc(0, 0, deepVault.radius, 0, Math.PI * 2); ctx.stroke();
             if (live) { ctx.globalAlpha = 0.18; ctx.fillStyle = '#c46dff'; ctx.fill(); ctx.globalAlpha = 1; }
             ctx.shadowBlur = 0;
@@ -259,11 +259,11 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         }
         ctx.restore();
     }
-    if (questState === 'heat' && extractionPoint) { ctx.save(); ctx.translate(extractionPoint.x, extractionPoint.y); ctx.shadowBlur = 20 + Math.sin(time / 150) * 10; ctx.shadowColor = '#00ffff'; ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, extractionPoint.radius, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 0.2; ctx.fillStyle = '#00ffff'; ctx.fill(); ctx.restore(); }
+    if (questState === 'heat' && extractionPoint) { ctx.save(); ctx.translate(extractionPoint.x, extractionPoint.y); ctx.shadowBlur = (20 + Math.sin(time / 150) * 10) * GLOW_BIG; ctx.shadowColor = '#00ffff'; ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, extractionPoint.radius, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 0.2; ctx.fillStyle = '#00ffff'; ctx.fill(); ctx.restore(); }
     drawSmoke();   // взвесь идёт под всем: она фон для искр и вспышек, а не поверх них
     for (let s of scorches) { ctx.save(); ctx.fillStyle = `rgba(0, 15, 30, ${s.alpha})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-    for (let obs of customObstacles) { ctx.save(); if (obs.isVoid) { const vp = Math.max(0, obs.life / 1800); ctx.fillStyle = `rgba(128, 0, 255, ${0.35 * vp})`; ctx.shadowBlur = 30; ctx.shadowColor = '#b026ff'; ctx.beginPath(); ctx.arc(obs.x + 60, obs.y + 60, 60 + Math.sin(time/90)*8, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(obs.x + 60, obs.y + 60, 20, 0, Math.PI * 2); ctx.stroke(); } else if (obs.isGeyser) { ctx.fillStyle = 'rgba(0, 206, 209, 0.3)'; ctx.shadowBlur = 20; ctx.shadowColor = '#00ffff'; ctx.beginPath(); ctx.arc(obs.x + 50, obs.y + 50, 50 + Math.sin(time/100)*10, 0, Math.PI*2); ctx.fill(); if (fxRandom() < 0.2) spawnBubbles(obs.x + 50, obs.y + 50, 1); } else { ctx.strokeStyle = obs.color; ctx.lineWidth = 4; ctx.shadowBlur = 15; ctx.shadowColor = obs.color; ctx.strokeRect(obs.x, obs.y, obs.w, obs.h); } ctx.restore(); }
-    for (let obs of obstacles.values()) { if (!obs) continue; if (obs.x + obs.w < cam.x || obs.x > cam.x + vw || obs.y + obs.h < cam.y || obs.y > cam.y + vh) continue; ctx.save(); ctx.strokeStyle = obs.flashTimer > 0 ? '#ffffff' : '#00ffd5'; ctx.lineWidth = 4; ctx.shadowBlur = 10; ctx.shadowColor = ctx.strokeStyle; if (obs.type === 'rect') { ctx.strokeRect(obs.x, obs.y, obs.w, obs.h); } else { ctx.beginPath(); ctx.moveTo(obs.x + obs.w/2, obs.y); ctx.lineTo(obs.x + obs.w, obs.y + obs.h); ctx.lineTo(obs.x, obs.y + obs.h); ctx.closePath(); ctx.stroke(); } ctx.restore(); if (obs.flashTimer > 0) obs.flashTimer -= (lastFrameTime ? 16 : 0); }
+    for (let obs of customObstacles) { ctx.save(); if (obs.isVoid) { const vp = Math.max(0, obs.life / 1800); ctx.fillStyle = `rgba(128, 0, 255, ${0.35 * vp})`; ctx.shadowBlur = 30 * GLOW_BIG; ctx.shadowColor = '#b026ff'; ctx.beginPath(); ctx.arc(obs.x + 60, obs.y + 60, 60 + Math.sin(time/90)*8, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(obs.x + 60, obs.y + 60, 20, 0, Math.PI * 2); ctx.stroke(); } else if (obs.isGeyser) { ctx.fillStyle = 'rgba(0, 206, 209, 0.3)'; ctx.shadowBlur = 20 * GLOW_BIG; ctx.shadowColor = '#00ffff'; ctx.beginPath(); ctx.arc(obs.x + 50, obs.y + 50, 50 + Math.sin(time/100)*10, 0, Math.PI*2); ctx.fill(); if (fxRandom() < 0.2) spawnBubbles(obs.x + 50, obs.y + 50, 1); } else { ctx.strokeStyle = obs.color; ctx.lineWidth = 4; ctx.shadowBlur = 15 * GLOW_BIG; ctx.shadowColor = obs.color; ctx.strokeRect(obs.x, obs.y, obs.w, obs.h); } ctx.restore(); }
+    for (let obs of obstacles.values()) { if (!obs) continue; if (obs.x + obs.w < cam.x || obs.x > cam.x + vw || obs.y + obs.h < cam.y || obs.y > cam.y + vh) continue; ctx.save(); ctx.strokeStyle = obs.flashTimer > 0 ? '#ffffff' : '#00ffd5'; ctx.lineWidth = 4; ctx.shadowBlur = 10 * GLOW_BIG; ctx.shadowColor = ctx.strokeStyle; if (obs.type === 'rect') { ctx.strokeRect(obs.x, obs.y, obs.w, obs.h); } else { ctx.beginPath(); ctx.moveTo(obs.x + obs.w/2, obs.y); ctx.lineTo(obs.x + obs.w, obs.y + obs.h); ctx.lineTo(obs.x, obs.y + obs.h); ctx.closePath(); ctx.stroke(); } ctx.restore(); if (obs.flashTimer > 0) obs.flashTimer -= (lastFrameTime ? 16 : 0); }
     for (const t of trails) {
         ctx.save();
         ctx.globalAlpha = Math.max(0, t.alpha) * 0.5;
@@ -282,7 +282,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
     for (let b of bubbles) { ctx.save(); ctx.globalAlpha = Math.max(0, b.alpha); ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
 
     for (const e of enemies) {
-        if (e.type === 'boss') { ctx.save(); ctx.translate(e.x, e.y); if (typeof e.blinkAlpha === 'number') ctx.globalAlpha = e.blinkAlpha; if (e.image && e.image.complete && e.image.naturalWidth > 0) { const drawSize = e.size * 2, fw = Math.floor(e.image.naturalWidth / 5), fh = Math.floor(e.image.naturalHeight / 4), col = e.animFrame % 5, row = Math.floor(e.animFrame / 5); ctx.imageSmoothingEnabled = false; ctx.drawImage(e.image, col * fw, row * fh, fw, fh, -drawSize/2, -drawSize/2, drawSize, drawSize); } else { ctx.shadowBlur = 20; ctx.shadowColor = '#00ffff'; ctx.fillStyle = 'darkblue'; ctx.fillRect(-e.size/2, -e.size/2, e.size, e.size); ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.strokeRect(-e.size/2, -e.size/2, e.size, e.size); } if (e.shelled) { ctx.globalAlpha = 0.7; ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 25; ctx.shadowColor = '#39ff14'; ctx.beginPath(); ctx.arc(0, 0, e.size * 0.75 + Math.sin(time*0.01)*4, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } ctx.fillStyle = 'red'; ctx.fillRect(-50, -e.size - 20, 100, 10); ctx.fillStyle = '#00ffff'; ctx.fillRect(-50, -e.size - 20, 100 * (e.hp / e.maxHp), 10); ctx.restore(); } 
+        if (e.type === 'boss') { ctx.save(); ctx.translate(e.x, e.y); if (typeof e.blinkAlpha === 'number') ctx.globalAlpha = e.blinkAlpha; if (e.image && e.image.complete && e.image.naturalWidth > 0) { const drawSize = e.size * 2, fw = Math.floor(e.image.naturalWidth / 5), fh = Math.floor(e.image.naturalHeight / 4), col = e.animFrame % 5, row = Math.floor(e.animFrame / 5); ctx.imageSmoothingEnabled = false; ctx.drawImage(e.image, col * fw, row * fh, fw, fh, -drawSize/2, -drawSize/2, drawSize, drawSize); } else { ctx.shadowBlur = 20 * GLOW_BIG; ctx.shadowColor = '#00ffff'; ctx.fillStyle = 'darkblue'; ctx.fillRect(-e.size/2, -e.size/2, e.size, e.size); ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.strokeRect(-e.size/2, -e.size/2, e.size, e.size); } if (e.shelled) { ctx.globalAlpha = 0.7; ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 25 * GLOW_BIG; ctx.shadowColor = '#39ff14'; ctx.beginPath(); ctx.arc(0, 0, e.size * 0.75 + Math.sin(time*0.01)*4, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } ctx.fillStyle = 'red'; ctx.fillRect(-50, -e.size - 20, 100, 10); ctx.fillStyle = '#00ffff'; ctx.fillRect(-50, -e.size - 20, 100 * (e.hp / e.maxHp), 10); ctx.restore(); } 
         else if (e.type === 'husk') {
             // Своего листа нет: оболочка — тот же слизень крупнее и в синем.
             // Новый спрайт-лист ради одного врага просил бы ассет там, где
@@ -305,7 +305,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             if (playerImg.complete && playerImg.width > 0) {
                 const totalFrames = 16, frameWidth = Math.floor(playerImg.width / totalFrames), frameX = player.directionOffset + player.animFrame, renderSize = player.size * 2.0; 
                 ctx.save(); ctx.translate(Math.floor(player.x), Math.floor(player.y)); if (player.downed) ctx.rotate(Math.PI / 2); ctx.drawImage(playerImg, frameX * frameWidth, 0, frameWidth, playerImg.height, Math.floor(-renderSize / 2), Math.floor(-renderSize / 2), renderSize, renderSize); ctx.restore();
-            } else { ctx.save(); ctx.shadowBlur = 15; ctx.shadowColor = player.color; ctx.fillStyle = player.color; ctx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size); ctx.restore(); }
+            } else { ctx.save(); ctx.shadowBlur = 15 * GLOW_BIG; ctx.shadowColor = player.color; ctx.fillStyle = player.color; ctx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size); ctx.restore(); }
             ctx.restore();
 
             if (!player.downed) {
@@ -335,7 +335,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             const sp = player.shieldTimer / 1500;
             ctx.save(); ctx.translate(player.x, player.y);
             ctx.globalAlpha = Math.min(1, sp * 2);
-            ctx.strokeStyle = '#ff003c'; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#ff003c';
+            ctx.strokeStyle = '#ff003c'; ctx.lineWidth = 3; ctx.shadowBlur = 20 * GLOW_BIG; ctx.shadowColor = '#ff003c';
             ctx.beginPath(); ctx.arc(0, 0, player.size * 0.9 + Math.sin(time * 0.02) * 3, 0, Math.PI * 2); ctx.stroke();
             ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.arc(0, 0, player.size * 1.1, time * 0.003, time * 0.003 + Math.PI * 1.2); ctx.stroke();
@@ -343,7 +343,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         }
         if (player.parryWindow > 0) {
             ctx.save(); ctx.translate(player.x, player.y);
-            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.shadowBlur = 15; ctx.shadowColor = '#ffffff';
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.shadowBlur = 15 * GLOW_BIG; ctx.shadowColor = '#ffffff';
             ctx.globalAlpha = 0.8;
             ctx.beginPath(); ctx.arc(0, 0, player.size * 0.7, 0, Math.PI * 2); ctx.stroke();
             ctx.restore();
@@ -362,11 +362,11 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
                 if (entity.downed) ctx.rotate(Math.PI / 2);
                 ctx.drawImage(playerImg, frameX * frameWidth, 0, frameWidth, playerImg.height, Math.floor(-renderSize / 2), Math.floor(-renderSize / 2), renderSize, renderSize);
                 ctx.restore();
-            } else { ctx.save(); ctx.shadowBlur = 15; ctx.shadowColor = entity.color; ctx.fillStyle = entity.color; ctx.fillRect(entity.x - entity.size / 2, entity.y - entity.size / 2, entity.size, entity.size); ctx.restore(); }
+            } else { ctx.save(); ctx.shadowBlur = 15 * GLOW_MANY; ctx.shadowColor = entity.color; ctx.fillStyle = entity.color; ctx.fillRect(entity.x - entity.size / 2, entity.y - entity.size / 2, entity.size, entity.size); ctx.restore(); }
         }
         ctx.restore();
 
-        ctx.save(); ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = entity.color; ctx.textAlign = "center"; ctx.shadowBlur = 6; ctx.shadowColor = entity.color;
+        ctx.save(); ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = entity.color; ctx.textAlign = "center"; ctx.shadowBlur = 6 * GLOW_MANY; ctx.shadowColor = entity.color;
         ctx.fillText(entity.downed ? `${label}: OFFLINE` : label, entity.x, entity.y - entity.size - 6);
         ctx.restore();
 
@@ -374,7 +374,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             const sp = entity.shieldTimer / 1500;
             ctx.save(); ctx.translate(entity.x, entity.y);
             ctx.globalAlpha = Math.min(1, sp * 2);
-            ctx.strokeStyle = '#ff003c'; ctx.lineWidth = 3; ctx.shadowBlur = 20; ctx.shadowColor = '#ff003c';
+            ctx.strokeStyle = '#ff003c'; ctx.lineWidth = 3; ctx.shadowBlur = 20 * GLOW_MANY; ctx.shadowColor = '#ff003c';
             ctx.beginPath(); ctx.arc(0, 0, entity.size * 0.9 + Math.sin(time * 0.02) * 3, 0, Math.PI * 2); ctx.stroke();
             ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1;
             ctx.beginPath(); ctx.arc(0, 0, entity.size * 1.1, time * 0.003, time * 0.003 + Math.PI * 1.2); ctx.stroke();
@@ -382,7 +382,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         }
         if (!entity.downed && entity.parryWindow > 0) {
             ctx.save(); ctx.translate(entity.x, entity.y);
-            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.shadowBlur = 15; ctx.shadowColor = '#ffffff';
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.shadowBlur = 15 * GLOW_MANY; ctx.shadowColor = '#ffffff';
             ctx.globalAlpha = 0.8;
             ctx.beginPath(); ctx.arc(0, 0, entity.size * 0.7, 0, Math.PI * 2); ctx.stroke();
             ctx.restore();
@@ -394,7 +394,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 4;
             ctx.beginPath(); ctx.arc(0, 0, entity.size * 0.8, 0, Math.PI * 2); ctx.stroke();
             if (prog > 0) {
-                ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 12; ctx.shadowColor = '#39ff14';
+                ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 12 * GLOW_MANY; ctx.shadowColor = '#39ff14';
                 ctx.beginPath(); ctx.arc(0, 0, entity.size * 0.8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog); ctx.stroke();
             }
             ctx.restore();
@@ -406,12 +406,12 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
     if (player.downed) {
         const prog = Math.min(1, (player.reviveProgress || 0) / REVIVE_TIME);
         ctx.save(); ctx.translate(player.x, player.y);
-        ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = "#00f0ff"; ctx.textAlign = "center"; ctx.shadowBlur = 6; ctx.shadowColor = '#00f0ff';
+        ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = "#00f0ff"; ctx.textAlign = "center"; ctx.shadowBlur = 6 * GLOW_MANY; ctx.shadowColor = '#00f0ff';
         ctx.fillText('P1: OFFLINE', 0, -player.size - 6);
         ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.arc(0, 0, player.size * 0.8, 0, Math.PI * 2); ctx.stroke();
         if (prog > 0) {
-            ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 12; ctx.shadowColor = '#39ff14';
+            ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 4; ctx.shadowBlur = 12 * GLOW_MANY; ctx.shadowColor = '#39ff14';
             ctx.beginPath(); ctx.arc(0, 0, player.size * 0.8, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * prog); ctx.stroke();
         }
         ctx.restore();
@@ -424,7 +424,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         } else {
             const rx = player.x + Math.cos(p1GamepadAimAngle) * 130, ry = player.y + Math.sin(p1GamepadAimAngle) * 130;
             ctx.save(); ctx.translate(rx, ry);
-            ctx.strokeStyle = 'rgba(0,240,255,0.7)'; ctx.lineWidth = 2; ctx.shadowBlur = 8; ctx.shadowColor = '#00f0ff';
+            ctx.strokeStyle = 'rgba(0,240,255,0.7)'; ctx.lineWidth = 2; ctx.shadowBlur = 8 * GLOW_MANY; ctx.shadowColor = '#00f0ff';
             ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(-16, 0); ctx.lineTo(-6, 0); ctx.moveTo(6, 0); ctx.lineTo(16, 0);
             ctx.moveTo(0, -16); ctx.lineTo(0, -6); ctx.moveTo(0, 6); ctx.lineTo(0, 16);
@@ -437,7 +437,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
     if (getPlayer1Gamepad() && !player.downed && p1AiIntent) {
         ctx.save(); ctx.translate(player.x, player.y - player.size - 26);
         const intentColor = p1AiIntent === 'ПАРИРУЕТ!' || p1AiIntent === 'ИМПУЛЬС!' ? '#ffd700' : (p1AiIntent === 'УКЛОНЕНИЕ' ? '#ff003c' : '#00f0ff');
-        ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = intentColor; ctx.textAlign = "center"; ctx.shadowBlur = 8; ctx.shadowColor = intentColor;
+        ctx.font = "9px 'Press Start 2P'"; ctx.fillStyle = intentColor; ctx.textAlign = "center"; ctx.shadowBlur = 8 * GLOW_MANY; ctx.shadowColor = intentColor;
         ctx.fillText(p1AiIntent, 0, 0);
         ctx.restore();
     }
@@ -450,12 +450,12 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
         if (compassTarget) {
             let cx = player.inVehicle && player.currentVehicle ? player.currentVehicle.x : player.x, cy = player.inVehicle && player.currentVehicle ? player.currentVehicle.y : player.y;
             let cAngle = Math.atan2(compassTarget.y - cy, compassTarget.x - cx), cRadius = player.inVehicle && player.currentVehicle ? player.currentVehicle.size + 20 : 60;
-            ctx.save(); ctx.translate(cx + Math.cos(cAngle) * cRadius, cy + Math.sin(cAngle) * cRadius); ctx.rotate(cAngle); ctx.fillStyle = compassColor; ctx.shadowBlur = 15; ctx.shadowColor = compassColor; ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-12, 10); ctx.lineTo(-12, -10); ctx.closePath(); ctx.fill(); ctx.restore();
+            ctx.save(); ctx.translate(cx + Math.cos(cAngle) * cRadius, cy + Math.sin(cAngle) * cRadius); ctx.rotate(cAngle); ctx.fillStyle = compassColor; ctx.shadowBlur = 15 * GLOW_BIG; ctx.shadowColor = compassColor; ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-12, 10); ctx.lineTo(-12, -10); ctx.closePath(); ctx.fill(); ctx.restore();
         }
         if (coopMode && player2 && !player2.downed && compassTarget) {
             let cx2 = player2.inVehicle && player2.currentVehicle ? player2.currentVehicle.x : player2.x, cy2 = player2.inVehicle && player2.currentVehicle ? player2.currentVehicle.y : player2.y;
             let cAngle2 = Math.atan2(compassTarget.y - cy2, compassTarget.x - cx2), cRadius2 = player2.inVehicle && player2.currentVehicle ? player2.currentVehicle.size + 20 : 60;
-            ctx.save(); ctx.translate(cx2 + Math.cos(cAngle2) * cRadius2, cy2 + Math.sin(cAngle2) * cRadius2); ctx.rotate(cAngle2); ctx.fillStyle = compassColor; ctx.shadowBlur = 15; ctx.shadowColor = compassColor; ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-12, 10); ctx.lineTo(-12, -10); ctx.closePath(); ctx.fill(); ctx.restore();
+            ctx.save(); ctx.translate(cx2 + Math.cos(cAngle2) * cRadius2, cy2 + Math.sin(cAngle2) * cRadius2); ctx.rotate(cAngle2); ctx.fillStyle = compassColor; ctx.shadowBlur = 15 * GLOW_BIG; ctx.shadowColor = compassColor; ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-12, 10); ctx.lineTo(-12, -10); ctx.closePath(); ctx.fill(); ctx.restore();
         }
     }
 
@@ -471,7 +471,7 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             ctx.translate(p.x, p.y); ctx.rotate(p.angle);
             ctx.globalAlpha = 0.85 * (1 - t * 0.6);
             ctx.strokeStyle = '#00e0ff'; ctx.lineWidth = 10 - t * 4;
-            ctx.shadowBlur = 22; ctx.shadowColor = '#00e0ff';
+            ctx.shadowBlur = 22 * GLOW_BIG; ctx.shadowColor = '#00e0ff';
             ctx.beginPath(); ctx.arc(0, 0, p.width / 2, -Math.PI / 2.6, Math.PI / 2.6); ctx.stroke();
             ctx.globalAlpha = 0.3 * (1 - t);
             ctx.lineWidth = 24 - t * 10;
@@ -480,26 +480,26 @@ function drawWorldPass(cam, vx, vy, vw, vh, time) {
             continue;
         }
         if (p.draw) { p.draw(ctx); } else {
-            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.shadowBlur = 10; ctx.shadowColor = p.color; ctx.fillStyle = p.color;
+            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle); ctx.shadowBlur = 10 * GLOW_MANY; ctx.shadowColor = p.color; ctx.fillStyle = p.color;
             if (p.piercing) ctx.globalAlpha = Math.max(0, p.life / 300);
             if (p.isExplosive) { ctx.beginPath(); ctx.arc(0, 0, p.width/2, 0, Math.PI*2); ctx.fill(); } else { ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height); }
             ctx.restore();
         }
     }
     
-    for (const p of particles) { ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color; ctx.shadowBlur = 10; ctx.shadowColor = p.color; ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); ctx.restore(); }
+    for (const p of particles) { ctx.save(); ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color; ctx.shadowBlur = 10 * GLOW_MANY; ctx.shadowColor = p.color; ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size); ctx.restore(); }
     for (const ep of enemyProjectiles) ep.draw();
     for (const ring of pulseRingFx) {
         const prog = 1 - ring.life / ring.maxLife;
         ctx.save(); ctx.globalAlpha = 1 - prog; ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 6 * (1 - prog * 0.6);
-        ctx.shadowBlur = 25; ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 25 * GLOW_BIG; ctx.shadowColor = '#00ffff';
         ctx.beginPath(); ctx.arc(ring.x, ring.y, prog * 320, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
     }
     for (const ring of parryShockwaves) {
         const prog = 1 - ring.life / ring.maxLife;
         ctx.save(); ctx.globalAlpha = (1 - prog) * 0.9; ctx.strokeStyle = '#ff003c'; ctx.lineWidth = 14 * (1 - prog * 0.7);
-        ctx.shadowBlur = 40; ctx.shadowColor = '#ff003c';
+        ctx.shadowBlur = 40 * GLOW_BIG; ctx.shadowColor = '#ff003c';
         ctx.beginPath(); ctx.arc(ring.x, ring.y, prog * 420, 0, Math.PI * 2); ctx.stroke();
         ctx.globalAlpha = (1 - prog) * 0.3; ctx.lineWidth = 30 * (1 - prog);
         ctx.beginPath(); ctx.arc(ring.x, ring.y, prog * 420, 0, Math.PI * 2); ctx.stroke();

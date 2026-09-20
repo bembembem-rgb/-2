@@ -43,6 +43,7 @@ function initHTMLUI() {
                 <div id="btn-interact" class="touch-btn c-green is-off">ВХОД</div>
                 <div id="btn-swap" class="touch-btn c-amber">СТВОЛ</div>
             </div>
+            <div id="btn-pause" class="touch-btn touch-pause" aria-label="Пауза">II</div>
             <div id="touch-hint">ЛЕВО: ХОД · ДВА ТАПА — РЫВОК<br>ПРАВО: ОГОНЬ · ДВА ТАПА — ЩИТ</div>
         </div>
 
@@ -765,6 +766,8 @@ function initHTMLUI() {
         const el = document.getElementById(id);
         if (el) el.addEventListener('touchstart', (e) => { e.preventDefault(); tapKey(code); });
     };
+    const pauseBtn = document.getElementById('btn-pause');
+    if (pauseBtn) pauseBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pauseGame(); });
     bindTouchBtn('btn-swap', 'KeyF');
     bindTouchBtn('btn-interact', 'KeyE');
     bindTouchBtn('btn-pulse', 'KeyQ');

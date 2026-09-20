@@ -87,7 +87,7 @@ function drawMuzzleFlashes() {
         ctx.translate(m.x, m.y);
         ctx.rotate(m.angle);
         ctx.globalAlpha = t;
-        ctx.shadowBlur = 16; ctx.shadowColor = m.color;
+        ctx.shadowBlur = 16 * GLOW_MANY; ctx.shadowColor = m.color;
         ctx.fillStyle = '#ffffff';
         const core = m.size * 0.35 * t;
         ctx.fillRect(-core / 2, -core / 2, core * 1.6, core);
@@ -305,7 +305,7 @@ function drawWorldFx() {
         ctx.globalAlpha = t;
         ctx.strokeStyle = p.color;
         ctx.lineWidth = 2 * t + 0.5;
-        ctx.shadowBlur = 8; ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8 * GLOW_MANY; ctx.shadowColor = p.color;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(p.x - p.vx * 1.6, p.y - p.vy * 1.6);

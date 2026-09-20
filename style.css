@@ -1803,3 +1803,20 @@ body.is-mobile #contract-offer {
 }
 
 .touch-btn.is-off { visibility: hidden; pointer-events: none; }
+
+/* Пауза на телефоне. До неё дотягивались только клавишей Escape,
+   которой на экране нет: забег нельзя было ни остановить, ни бросить. */
+.touch-pause {
+    position: absolute;
+    top: calc(12px + env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 46px !important;
+    height: 46px !important;
+    font-size: 13px !important;
+    letter-spacing: 2px;
+    color: var(--txt-dim);
+    border-color: var(--line-dim);
+    background: rgba(10, 16, 28, 0.6);
+    pointer-events: auto;
+}
