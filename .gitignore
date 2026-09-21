@@ -3,3 +3,5 @@ build-itch.zip
 __pycache__/
 *.png
 !vfx/*.png
+!explosion_boss.png
+!tankballexplode.png
