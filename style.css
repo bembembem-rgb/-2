@@ -1864,3 +1864,23 @@ body.is-mobile #go-title { font-size: 22px !important; margin-bottom: 12px !impo
     ::-webkit-scrollbar { width: 0; height: 0; }
     * { scrollbar-width: none; }
 }
+
+/* Раскладки геймпадов и клавиш P2 на телефоне не значат ничего, а панель
+   от них вырастает так, что нижняя кнопка уезжает за экран. */
+@media (pointer: coarse) {
+    .dev-note { display: none; }
+}
+
+/* Совсем низкие экраны (телефон лёжа, 360 и меньше по высоте). */
+@media (pointer: coarse) and (max-height: 400px) {
+    #main-menu-screen .menu-title { font-size: 15px; }
+    #main-menu-screen #menu-stats { font-size: 9px; line-height: 1.5; }
+    #main-menu-screen .menu-panel { padding: 10px 14px; }
+    #main-menu-screen .menu-btn { min-height: 38px; font-size: 11px; }
+    #main-menu-screen .menu-divider { margin: 6px 0; }
+}
+
+@media (pointer: coarse) and (max-height: 480px) {
+    .lore-container { height: 58vh; }
+    #lore-screen .menu-btn { min-height: 38px; }
+}
