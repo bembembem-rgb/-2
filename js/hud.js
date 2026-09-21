@@ -193,7 +193,7 @@ function updateTouchHint() {
     document.body.classList.add('hint-done');
 }
 
-let _pulseCold = null;
+let _pulseCold = null, _interactLabel = '';
 function updateTouchButtons() {
     if (!isMobile) return;
     updateTouchHint();
@@ -207,12 +207,16 @@ function updateTouchButtons() {
     const btn = document.getElementById('btn-interact');
     if (!btn) return;
     const on = !!nearVehicleNow;
-    if (on === _interactShown) return;
-    _interactShown = on;
-    // Кнопка не появляется и не исчезает из ряда: соседние уехали бы
-    // в сторону прямо под пальцем.
-    btn.classList.toggle('is-off', !on);
-    btn.innerText = (player && player.inVehicle) ? 'ВЫЙТИ' : 'ВХОД';
+    if (on !== _interactShown) {
+        _interactShown = on;
+        // Кнопка не появляется и не исчезает из ряда: соседние уехали бы
+        // в сторону прямо под пальцем.
+        btn.classList.toggle('is-off', !on);
+    }
+    // Подпись считалась отдельно от видимости: сев в машину, игрок видел
+    // на кнопке «ВХОД» и не знал, чем вылезать.
+    const label = (player && player.inVehicle) ? 'ВЫЙТИ' : 'ВХОД';
+    if (label !== _interactLabel) { _interactLabel = label; btn.innerText = label; }
 }
 
 function updateCooldownBars() {
