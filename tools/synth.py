@@ -182,3 +182,51 @@ def dry(x, bright=1.0):
 
 def crush(x, bits=8, hold=1):
     return bitcrush(x, bits, hold)
+
+
+# --- FM и PSG ---
+# Sonic 3 звучит на YM2612: синус модулирует фазу синуса, и от глубины
+# модуляции зависит всё — от колокольчика до удара. Прямоугольник такого
+# не даёт, поэтому одними pulse-волнами Genesis не изобразить.
+
+def fm_ph(ph, ratio=2.0, index=4.0, idx_attack=0.0005, idx_curve=3.0, fb=0.0):
+    m = np.sin(ph * ratio)
+    if fb > 0:
+        m = np.sin(ph * ratio + fb * m)
+    ie = index * env(len(ph), idx_attack, curve=idx_curve)
+    return np.sin(ph + ie * m)
+
+
+def fm(freq, n, ratio=2.0, index=4.0, idx_attack=0.0005, idx_curve=3.0, fb=0.0, vib=0.0, vibrate=6.0):
+    t = np.arange(n) / SR
+    f = freq * (1.0 + vib * np.sin(2 * np.pi * vibrate * t))
+    ph = np.cumsum(2 * np.pi * f / SR)
+    return fm_ph(ph, ratio, index, idx_attack, idx_curve, fb)
+
+
+# Шум на сдвиговом регистре, как в SN76489: при коротком периоде он звенит
+# металлом, а не шипит. Обычный белый шум даёт «песок», а не Genesis.
+def psg_noise(n, rate=16, white=True, seed=0x7FFF):
+    steps_n = n // rate + 2
+    reg = seed & 0x7FFF or 0x7FFF
+    vals = np.empty(steps_n)
+    for i in range(steps_n):
+        if white:
+            bit = (reg ^ (reg >> 1)) & 1
+        else:
+            bit = reg & 1
+        reg = (reg >> 1) | (bit << 14)
+        vals[i] = 1.0 if (reg & 1) else -1.0
+    return np.repeat(vals, rate)[:n]
+
+
+def psg_sweep(n, r0, r1, white=True, seed=0x7FFF, chunks=12):
+    out = np.zeros(n)
+    edges = np.linspace(0, n, chunks + 1).astype(int)
+    for i in range(chunks):
+        a, b = edges[i], edges[i + 1]
+        if b <= a:
+            continue
+        rate = max(1, int(round(r0 + (r1 - r0) * i / max(1, chunks - 1))))
+        out[a:b] = psg_noise(b - a, rate, white, seed + i * 977)
+    return out
