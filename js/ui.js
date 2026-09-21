@@ -57,6 +57,7 @@ function initHTMLUI() {
                 <button class="menu-btn" onclick="showShopBtn('menu')">МАСТЕРСКАЯ</button>
                 <button id="coop-toggle-btn" class="menu-btn" onclick="showCoopPanelBtn()">УПРАВЛЕНИЕ: КЛАВИАТУРА</button>
                 <button id="daily-menu-btn" class="menu-btn" onclick="showDailyBtn()">ЗАДАНИЯ ДНЯ</button>
+                <button id="menu-touch-btn" class="menu-btn" style="display:none;" onclick="showTouchSettingsBtn()">УПРАВЛЕНИЕ</button>
                 <button class="menu-btn" onclick="showKeysBtn()">РАСКЛАДКА</button>
                 <button class="menu-btn" onclick="showAchievementsBtn()">ТРОФЕИ</button>
             </div>
@@ -224,6 +225,17 @@ function initHTMLUI() {
             </div>
         </div>
 
+        <div id="touch-settings-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; flex-direction:column; align-items:center; padding:24px; box-sizing:border-box; overflow-y:auto;">
+            <button class="menu-btn back-btn" onclick="hideTouchSettingsBtn()">НАЗАД</button>
+            <div class="menu-panel" style="width:min(90vw, 100%); max-width:520px;">
+                <div class="menu-eyebrow">ПОД СВОЮ РУКУ</div>
+                <h1 class="menu-title" style="font-size:20px;">УПРАВЛЕНИЕ</h1>
+                <div id="touch-settings-list"></div>
+                <div class="menu-divider"></div>
+                <button class="menu-btn muted" onclick="resetTouchCfg()">СБРОСИТЬ К ИСХОДНЫМ</button>
+            </div>
+        </div>
+
         <div id="pause-screen" class="ui-screen" style="display:none; pointer-events:auto; position:absolute; top:0; left:0; width:100vw; height:100vh; align-items:center; ">
             <div class="menu-panel pause-panel">
                 <div class="menu-eyebrow">ТАЙМЕР ЗАБЕГА ОСТАНОВЛЕН</div>
@@ -233,6 +245,7 @@ function initHTMLUI() {
                 <dl class="keymap" id="pause-keymap"></dl>
                 <div class="menu-divider"></div>
                 <button class="menu-btn primary" onclick="resumeGameBtn()">ОБРАТНО В ВОДУ</button>
+                <button id="pause-touch-btn" class="menu-btn" style="display:none;" onclick="showTouchSettingsBtn()">УПРАВЛЕНИЕ</button>
                 <button class="menu-btn muted" onclick="abandonRunBtn()">БРОСИТЬ ЗАБЕГ</button>
                 <div class="pause-warn" id="pause-warn"></div>
             </div>
@@ -766,6 +779,24 @@ function initHTMLUI() {
         const el = document.getElementById(id);
         if (el) el.addEventListener('touchstart', (e) => { e.preventDefault(); tapKey(code); });
     };
+    window.showTouchSettingsBtn = function () {
+        renderTouchSettings();
+        document.getElementById('touch-settings-screen').style.display = 'flex';
+        resetMenuFocus();
+    };
+    window.hideTouchSettingsBtn = function () {
+        document.getElementById('touch-settings-screen').style.display = 'none';
+        resetMenuFocus();
+    };
+    // Раздел живёт только там, где есть сенсор: на клавиатуре настраивать
+    // нечего, а лишний пункт в меню — это ещё одна строка, которую читают.
+    if (isMobile) {
+        for (const id of ['menu-touch-btn', 'pause-touch-btn']) {
+            const b = document.getElementById(id);
+            if (b) b.style.display = '';
+        }
+    }
+
     const pauseBtn = document.getElementById('btn-pause');
     if (pauseBtn) pauseBtn.addEventListener('touchstart', (e) => { e.preventDefault(); pauseGame(); });
     bindTouchBtn('btn-swap', 'KeyF');
@@ -1043,7 +1074,7 @@ function pauseGame() {
     // Alt-Tab и пауза — одна и та же проблема: без сброса клавиша остаётся зажатой
     resetInputState();
     document.body.classList.remove('is-critical');
-    if (currentBGM) currentBGM.volume = 0.15;
+    if (currentBGM) currentBGM.volume = 0.15 * musicVolume;
     renderPauseScreen();
     const scr = document.getElementById('pause-screen');
     if (scr) scr.style.display = 'flex';
@@ -1054,7 +1085,7 @@ function resumeGame() {
     if (gameState !== 'paused') return;
     const scr = document.getElementById('pause-screen');
     if (scr) scr.style.display = 'none';
-    if (currentBGM) { currentBGM.volume = 0.5; currentBGM.play().catch(() => {}); }
+    if (currentBGM) { currentBGM.volume = 0.5 * musicVolume; currentBGM.play().catch(() => {}); }
     // lastFrameTime отстал на всю паузу; потолок dt в gameLoop гасит скачок,
     // но честнее начать отсчёт заново.
     lastFrameTime = performance.now();
@@ -1066,7 +1097,7 @@ function resumeGame() {
 function abandonRun() {
     const scr = document.getElementById('pause-screen');
     if (scr) scr.style.display = 'none';
-    if (currentBGM) currentBGM.volume = 0.5;
+    if (currentBGM) currentBGM.volume = 0.5 * musicVolume;
     gameState = 'playing';   // triggerGameOver ждёт живой забег
     triggerGameOver();
 }
@@ -1077,7 +1108,7 @@ function abandonRun() {
 
 // Порядок важен: пауза перекрывает всё остальное, лор — самый нижний слой.
 const MENU_SCREENS = [
-    'levelup-screen', 'pause-screen', 'coming-soon-screen', 'part-select-screen', 'shop-screen',
+    'touch-settings-screen', 'levelup-screen', 'pause-screen', 'coming-soon-screen', 'part-select-screen', 'shop-screen',
     'achievements-screen', 'daily-screen', 'keys-screen', 'coop-device-panel', 'lore-screen',
     'game-over-screen', 'win-screen', 'main-menu-screen'
 ];
@@ -1090,6 +1121,7 @@ const MENU_ESCAPE = {
     'daily-screen': 'hideDailyBtn',
     'keys-screen': 'hideKeysBtn',
     'coop-device-panel': 'hideCoopPanelBtn',
+    'touch-settings-screen': 'hideTouchSettingsBtn',
     'lore-screen': 'hideLoreBtn',
     'win-screen': 'winToMenuBtn'
 };

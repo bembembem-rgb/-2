@@ -110,7 +110,7 @@ function setCdBar(el, ratio) {
 // HUD принадлежит забегу. Вне его панели висели поверх меню и магазина
 // и показывали пустые строки: заполнить их нечем, игрока нет.
 let _runUiShown = null;
-let _touchUiShown = null;
+let _touchUiShown = null, _mapShown = null;
 function updateHudVisibility() {
     const on = gameState === 'playing' || gameState === 'paused';
     if (on !== _runUiShown) {
@@ -121,10 +121,17 @@ function updateHudVisibility() {
     // перка и паузы, и тап по карточке уходит в «импульс».
     if (!isMobile) return;
     const fight = gameState === 'playing';
-    if (fight === _touchUiShown) return;
-    _touchUiShown = fight;
-    const jc = document.getElementById('joystick-container');
-    if (jc) jc.style.display = fight ? 'block' : 'none';
+    if (fight !== _touchUiShown) {
+        _touchUiShown = fight;
+        const jc = document.getElementById('joystick-container');
+        if (jc) jc.style.display = fight ? 'block' : 'none';
+    }
+    // Сонар на весь экран — это отдельный экран, а не слой поверх боя:
+    // панели и кнопки на нём только спорят с метками за внимание.
+    if (bigMapOpen !== _mapShown) {
+        _mapShown = bigMapOpen;
+        document.body.classList.toggle('map-open', bigMapOpen);
+    }
 }
 
 // Одна функция на строку способности: и текст, и класс, и полоса. Раньше

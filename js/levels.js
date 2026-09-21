@@ -148,7 +148,7 @@ function openLevelChoice() {
     gameState = 'paused';
     resetInputState();
     document.body.classList.remove('is-critical');
-    if (currentBGM) currentBGM.volume = 0.15;
+    if (currentBGM) currentBGM.volume = 0.15 * musicVolume;
     renderLevelCards();
     const scr = document.getElementById('levelup-screen');
     if (scr) scr.style.display = 'flex';
@@ -161,7 +161,7 @@ function closeLevelChoice() {
     levelChoice = null;
     const scr = document.getElementById('levelup-screen');
     if (scr) scr.style.display = 'none';
-    if (currentBGM) currentBGM.volume = 0.5;
+    if (currentBGM) currentBGM.volume = 0.5 * musicVolume;
     // Пауза выбора не должна прилететь в физику одним куском
     lastFrameTime = performance.now();
     gameState = 'playing';

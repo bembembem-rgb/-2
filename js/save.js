@@ -33,8 +33,8 @@ function loadSave() {
     try {
         const d = JSON.parse(localStorage.getItem(SAVE_KEY));
         if (!d) throw 0;
-        return { bestScore: d.bestScore || 0, bossWins: d.bossWins || {}, runs: Array.isArray(d.runs) ? d.runs : [], achievements: d.achievements || {}, stats: d.stats || { dashCount: 0, legendaries: 0 }, cosmetics: d.cosmetics || {}, wallet: d.wallet || 0, cores: d.cores || 0, unlocks: d.unlocks || {}, depth: d.depth || 1, depthBest: d.depthBest || {}, depthWins: d.depthWins || {}, upgrades: d.upgrades || {}, daily: d.daily || null };
-    } catch { return { bestScore: 0, bossWins: {}, runs: [], achievements: {}, stats: { dashCount: 0 }, cosmetics: {}, wallet: 0, cores: 0, unlocks: {}, depth: 1, depthBest: {}, depthWins: {}, upgrades: {}, daily: null }; }
+        return { bestScore: d.bestScore || 0, bossWins: d.bossWins || {}, runs: Array.isArray(d.runs) ? d.runs : [], achievements: d.achievements || {}, stats: d.stats || { dashCount: 0, legendaries: 0 }, cosmetics: d.cosmetics || {}, wallet: d.wallet || 0, cores: d.cores || 0, unlocks: d.unlocks || {}, depth: d.depth || 1, depthBest: d.depthBest || {}, depthWins: d.depthWins || {}, upgrades: d.upgrades || {}, daily: d.daily || null, touch: d.touch || null };
+    } catch { return { bestScore: 0, bossWins: {}, runs: [], achievements: {}, stats: { dashCount: 0 }, cosmetics: {}, wallet: 0, cores: 0, unlocks: {}, depth: 1, depthBest: {}, depthWins: {}, upgrades: {}, daily: null, touch: null }; }
 }
 let achievementsScreenOpen = false;
 // Открытое за текущий забег. Чистится в initGameCore, читается экраном смерти.

@@ -7,12 +7,21 @@ function mapDist(a, b) {
     return m >= 1000 ? (m / 1000).toFixed(1) + 'К' : Math.round(m) + 'М';
 }
 
+// Сонар перерисовывается не каждый кадр: метки на нём ползут медленно,
+// а на телефоне он рисуется поверх боя и стоил три кадра из пятидесяти.
+let _minimapTick = 0;
 function drawMinimap() {
     const mc = document.getElementById('minimapCanvas');
     if (!mc || !player) return;
+    if (isMobile && (_minimapTick++ % 3) !== 0) return;
     const mctx = mc.getContext('2d');
-    const size = mc.width, cx = size / 2, cy = size / 2, radius = size / 2 - 4;
-    const range = 1600; // мировых пикселей на радиус карты
+    const size = mc.width, cx = size / 2, cy = size / 2;
+    // Метки, шрифт и толщина линий считаются от размера холста: на телефоне
+    // он вчетверо меньше, и фиксированные тройки пикселей превращались там
+    // в пыль, которую не разглядеть.
+    const k = size / (isMobile ? 84 : 160);
+    const radius = size / 2 - 4 * k;
+    const range = isMobile ? 1100 : 1600;
     const scale = Math.min(1, radius / range);
     mctx.clearRect(0, 0, size, size);
     mctx.save();
@@ -34,7 +43,7 @@ function drawMinimap() {
     }
 
     // Кольца дальности — шкала, а не декор. Луч-развёртка убран.
-    mctx.strokeStyle = UI.line; mctx.lineWidth = 1;
+    mctx.strokeStyle = UI.line; mctx.lineWidth = k;
     for (let r = radius / 3; r <= radius; r += radius / 3) { mctx.beginPath(); mctx.arc(cx, cy, r, 0, Math.PI * 2); mctx.stroke(); }
     mctx.beginPath(); mctx.moveTo(cx - radius, cy); mctx.lineTo(cx + radius, cy); mctx.moveTo(cx, cy - radius); mctx.lineTo(cx, cy + radius); mctx.stroke();
 
@@ -59,65 +68,81 @@ function drawMinimap() {
         mctx.beginPath(); mctx.arc(px, py, r, 0, Math.PI * 2); mctx.fill();
     };
 
-    for (const e of enemies) { if (e.type === 'boss') continue; plot(e.x, e.y, UI.red, 3); }
+    for (const e of enemies) { if (e.type === 'boss') continue; plot(e.x, e.y, UI.red, 3 * k); }
     // Транспорт на сонаре был только на большой карте, хотя весь квест
     // именно про то, чтобы до него добежать
-    for (const v of transports) plot(v.x, v.y, v.isQuestVehicle ? UI.gold : UI.amber, 4);
-    if (typeof questVehicle !== 'undefined' && questVehicle && typeof questState !== 'undefined' && questState === 'seeking') plot(questVehicle.x, questVehicle.y, UI.gold, 5);
-    if (typeof extractionPoint !== 'undefined' && extractionPoint) plot(extractionPoint.x, extractionPoint.y, UI.green, 5);
-    if (deepVault) plot(deepVault.x, deepVault.y, deepVault.sealed ? UI.txtMute : UI.magenta, deepVault.sealed ? 3 : 5);
-    if (coopMode && player2 && !player2.downed) plot(player2.x, player2.y, UI.blue, 5);
-    for (const g of groundArtifacts) plot(g.x, g.y, (ARTIFACTS[g.id] || {}).color || UI.gold, 5);
-    if (activeBoss) plot(activeBoss.x, activeBoss.y, UI.red, 7);
+    for (const v of transports) plot(v.x, v.y, v.isQuestVehicle ? UI.gold : UI.amber, 4 * k);
+    if (typeof questVehicle !== 'undefined' && questVehicle && typeof questState !== 'undefined' && questState === 'seeking') plot(questVehicle.x, questVehicle.y, UI.gold, 5 * k);
+    if (typeof extractionPoint !== 'undefined' && extractionPoint) plot(extractionPoint.x, extractionPoint.y, UI.green, 5 * k);
+    if (deepVault) plot(deepVault.x, deepVault.y, deepVault.sealed ? UI.txtMute : UI.magenta, (deepVault.sealed ? 3 : 5) * k);
+    if (coopMode && player2 && !player2.downed) plot(player2.x, player2.y, UI.blue, 5 * k);
+    for (const g of groundArtifacts) plot(g.x, g.y, (ARTIFACTS[g.id] || {}).color || UI.gold, 5 * k);
+    if (activeBoss) plot(activeBoss.x, activeBoss.y, UI.red, 7 * k);
 
     // Игрок в центре. Поворот берётся с прицела: поля angle у пешего бойца
     // нет вовсе, и стрелка годами показывала строго вправо.
     mctx.save(); mctx.translate(cx, cy);
     mctx.rotate(player.inVehicle && player.currentVehicle ? player.currentVehicle.angle : getP1AimAngle());
     mctx.fillStyle = UI.cyan;
-    mctx.beginPath(); mctx.moveTo(8, 0); mctx.lineTo(-6, -6); mctx.lineTo(-6, 6); mctx.closePath(); mctx.fill();
+    mctx.beginPath(); mctx.moveTo(8 * k, 0); mctx.lineTo(-6 * k, -6 * k); mctx.lineTo(-6 * k, 6 * k); mctx.closePath(); mctx.fill();
     mctx.restore();
 
     mctx.restore();
 
-    mctx.strokeStyle = UI.line; mctx.lineWidth = 2;
+    mctx.strokeStyle = isMobile ? UI.cyan : UI.line; mctx.lineWidth = 2 * k;
+    mctx.globalAlpha = isMobile ? 0.55 : 1;
     mctx.beginPath(); mctx.arc(cx, cy, radius, 0, Math.PI * 2); mctx.stroke();
-    // Радиус сонара цифрой: без него кольца — просто узор
-    mctx.font = '8px monospace'; mctx.fillStyle = UI.txtMute; mctx.textAlign = 'center';
-    mctx.fillText(Math.round(range / MAP_PX_PER_M) + 'М', cx, size - 2);
+    mctx.globalAlpha = 1;
+    // Радиус сонара цифрой: без него кольца — просто узор. На телефоне
+    // подписи нет — на восьмидесяти пикселях её всё равно не прочесть.
+    if (!isMobile) {
+        mctx.font = '8px monospace'; mctx.fillStyle = UI.txtMute; mctx.textAlign = 'center';
+        mctx.fillText(Math.round(range / MAP_PX_PER_M) + 'М', cx, size - 2);
+    }
 }
 
-// --- БОЛЬШАЯ КАРТА (R1 / M) ---
+// --- БОЛЬШАЯ КАРТА: ГЛУБИННЫЙ СОНАР ---
+// Квадратный лист карты здесь врал дважды: по углам он показывал дальше,
+// чем по сторонам, и на телефоне от него оставалась полоска. Диск честнее —
+// до края одинаково далеко в любую сторону, и он же влезает в любой экран.
+
+const SONAR_GOAL_R = 26;
+
+function sonarGeometry() {
+    const w = canvas.width, h = canvas.height;
+    const pad = isMobile ? 40 : 56;
+    const radius = Math.min(w, h) / 2 - pad;
+    return { cx: w / 2, cy: h / 2 + (isMobile ? 10 : 0), radius, w, h };
+}
+
 function drawBigMap() {
     if (!player) return;
-    const time = performance.now();
-    const side = Math.min(canvas.width, canvas.height) * 0.9;
-    const ox = (canvas.width - side) / 2, oy = (canvas.height - side) / 2;
-    const range = 5200; // мировых пикселей от центра до края карты
-    const scale = (side / 2) / range;
+    const { cx, cy, radius, w, h } = sonarGeometry();
+    if (radius < 60) return;
+    const range = 5200;
+    const scale = radius / range;
 
     let ccx = player.x, ccy = player.y;
     if (coopMode && player2 && !player2.downed) { ccx = (player.x + player2.x) / 2; ccy = (player.y + player2.y) / 2; }
+    const toX = (wx) => cx + (wx - ccx) * scale;
+    const toY = (wy) => cy + (wy - ccy) * scale;
 
     ctx.save();
-    ctx.fillStyle = 'rgba(5,8,14,0.92)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(5,8,14,0.94)';
+    ctx.fillRect(0, 0, w, h);
 
-    ctx.beginPath(); ctx.rect(ox, oy, side, side); ctx.clip();
-    ctx.fillStyle = UI.panel; ctx.fillRect(ox, oy, side, side);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.clip();
+    ctx.fillStyle = UI.panel;
+    ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
 
-    const toX = (wx) => ox + side / 2 + (wx - ccx) * scale;
-    const toY = (wy) => oy + side / 2 + (wy - ccy) * scale;
-
-    // сетка
-    ctx.strokeStyle = 'rgba(33,65,79,0.55)'; ctx.lineWidth = 1;
-    const gridStep = 400 * scale;
+    ctx.strokeStyle = 'rgba(33,65,79,0.5)'; ctx.lineWidth = 1;
+    const step = 400 * scale;
     const gx0 = toX(Math.floor((ccx - range) / 400) * 400);
-    for (let x = gx0; x < ox + side; x += gridStep) { ctx.beginPath(); ctx.moveTo(x, oy); ctx.lineTo(x, oy + side); ctx.stroke(); }
+    for (let x = gx0; x < cx + radius; x += step) { ctx.beginPath(); ctx.moveTo(x, cy - radius); ctx.lineTo(x, cy + radius); ctx.stroke(); }
     const gy0 = toY(Math.floor((ccy - range) / 400) * 400);
-    for (let y = gy0; y < oy + side; y += gridStep) { ctx.beginPath(); ctx.moveTo(ox, y); ctx.lineTo(ox + side, y); ctx.stroke(); }
+    for (let y = gy0; y < cy + radius; y += step) { ctx.beginPath(); ctx.moveTo(cx - radius, y); ctx.lineTo(cx + radius, y); ctx.stroke(); }
 
-    // препятствия и стены аванпоста
     ctx.fillStyle = 'rgba(33,65,79,0.9)';
     for (const obs of obstacles.values()) if (obs) ctx.fillRect(toX(obs.x), toY(obs.y), Math.max(2, obs.w * scale), Math.max(2, obs.h * scale));
     for (const obs of customObstacles) {
@@ -125,35 +150,26 @@ function drawBigMap() {
         ctx.fillRect(toX(obs.x), toY(obs.y), Math.max(2, obs.w * scale), Math.max(2, obs.h * scale));
     }
 
-    // Вес метки = её важность. Свечение не используется.
     const dot = (wx, wy, color, r) => {
         ctx.fillStyle = color;
         ctx.beginPath(); ctx.arc(toX(wx), toY(wy), r, 0, Math.PI * 2); ctx.fill();
     };
+    const ring = (wx, wy, color, wr, dash) => {
+        ctx.strokeStyle = color; ctx.lineWidth = 2;
+        if (dash) ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.arc(toX(wx), toY(wy), Math.max(6, wr * scale), 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+    };
 
     for (const e of enemies) { if (e.type !== 'boss') dot(e.x, e.y, UI.red, 3); }
     for (const v of transports) dot(v.x, v.y, v.isQuestVehicle ? UI.gold : UI.amber, 5);
+    for (const g of groundArtifacts) dot(g.x, g.y, (ARTIFACTS[g.id] || {}).color || UI.gold, 5);
     if (activeBoss) dot(activeBoss.x, activeBoss.y, UI.red, 9);
-
-    if (extractionPoint) {
-        ctx.strokeStyle = UI.green; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(toX(extractionPoint.x), toY(extractionPoint.y), Math.max(6, extractionPoint.radius * scale), 0, Math.PI * 2); ctx.stroke();
-    }
-    if (deepVault) {
-        ctx.strokeStyle = deepVault.sealed ? UI.txtMute : UI.magenta; ctx.lineWidth = 2;
-        if (deepVault.sealed) ctx.setLineDash([5, 5]);
-        ctx.beginPath(); ctx.arc(toX(deepVault.x), toY(deepVault.y), Math.max(6, deepVault.radius * scale), 0, Math.PI * 2); ctx.stroke();
-        ctx.setLineDash([]);
-    }
-    if (questOutpost) {
-        ctx.strokeStyle = UI.line; ctx.lineWidth = 1; ctx.setLineDash([6, 6]);
-        ctx.beginPath(); ctx.arc(toX(questOutpost.x), toY(questOutpost.y), questOutpost.r * scale, 0, Math.PI * 2); ctx.stroke();
-        ctx.setLineDash([]);
-    }
+    if (extractionPoint) ring(extractionPoint.x, extractionPoint.y, UI.green, extractionPoint.radius);
+    if (deepVault) ring(deepVault.x, deepVault.y, deepVault.sealed ? UI.txtMute : UI.magenta, deepVault.radius, deepVault.sealed);
+    if (questOutpost) { ctx.strokeStyle = UI.line; ctx.lineWidth = 1; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.arc(toX(questOutpost.x), toY(questOutpost.y), questOutpost.r * scale, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
 
     dot(player.x, player.y, UI.cyan, 7);
-    // Куда смотрит игрок. Точка без направления не говорит, в какую
-    // сторону он побежит, если отпустить карту.
     ctx.save();
     ctx.translate(toX(player.x), toY(player.y));
     ctx.rotate(player.inVehicle && player.currentVehicle ? player.currentVehicle.angle : getP1AimAngle());
@@ -161,72 +177,78 @@ function drawBigMap() {
     ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(7, -5); ctx.lineTo(7, 5); ctx.closePath(); ctx.fill();
     ctx.restore();
     if (coopMode && player2) dot(player2.x, player2.y, player2.downed ? UI.txtMute : UI.blue, 7);
-
     ctx.restore();
 
-    // Цели за краем карты. Раньше их просто не было видно: пока эвакуация
-    // не попадёт в квадрат, карта молчала о том, что она вообще есть.
+    // Кольца дальности и подписи к ним: без цифр круг остаётся узором.
+    ctx.strokeStyle = UI.line; ctx.lineWidth = 1;
+    ctx.font = "9px 'JetBrains Mono', monospace"; ctx.textAlign = 'center';
+    for (let k = 1; k <= 3; k++) {
+        const r = radius * k / 3;
+        ctx.globalAlpha = k === 3 ? 1 : 0.45;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = UI.txtMute;
+        ctx.fillText(Math.round(range * k / 3 / MAP_PX_PER_M) + 'М', cx, cy - r + 12);
+    }
+    // Засечки по ободу вместо рамки: они же дают чувство направления.
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 12) {
+        const long = Math.abs(a % (Math.PI / 2)) < 0.01;
+        const r1 = radius, r2 = radius + (long ? 9 : 4);
+        ctx.strokeStyle = long ? UI.txtDim : UI.line;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+        ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+        ctx.stroke();
+    }
+
+    // Цели: те, что за краем, садятся на обод стрелкой; те, что внутри,
+    // получают подпись с дальностью рядом с меткой.
     const goals = [];
     if (extractionPoint) goals.push([extractionPoint, UI.green, 'ЭВАКУАЦИЯ']);
     if (deepVault && !deepVault.sealed) goals.push([deepVault, UI.magenta, 'ШЛЮЗ']);
     if (typeof questVehicle !== 'undefined' && questVehicle && questState === 'seeking') goals.push([questVehicle, UI.gold, 'КВЕСТ']);
     if (activeBoss) goals.push([activeBoss, UI.red, 'БОСС']);
-    ctx.save();
     ctx.font = "9px 'JetBrains Mono', monospace"; ctx.textAlign = 'center';
-    const mx = ox + side / 2, my = oy + side / 2, lim = side / 2 - 22;
     for (const [g, color, label] of goals) {
         const gx = toX(g.x), gy = toY(g.y);
-        const inside = gx > ox + 4 && gx < ox + side - 4 && gy > oy + 4 && gy < oy + side - 4;
+        const d = Math.hypot(gx - cx, gy - cy);
         const dist = mapDist(player, g);
-        if (inside) {
-            ctx.fillStyle = UI.txtDim;
-            ctx.fillText(dist, gx, gy - 12);
+        if (d < radius - 10) {
+            ctx.fillStyle = color; ctx.fillText(label, gx, gy - 20);
+            ctx.fillStyle = UI.txtDim; ctx.fillText(dist, gx, gy - 9);
             continue;
         }
-        // Метку кладём на границу квадрата по направлению к цели
-        const a = Math.atan2(gy - my, gx - mx);
-        const k = Math.min(lim / Math.abs(Math.cos(a) || 1e-6), lim / Math.abs(Math.sin(a) || 1e-6));
-        const ex = mx + Math.cos(a) * k, ey = my + Math.sin(a) * k;
+        const a = Math.atan2(gy - cy, gx - cx);
+        const ex = cx + Math.cos(a) * (radius - 10), ey = cy + Math.sin(a) * (radius - 10);
         ctx.save();
         ctx.translate(ex, ey); ctx.rotate(a);
         ctx.fillStyle = color;
         ctx.beginPath(); ctx.moveTo(10, 0); ctx.lineTo(-6, -7); ctx.lineTo(-6, 7); ctx.closePath(); ctx.fill();
         ctx.restore();
-        ctx.fillStyle = color;
-        ctx.fillText(label, ex - Math.cos(a) * 26, ey - Math.sin(a) * 26 - 4);
-        ctx.fillStyle = UI.txtDim;
-        ctx.fillText(dist, ex - Math.cos(a) * 26, ey - Math.sin(a) * 26 + 8);
+        const lx = cx + Math.cos(a) * (radius - SONAR_GOAL_R - 12), ly = cy + Math.sin(a) * (radius - SONAR_GOAL_R - 12);
+        ctx.fillStyle = color; ctx.fillText(label, lx, ly - 4);
+        ctx.fillStyle = UI.txtDim; ctx.fillText(dist, lx, ly + 8);
     }
-    ctx.restore();
 
-    // рамка и подписи
-    ctx.save();
-    ctx.strokeStyle = UI.line; ctx.lineWidth = 1;
-    ctx.strokeRect(ox + 0.5, oy + 0.5, side - 1, side - 1);
-    ctx.font = "12px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.txt; ctx.textAlign = 'left';
-    ctx.fillText('ТАКТИЧЕСКАЯ КАРТА', ox, oy - 14);
-    ctx.textAlign = 'right'; ctx.fillStyle = UI.txtDim; ctx.font = "10px 'JetBrains Mono', monospace";
-    ctx.fillText('[R1] / [M] — ЗАКРЫТЬ', ox + side, oy - 14);
+    ctx.textAlign = 'center';
+    ctx.font = (isMobile ? "11px" : "13px") + " 'JetBrains Mono', monospace";
+    ctx.fillStyle = UI.txt;
+    ctx.fillText('ГЛУБИННЫЙ СОНАР', cx, cy - radius - (isMobile ? 18 : 26));
+    ctx.font = "9px 'JetBrains Mono', monospace"; ctx.fillStyle = UI.txtMute;
+    ctx.fillText(isMobile ? 'ТАП — ЗАКРЫТЬ' : '[M] — ЗАКРЫТЬ', cx, cy + radius + (isMobile ? 22 : 28));
 
-    // Линейка масштаба: без неё квадрат карты не говорит, далеко ли
-    // «вон та точка в углу» — километр или десять шагов.
-    const barWorld = 1000;                       // мировых пикселей в линейке
-    const barPx = barWorld * scale;
-    const bx = ox + side - barPx - 12, by = oy + side - 14;
-    ctx.strokeStyle = UI.txtDim; ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(bx, by - 5); ctx.lineTo(bx, by); ctx.lineTo(bx + barPx, by); ctx.lineTo(bx + barPx, by - 5);
-    ctx.stroke();
-    ctx.textAlign = 'center'; ctx.fillStyle = UI.txtDim; ctx.font = "9px 'JetBrains Mono', monospace";
-    ctx.fillText(Math.round(barWorld / MAP_PX_PER_M) + 'М', bx + barPx / 2, by - 8);
-
-    const legend = [[UI.cyan, 'P1'], [UI.blue, 'P2'], [UI.gold, 'КВЕСТ'], [UI.amber, 'ТРАНСПОРТ'], [UI.green, 'ЭВАКУАЦИЯ'], [UI.magenta, 'ШЛЮЗ'], [UI.red, 'БОСС']];
-    ctx.textAlign = 'left'; ctx.font = "10px 'JetBrains Mono', monospace";
-    let lx = ox, ly = oy + side + 22;
-    legend.forEach(([c, label]) => {
-        ctx.fillStyle = c; ctx.fillRect(lx, ly - 8, 8, 8);
-        ctx.fillStyle = UI.txtDim; ctx.fillText(label, lx + 14, ly);
-        lx += 14 + ctx.measureText(label).width + 24;
-    });
+    if (!isMobile) {
+        const legend = [[UI.cyan, 'P1'], [UI.gold, 'КВЕСТ'], [UI.amber, 'ТРАНСПОРТ'], [UI.green, 'ЭВАКУАЦИЯ'], [UI.magenta, 'ШЛЮЗ'], [UI.red, 'ВРАГ']];
+        ctx.font = "10px 'JetBrains Mono', monospace"; ctx.textAlign = 'left';
+        let lw = 0;
+        for (const [, label] of legend) lw += 14 + ctx.measureText(label).width + 22;
+        let lx = cx - lw / 2;
+        const ly = cy + radius + 46;
+        for (const [c, label] of legend) {
+            ctx.fillStyle = c; ctx.fillRect(lx, ly - 8, 8, 8);
+            ctx.fillStyle = UI.txtDim; ctx.fillText(label, lx + 14, ly);
+            lx += 14 + ctx.measureText(label).width + 22;
+        }
+    }
     ctx.restore();
 }

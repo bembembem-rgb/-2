@@ -5,7 +5,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 // среднего класса отдаёт 17 кадров вместо 60. Мелочи (пули, частицы,
 // рядовые враги) его лишаются, крупное (игрок, босс, точка эвакуации)
 // оставляет: их на экране единицы, и именно они держат картинку.
-const GLOW_MANY = isMobile ? 0 : 1;
+let GLOW_MANY = isMobile ? 0 : 1;
 const GLOW_BIG = 1;
 
 // --- ГЛОБАЛЬНЫЕ СОСТОЯНИЯ ---
@@ -20,7 +20,10 @@ let audioUnlocked = false;
 let leftJoy = { active: false, dx: 0, dy: 0, originX: 0, originY: 0, touchId: null, startX: 0, startY: 0, downAt: 0, lastTapAt: 0, moved: 0 };
 let rightJoy = { active: false, dx: 0, dy: 0, originX: 0, originY: 0, touchId: null, startX: 0, startY: 0, downAt: 0, lastTapAt: 0, moved: 0 };
 // Порог радиуса стика в пикселях и параметры распознавания тапа
-const JOY_RADIUS = 56, TAP_SLOP = 14, TAP_TIME = 260, DOUBLE_TAP_GAP = 320;
+let JOY_RADIUS = 56;
+const TAP_SLOP = 14, TAP_TIME = 260, DOUBLE_TAP_GAP = 320;
+// Громкость из настроек: playSFX и playBGM умножают на неё свои значения.
+let musicVolume = 0.5, sfxVolume = 0.7;
 // Рядом ли транспорт — от этого зависит контекстная кнопка на телефоне
 let nearVehicleNow = false;
 let mouse = { screenX: window.innerWidth / 2, screenY: window.innerHeight / 2, worldX: 0, worldY: 0 };

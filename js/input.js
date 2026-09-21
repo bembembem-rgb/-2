@@ -2,6 +2,23 @@ function initMobileControls() {
     if (!isMobile) return;
     const joyCont = document.getElementById('joystick-container');
     if (joyCont) joyCont.style.display = 'block';
+    // Сонар переезжает внутрь панели здоровья: своим углом он на телефоне
+    // не распоряжается — снизу пальцы, сверху счёт. Клавиши [C] там нет,
+    // поэтому он просто всегда включён, а тап разворачивает его на экран.
+    const mm = document.getElementById('minimap-wrap');
+    const panel = document.getElementById('ui-container');
+    if (mm && panel) {
+        panel.appendChild(mm);
+        mm.style.display = 'block';
+        const mc = document.getElementById('minimapCanvas');
+        // Холст под фактический размер, с запасом на плотность экрана:
+        // 160 пикселей, ужатые до 84, превращали метки в мыло.
+        if (mc) { const px = 84 * Math.min(2, window.devicePixelRatio || 1); mc.width = px; mc.height = px; }
+        mm.addEventListener('touchstart', (e) => {
+            e.preventDefault(); e.stopPropagation();
+            if (gameState === 'playing') bigMapOpen = true;
+        }, { passive: false });
+    }
     // Класс на <body>, а не медиазапрос: узкое окно на ноутбуке — это всё ещё
     // клавиатура, и прятать по ширине строки про клавиши там было бы неверно.
     document.body.classList.add('is-mobile');
@@ -63,9 +80,31 @@ function getPlayer1Gamepad() {
     return (gp && gp.connected) ? gp : null;
 }
 
+// Самоприцел на телефоне: пока палец не на стике прицела, ствол сам
+// ведёт ближайшую цель. Два пальца на стиках не оставляют руки ни на
+// что другое, и без этого телефон играется вдвое тяжелее мыши.
+let touchAutoTarget = { lockedEnemy: null, lockAt: 0 };
+let _autoAimFrame = -1, _autoAimAngle = null;
+function touchAutoAim() {
+    if (!isMobile || !touchCfg.autoFire || rightJoy.active || !player) return null;
+    // Захват считается один раз за кадр: его зовут и прицел, и огонь,
+    // а повторный вызов дёргал бы цель туда-обратно на каждом кадре.
+    if (_autoAimFrame === lastFrameTime) return _autoAimAngle;
+    _autoAimFrame = lastFrameTime;
+    const e = acquireTarget(touchAutoTarget, player.x, player.y, 720);
+    _autoAimAngle = e ? Math.atan2(e.y - player.y, e.x - player.x) : null;
+    return _autoAimAngle;
+}
+
+function touchAutoFiring() {
+    return touchAutoAim() !== null;
+}
+
 function getP1AimAngle() {
     if (p1GamepadAimAngle !== null) return p1GamepadAimAngle;
     if (isMobile && rightJoy.active) return Math.atan2(rightJoy.dy, rightJoy.dx);
+    const auto = touchAutoAim();
+    if (auto !== null) return auto;
     return Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
 }
 

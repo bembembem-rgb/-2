@@ -247,7 +247,7 @@ function update(dt) {
         if (player.gunRecoil < 0) player.gunRecoil = 0;
         if (player.weaponCooldown > 0) player.weaponCooldown -= dt;
 
-        if ((isShooting || p1GamepadShooting) && player.weaponCooldown <= 0 && !player.isDashing && !player.downed) {
+        if ((isShooting || p1GamepadShooting || touchAutoFiring()) && player.weaponCooldown <= 0 && !player.isDashing && !player.downed) {
             let aimAngle = getP1AimAngle();
             if (player.currentWeapon === 1) { 
                 for (const ang of overloadAngles(aimAngle)) projectiles.push(overloadArm(artOnShot(new PlayerVFXProjectile(player.x, player.y, ang, 15, 1, p1Dmg()))));
@@ -320,7 +320,7 @@ function update(dt) {
         
         // С геймпада мыши нет — турель наводится на ближайшего врага (как и пеший автоприцел)
         const vAim = (p1GamepadAimAngle !== null) ? p1GamepadAimAngle : Math.atan2(mouse.worldY - v.y, mouse.worldX - v.x);
-        const vFiring = isShooting || p1GamepadShooting;
+        const vFiring = isShooting || p1GamepadShooting || touchAutoFiring();
 
         if (v.type === 'tank') {
             let diff = vAim - v.turretAngle;

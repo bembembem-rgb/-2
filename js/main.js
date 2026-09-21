@@ -57,12 +57,18 @@ function joyUp(joy) {
 window.addEventListener('touchstart', (e) => {
     if (gameState === 'click_to_start') { enterFromStartGate(); return; }
     if (gameState !== 'playing') return;
+    // Сонар на весь экран закрывается тем же пальцем, которым открылся,
+    // и до стиков дело не доходит: иначе герой рванул бы в сторону тапа.
+    if (bigMapOpen) { bigMapOpen = false; return; }
     for (let t of e.changedTouches) {
         if (t.target.closest && t.target.closest('button, .tap-btn, .touch-btn')) continue;
-        if (t.clientX < window.innerWidth / 2 && !leftJoy.active) {
-            if (joyDown(leftJoy, t) && player && !player.downed && !player.inVehicle && player.dashCooldown <= 0) tapKey('ShiftLeft');
-        } else if (t.clientX >= window.innerWidth / 2 && !rightJoy.active) {
-            if (joyDown(rightJoy, t) && player && !player.downed && !player.inVehicle && player.parryReady) tapKey('Space');
+        // Какая половина за что отвечает, решает настройка «рука».
+        const joy = joyForTouch(t.clientX);
+        if (joy.active) continue;
+        if (joy === leftJoy) {
+            if (joyDown(leftJoy, t) && player && !player.downed && !player.inVehicle && player.dashCooldown <= 0) { tapKey('ShiftLeft'); buzz(14); }
+        } else {
+            if (joyDown(rightJoy, t) && player && !player.downed && !player.inVehicle && player.parryReady) { tapKey('Space'); buzz(22); }
             isShooting = true;
         }
     }
@@ -247,6 +253,7 @@ function enterFromStartGate() {
 
 readLinkSeed();
 initHTMLUI();
+loadTouchCfg();
 requestAnimationFrame(gameLoop);
 
 // --- DEBUG: КОНСОЛЬНЫЙ СПАВН БОССОВ ---

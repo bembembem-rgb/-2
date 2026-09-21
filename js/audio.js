@@ -83,7 +83,7 @@ function playBGM(track) {
     }
     if (currentBGM) { currentBGM.pause(); currentBGM.currentTime = 0; }
     currentBGM = track;
-    currentBGM.volume = 0.5;
+    currentBGM.volume = 0.5 * musicVolume;
     currentBGM.play().catch(e => console.warn("Audio error:", e));
 }
 
@@ -101,7 +101,8 @@ function playSFX(sound, volume = 0.5, startAt = 0, vary = 0) {
     const b = SFX_BANKS.get(sound);
     if (b) { sound = b.list[b.i]; b.i = (b.i + 1) % b.list.length; }
     const clone = sound.cloneNode();
-    clone.volume = volume;
+    clone.volume = Math.max(0, Math.min(1, volume * sfxVolume));
+    if (clone.volume <= 0) return clone;
     if (vary > 0 || rate !== 1) {
         if ('preservesPitch' in clone) clone.preservesPitch = false;
         if ('mozPreservesPitch' in clone) clone.mozPreservesPitch = false;

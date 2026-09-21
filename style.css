@@ -1668,8 +1668,31 @@ body.is-mobile #p2-ui-container { display: none !important; }
 }
 
 body.is-mobile #minimap-hint,
-body.is-mobile #minimap-wrap,
 body.is-mobile #p2-ui-container { display: none !important; }
+
+/* Сонар внутри панели здоровья: без рамки и фона — коробка в коробке
+   выглядела бы вложенным окном, а места на телефоне нет. */
+body.is-mobile #minimap-wrap {
+    position: static;
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 4px;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    clip-path: none;
+    opacity: 1;
+    visibility: inherit;
+    transform: none;
+}
+body.is-mobile #minimap-wrap::before,
+body.is-mobile #minimap-wrap::after { content: none; }
+body.is-mobile #minimapCanvas {
+    display: block;
+    width: 84px;
+    height: 84px;
+}
 
 body.is-mobile #ui-container {
     left: calc(12px + env(safe-area-inset-left));
@@ -1884,3 +1907,66 @@ body.is-mobile #go-title { font-size: 22px !important; margin-bottom: 12px !impo
     .lore-container { height: 58vh; }
     #lore-screen .menu-btn { min-height: 38px; }
 }
+
+/* Пока сонар развёрнут, HUD уходит: метки на диске и так тесно. */
+body.map-open #ui-container,
+body.map-open #score-container,
+body.map-open #top-center-hud,
+body.map-open #touch-pad,
+body.map-open #touch-hint,
+body.map-open #dive-choice,
+body.map-open #contract-offer { opacity: 0; pointer-events: none; }
+body.map-open #btn-pause { opacity: 0.25; }
+
+/* ============================================================
+   НАСТРОЙКИ УПРАВЛЕНИЯ
+   ============================================================ */
+
+.set-row { padding: 12px 0; border-bottom: 1px dashed var(--line-dim); }
+.set-row:last-child { border-bottom: 0; }
+.set-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.set-title { font-size: var(--fs-sm); letter-spacing: 1.5px; color: var(--txt); }
+.set-val { font-size: var(--fs-sm); color: var(--cyan); }
+.set-note { margin-top: 8px; font-size: 11px; line-height: 1.6; color: var(--txt-mute); }
+
+.set-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.set-opt {
+    flex: 1 1 auto;
+    min-width: 96px;
+    min-height: 44px;
+    padding: 10px 12px;
+    font-family: var(--font-ui);
+    font-size: var(--fs-sm);
+    letter-spacing: 1px;
+    color: var(--txt-dim);
+    background: rgba(0, 224, 255, 0.05);
+    border: 1px solid var(--line-dim);
+    cursor: pointer;
+    transition: background 110ms linear, color 110ms linear, border-color 110ms linear;
+}
+.set-opt.is-on {
+    color: #02080c;
+    background: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.set-steps { display: flex; gap: 5px; }
+.set-step {
+    flex: 1 1 0;
+    height: 34px;
+    padding: 0;
+    background: rgba(0, 224, 255, 0.06);
+    border: 1px solid var(--line-dim);
+    cursor: pointer;
+}
+.set-step.is-on { background: var(--cyan); border-color: var(--cyan); }
+
+/* Размер HUD из настроек. Меняется только на телефоне: на десктопе
+   панели и так стоят по углам большого экрана. */
+body.is-mobile #ui-container,
+body.is-mobile #score-container { font-size: calc(var(--fs-sm) * var(--hud-scale, 1)); }
+body.is-mobile #ui-container .status-line { font-size: calc(9px * var(--hud-scale, 1)); }
+body.is-mobile #score { font-size: calc(14px * var(--hud-scale, 1)); }
+body.is-mobile .hp-square { width: calc(17px * var(--hud-scale, 1)); height: calc(17px * var(--hud-scale, 1)); }
+body.is-mobile .touch-btn { width: calc(64px * var(--hud-scale, 1)); height: calc(64px * var(--hud-scale, 1)); }
+body.is-mobile .touch-pause { width: 46px !important; height: 46px !important; }
