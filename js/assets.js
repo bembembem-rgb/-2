@@ -12,8 +12,14 @@ function assetLoaded() {
 
 function loadImg(src, onloadCallback) {
     const img = new Image();
+    let retried = false;
     img.onload = () => { if (onloadCallback) onloadCallback(); assetLoaded(); };
-    img.onerror = () => { console.warn(`Файл не найден: ${src}`); assetLoaded(); };
+    img.onerror = () => {
+        const alt = retried ? null : altPath(src);
+        if (alt) { retried = true; img.src = alt; return; }
+        noteMissing(src.split('/').pop());
+        assetLoaded();
+    };
     img.src = src;
     return img;
 }

@@ -1,12 +1,25 @@
 // --- МЕНЕДЖЕР АУДИО ---
-const bgmMenu = new Audio('menu_bg.mp3'); bgmMenu.loop = true;
-const bgmFight = new Audio('fight.mp3'); bgmFight.loop = true;
-const bgmBoss1 = new Audio('boss1.mp3'); bgmBoss1.loop = true;
-const bgmBoss2 = new Audio('boss2.mp3'); bgmBoss2.loop = true;
-const bgmBoss3 = new Audio('boss3.mp3'); bgmBoss3.loop = true;
-const bgmBoss4 = new Audio('boss4.mp3'); bgmBoss4.loop = true;
-const bgmBoss5 = new Audio('boss5.mp3'); bgmBoss5.loop = true;
-const bgmFinale = new Audio('finale.mp3'); bgmFinale.loop = false;
+
+// Тот же приём, что и у картинок: не нашли файл в подпапке — пробуем
+// рядом с index.html, и наоборот. Раскладка папок у всех разъезжается.
+function mkAudio(src) {
+    const a = new Audio(src);
+    let retried = false;
+    a.addEventListener('error', () => {
+        const alt = retried ? null : altPath(src);
+        if (alt) { retried = true; a.src = alt; a.load(); return; }
+        noteMissing(src.split('/').pop());
+    });
+    return a;
+}
+const bgmMenu = mkAudio('menu_bg.mp3'); bgmMenu.loop = true;
+const bgmFight = mkAudio('fight.mp3'); bgmFight.loop = true;
+const bgmBoss1 = mkAudio('boss1.mp3'); bgmBoss1.loop = true;
+const bgmBoss2 = mkAudio('boss2.mp3'); bgmBoss2.loop = true;
+const bgmBoss3 = mkAudio('boss3.mp3'); bgmBoss3.loop = true;
+const bgmBoss4 = mkAudio('boss4.mp3'); bgmBoss4.loop = true;
+const bgmBoss5 = mkAudio('boss5.mp3'); bgmBoss5.loop = true;
+const bgmFinale = mkAudio('finale.mp3'); bgmFinale.loop = false;
 
 // Банк вариантов. Игра зовёт звук одним именем, а playSFX сама подставляет
 // следующий файл: иначе про варианты пришлось бы знать каждому вызову
@@ -14,7 +27,7 @@ const bgmFinale = new Audio('finale.mp3'); bgmFinale.loop = false;
 // (vary) её не меняет — спасает именно другой файл.
 const SFX_BANKS = new Map();
 function sfxBank(files) {
-    const list = files.map(f => new Audio(f));
+    const list = files.map(f => mkAudio(f));
     const b = { list, i: 0 };
     for (const a of list) SFX_BANKS.set(a, b);
     return list[0];
@@ -29,7 +42,7 @@ const sfxAlt         = sfxBank(['sfx/shot_alt_1.mp3', 'sfx/shot_alt_2.mp3', 'sfx
 const sfxRocket      = sfxBank(['sfx/rocket_launch_1.mp3', 'sfx/rocket_launch_2.mp3']);
 const sfxVehicleBoom = sfxBank(['sfx/boom_1.mp3', 'sfx/boom_2.mp3', 'sfx/boom_3.mp3']);
 
-const sfxAchievement = new Audio('sfx/achievement_1.mp3');
+const sfxAchievement = mkAudio('sfx/achievement_1.mp3');
 const sfxParryShield = sfxBank(['sfx/parry_up_1.mp3', 'sfx/parry_up_2.mp3']);
 const sfxParryDone   = sfxBank(['sfx/parry_hit_1.mp3', 'sfx/parry_hit_2.mp3']);
 const sfxDash        = sfxBank(['sfx/dash_1.mp3', 'sfx/dash_2.mp3', 'sfx/dash_3.mp3']);
@@ -38,7 +51,7 @@ const sfxUiNav       = sfxBank(['sfx/ui_1.mp3', 'sfx/ui_2.mp3', 'sfx/ui_3.mp3'])
 const sfxHurt        = sfxBank(['sfx/hurt_1.mp3', 'sfx/hurt_2.mp3', 'sfx/hurt_3.mp3']);
 const sfxEnemyDeath  = sfxBank(['sfx/enemy_death_1.mp3', 'sfx/enemy_death_2.mp3',
                                 'sfx/enemy_death_3.mp3', 'sfx/enemy_death_4.mp3']);
-const sfxLose        = new Audio('sfx/lose_1.mp3');
+const sfxLose        = mkAudio('sfx/lose_1.mp3');
 const sfxSurge       = sfxBank(['sfx/surge_1.mp3', 'sfx/surge_2.mp3']);
 const sfxPulse       = sfxBank(['sfx/pulse_1.mp3', 'sfx/pulse_2.mp3']);
 const sfxGlitch      = sfxBank(['sfx/glitch_1.mp3', 'sfx/glitch_2.mp3']);
@@ -49,7 +62,13 @@ const sfxGlitch      = sfxBank(['sfx/glitch_1.mp3', 'sfx/glitch_2.mp3']);
 const SFX_FALLBACK = new Map();
 function sfxFallback(src, alt, rate = 1) {
     const a = new Audio(src);
-    a.addEventListener('error', () => SFX_FALLBACK.set(a, { alt, rate }), { once: true });
+    let retried = false;
+    a.addEventListener('error', () => {
+        const other = retried ? null : altPath(src);
+        if (other) { retried = true; a.src = other; a.load(); return; }
+        noteMissing(src.split('/').pop());
+        SFX_FALLBACK.set(a, { alt, rate });
+    });
     return a;
 }
 // Единственный звук, оставшийся от прежнего набора. Подмена тут только на
