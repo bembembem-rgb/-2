@@ -5,6 +5,18 @@
 // сам срез — на шестом пикселе кадра: (48 - 6) / 96 * 192.
 const TANK_MUZZLE = 84;
 
+// Цикл шага в листе: 0 стойка, 1 левая нога + правая рука вперёд, 2 проход, 3 наоборот.
+// Темп привязан к скорости, иначе на замедлении ноги скользят по полу.
+// С места сразу кадр 1: без этого первый шаг запаздывает на целый интервал.
+function stepWalkAnim(p, dt) {
+    const k = Math.min(1.6, Math.max(0.5, Math.hypot(p.vx, p.vy) / (p.speed || 5)));
+    if (p.animFrame === 0 && p.frameTimer === 0) { p.animFrame = 1; }
+    p.frameTimer += dt * k;
+    if (p.frameTimer > p.frameInterval) {
+        p.animFrame = (p.animFrame + 1) % 4; p.frameTimer = 0.001;
+    }
+}
+
 function update(dt) {
     if (gameState !== 'playing') return;
     updateChain(dt);
@@ -189,10 +201,7 @@ function update(dt) {
             } else { 
                 if (player.vx < 0) player.directionOffset = 4; else player.directionOffset = 8; 
             }
-            player.frameTimer += dt; 
-            if (player.frameTimer > player.frameInterval) { 
-                player.animFrame = (player.animFrame + 1) % 4; player.frameTimer = 0; 
-            }
+            stepWalkAnim(player, dt);
         } else { 
             player.animFrame = 0; player.frameTimer = 0; 
         }

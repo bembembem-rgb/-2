@@ -197,9 +197,8 @@ function updatePlayer2(dt) {
     if (isMoving2) {
         if (Math.abs(player2.vy) > Math.abs(player2.vx)) { player2.directionOffset = player2.vy > 0 ? 0 : 12; }
         else { player2.directionOffset = player2.vx < 0 ? 4 : 8; }
-        player2.frameTimer += dt;
-        if (player2.frameTimer > player2.frameInterval) { player2.animFrame = (player2.animFrame + 1) % 4; player2.frameTimer = 0; }
-    }
+        stepWalkAnim(player2, dt);
+    } else { player2.animFrame = 0; player2.frameTimer = 0; }
 
     for (let obs of obstacles.values()) if (obs) resolveAABB(player2, obs);
     for (let obs of customObstacles) resolveAABB(player2, obs);
