@@ -20,23 +20,25 @@ function sfxBank(files) {
     return list[0];
 }
 
-const sfxPistol = new Audio('Laser_Shoot4.mp3');
-const sfxShotgun = new Audio('shotgunshot.mp3');
-const sfxEnemyShot = sfxBank(['enemyshoot.mp3', 'enemyshoot_v2.mp3']);
-const sfxAlt = new Audio('Laser_Shoot5.mp3');          // альт-залп
-const sfxRocket = new Audio('rocketlaunchtankorheli.mp3');
-const sfxVehicleBoom = new Audio('rocketexplodeheliortank.mp3');
+// Эффекты синтезирует tools/sfx_forge.py: FM и хруст в духе Sonic Mania,
+// квадратные блипы в духе Deltarune. Правка звука — там, а не в файлах.
+const sfxPistol = new Audio('sfx/sfx_pistol.wav');
+const sfxShotgun = new Audio('sfx/sfx_shotgun.wav');
+const sfxEnemyShot = sfxBank(['sfx/sfx_enemyshot_a.wav', 'sfx/sfx_enemyshot_b.wav']);
+const sfxAlt = new Audio('sfx/sfx_alt.wav');          // альт-залп
+const sfxRocket = new Audio('sfx/sfx_rocket.wav');
+const sfxVehicleBoom = new Audio('sfx/sfx_boom.wav');
 
-const sfxAchievement = new Audio('achivment.mp3');
-const sfxParryShield = new Audio('parrypushon.mp3');   // щит поднят
-const sfxParryDone = new Audio('parrypushout.mp3');    // удар отражён
-const sfxDash = new Audio('dash.mp3');
-const sfxWeapon = new Audio('item_equip.mp3');
-const sfxUiNav = new Audio('Blip_Select2.mp3');
-const sfxBossSpawn = new Audio('bossspawn.mp3');
-const sfxHurt = sfxBank(['hurt.mp3', 'hurttwo.mp3']);
-const sfxEnemyDeath = sfxBank(['slimedeath.mp3', 'slimedeath2.mp3']);
-const sfxLose = new Audio('lose.mp3');
+const sfxAchievement = new Audio('sfx/sfx_achievement.wav');
+const sfxParryShield = new Audio('sfx/sfx_parry_up.wav');   // щит поднят
+const sfxParryDone = new Audio('sfx/sfx_parry_done.wav');    // удар отражён
+const sfxDash = new Audio('sfx/sfx_dash.wav');
+const sfxWeapon = new Audio('sfx/sfx_equip.wav');
+const sfxUiNav = new Audio('sfx/sfx_ui_nav.wav');
+const sfxBossSpawn = new Audio('sfx/sfx_boss_spawn.wav');
+const sfxHurt = sfxBank(['sfx/sfx_hurt_a.wav', 'sfx/sfx_hurt_b.wav']);
+const sfxEnemyDeath = sfxBank(['sfx/sfx_enemy_death_a.wav', 'sfx/sfx_enemy_death_b.wav']);
+const sfxLose = new Audio('sfx/sfx_lose.wav');
 
 // Подмена на случай отсутствующего файла. Немая способность читается как
 // поломка: игрок жмёт Q, экран дрожит, а звука нет. Ошибку загрузки ловим
@@ -48,9 +50,9 @@ function sfxFallback(src, alt, rate = 1) {
     a.addEventListener('error', () => SFX_FALLBACK.set(a, { alt, rate }), { once: true });
     return a;
 }
-const sfxSurge = sfxFallback('sfx_surge.wav', sfxRocket, 0.55);
-const sfxPulse = sfxFallback('pulse.mp3', sfxParryDone, 0.7);
-const sfxGlitch = sfxFallback('glitch_crackle.mp3', sfxParryShield, 0.55);
+const sfxSurge = sfxFallback('sfx/sfx_surge.wav', sfxRocket, 0.55);
+const sfxPulse = sfxFallback('sfx/sfx_pulse.wav', sfxParryDone, 0.7);
+const sfxGlitch = sfxFallback('sfx/sfx_glitch.wav', sfxParryShield, 0.55);
 
 let currentBGM = null;
 
