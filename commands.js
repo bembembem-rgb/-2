@@ -236,7 +236,8 @@ const DEV_CREDITS = {
         }
         if (finalWatch && finalWatch.hp <= 0 && !activeBoss) {
             finalWatch = null;
-            setTimeout(showDevMessage, 1800);   // дать взрыву отыграть
+            // дать взрыву отыграть; если игра сама ушла в концовку или меню — не мешаем ей
+            setTimeout(() => { if (gameState === 'playing') showDevMessage(); }, 1800);
         }
         if (finalWatch && !inRun()) finalWatch = null;
         requestAnimationFrame(tick);
