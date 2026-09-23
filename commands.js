@@ -1,6 +1,10 @@
 // --- КОНСОЛЬ КОМАНД ---
-// ПК: клавиша ` (она же Ё). Телефон: удерживать кнопку паузы.
-// Пока консоль открыта, игра стоит на паузе. Список — команда help.
+// Спрятана за секретным словом. ПК: набрать слово на клавиатуре во время
+// забега (раскладка не важна). Телефон: удерживать паузу и ввести слово.
+// После первого ввода устройство запоминается: дальше хватает ` (Ё)
+// или удержания паузы. Пока консоль открыта, игра стоит на паузе.
+// В коде лежит не само слово, а его отпечаток: прочитав файл, слово не узнать.
+const SECRET = { hash: '47bc4ea3', len: 11 };
 
 // Текст, который игра показывает после победы над финальным боссом (команда final).
 const DEV_MESSAGE = {
@@ -44,7 +48,11 @@ const DEV_MESSAGE = {
     msg.innerHTML = '<div class="card"><h2></h2><p></p><div class="sign"></div><button>ПРОДОЛЖИТЬ</button></div>';
     document.body.appendChild(msg);
 
-    let open = false, pausedByUs = false;
+    let open = false, pausedByUs = false, codeMode = false;
+    const fnv = (str) => { let h = 0x811c9dc5; for (const ch of str) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
+    let unlocked = false;
+    try { unlocked = localStorage.getItem('ntz_dev') === SECRET.hash; } catch (e) {}
+    function unlock() { unlocked = true; try { localStorage.setItem('ntz_dev', SECRET.hash); } catch (e) {} }
     const history = []; let hi = 0;
 
     function print(text, cls = '') {
@@ -53,13 +61,16 @@ const DEV_MESSAGE = {
     }
     const inRun = () => typeof player !== 'undefined' && player && (gameState === 'playing' || gameState === 'paused');
 
-    function setOpen(v) {
-        open = v;
+    function setOpen(v, asCode = false) {
+        open = v; codeMode = v && asCode;
         box.style.display = v ? 'block' : 'none';
+        log.style.display = codeMode ? 'none' : '';
+        input.type = codeMode ? 'password' : 'text';
+        input.placeholder = codeMode ? '•••' : 'команда… (help)';
         if (v) {
             if (typeof resetInputState === 'function') resetInputState();
             if (gameState === 'playing') { gameState = 'paused'; pausedByUs = true; }
-            if (!log.childElementCount) print('help — список команд');
+            if (!codeMode && !log.childElementCount) print('help — список команд');
             setTimeout(() => input.focus(), 0);
         } else {
             input.blur();
@@ -120,6 +131,7 @@ const DEV_MESSAGE = {
     };
 
     function exec(line) {
+        if (!unlocked) return;
         const parts = line.trim().replace(/^\//, '').split(/\s+/);
         const name = (parts.shift() || '').toLowerCase();
         if (!name) return;
@@ -127,8 +139,12 @@ const DEV_MESSAGE = {
         const c = COMMANDS[name];
         if (!c) { print('нет такой команды. help — список', 'err'); return; }
         if (c.run && !inRun()) { print('сначала начни забег', 'err'); return; }
+        // Консоль держит игру на паузе, а spawnBoss и прочие ждут живой забег
+        const resume = c.run && pausedByUs && gameState === 'paused';
+        if (resume) gameState = 'playing';
         try { const r = c.f(parts); if (r) print(r, 'ok'); }
         catch (e) { print('ошибка: ' + e.message, 'err'); }
+        finally { if (resume && open && gameState === 'playing') gameState = 'paused'; }
     }
 
     // Бессмертие: здоровье держится полным каждый кадр
@@ -146,13 +162,27 @@ const DEV_MESSAGE = {
         requestAnimationFrame(tick);
     })();
 
-    // Клавиши: ` открывает; пока открыто, игра клавиш не получает
+    // Клавиши: секретное слово по физическим клавишам, ` — только после разблокировки.
+    // Пока консоль открыта, игра клавиш не получает.
+    let typed = '';
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'Backquote' && !open) { e.preventDefault(); e.stopImmediatePropagation(); setOpen(true); }
+        if (open) return;
+        if (e.code === 'Backquote' && unlocked) { e.preventDefault(); e.stopImmediatePropagation(); setOpen(true); return; }
+        const m = /^Key([A-Z])$/.exec(e.code);
+        if (!m || !inRun()) return;
+        typed = (typed + m[1].toLowerCase()).slice(-SECRET.len);
+        if (typed.length === SECRET.len && fnv(typed) === SECRET.hash) { typed = ''; unlock(); setOpen(true); }
     }, true);
     input.addEventListener('keydown', (e) => {
         e.stopPropagation();
-        if (e.code === 'Enter') { const v = input.value; if (v.trim()) { history.push(v); hi = history.length; } input.value = ''; exec(v); }
+        const enter = e.code === 'Enter' || e.key === 'Enter';   // у экранных клавиатур code пустой
+        if (enter && codeMode) {
+            // неверное слово — окно молча закрывается, без подсказок
+            const ok = fnv(input.value.trim().toLowerCase()) === SECRET.hash;
+            input.value = ''; setOpen(false);
+            if (ok) { unlock(); setOpen(true); }
+        }
+        else if (enter) { const v = input.value; if (v.trim()) { history.push(v); hi = history.length; } input.value = ''; exec(v); }
         else if (e.code === 'Escape' || e.code === 'Backquote') { e.preventDefault(); setOpen(false); }
         else if (e.code === 'ArrowUp' && history.length) { hi = Math.max(0, hi - 1); input.value = history[hi]; e.preventDefault(); }
         else if (e.code === 'ArrowDown' && history.length) { hi = Math.min(history.length, hi + 1); input.value = history[hi] || ''; e.preventDefault(); }
@@ -160,6 +190,5 @@ const DEV_MESSAGE = {
     input.addEventListener('keyup', (e) => e.stopPropagation());
 
     window.runCommand = exec;
-    window.openCommandConsole = () => setOpen(true);
-    window.showDevMessage = showDevMessage;
+    window.openCommandConsole = () => setOpen(true, !unlocked);
 })();
