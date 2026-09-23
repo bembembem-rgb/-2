@@ -14,14 +14,18 @@ OUT = (10, 8, 16)
 RAMP = {
     'cloak': [(24, 20, 34), (40, 34, 56), (60, 52, 82), (92, 82, 120)],
     'cloakfar': [(16, 13, 24), (26, 22, 36), (36, 31, 50), (48, 42, 66)],
+    # пальто чуть светлее капюшона и одежды под ним — чтобы его было видно
+    'coat': [(30, 26, 44), (50, 44, 70), (74, 66, 102), (112, 102, 146)],
+    'inner': [(10, 8, 16), (18, 15, 27), (26, 22, 38), (34, 30, 50)],
     'pants': [(18, 16, 26), (30, 26, 40), (42, 37, 56), (56, 50, 74)],
     'boot': [(16, 13, 22), (26, 22, 34), (40, 35, 52), (62, 56, 80)],
     'visor': [(110, 0, 24), (200, 16, 40), (240, 44, 60), (255, 120, 120)],
     'glove': [(120, 0, 22), (210, 20, 42), (250, 60, 70), (255, 150, 150)],
     'glovefar': [(70, 0, 14), (130, 6, 26), (160, 14, 32), (190, 40, 52)],
 }
-BAND_HI, BAND_LO = (240, 34, 52), (96, 6, 22)
-BAND_HI_FAR, BAND_LO_FAR = (150, 12, 30), (60, 4, 14)
+# Неоновые бинты: яркая красная лента, её тень и чёрный зазор между витками
+NEON, NEON_HI, NEON_DIM, WRAP_GAP = (255, 36, 58), (255, 150, 160), (176, 10, 36), (14, 6, 12)
+NEON_FAR, NEON_DIM_FAR = (150, 12, 32), (90, 6, 20)
 STRAP, STRAP_HI = (104, 8, 28), (168, 22, 44)
 HOLE = (6, 4, 10)
 VISOR_SPEC = (255, 225, 225)
@@ -97,15 +101,23 @@ class Canvas:
         return self.rgb, self.a
 
 def banded_arm(cv, shoulder, hand, far=False, keep=None):
-    """Рука: тёмный рукав, на предплечье светящиеся витки поперёк руки, красная перчатка."""
-    m, t = capsule(shoulder, hand, 2.6, 2.1)
-    ramp = RAMP['cloakfar' if far else 'cloak']
-    img = shade(m, ramp)
-    fore = m & (t > 0.42)
-    hi, lo = (BAND_HI_FAR, BAND_LO_FAR) if far else (BAND_HI, BAND_LO)
-    L = np.hypot(hand[0] - shoulder[0], hand[1] - shoulder[1])
-    band = (np.floor(t * L / 1.5) % 2 == 0)
-    img[fore & band] = hi; img[fore & ~band] = lo
+    """Рука: рукав пальто, ниже локтя — неоновые бинты косыми витками, перчатка."""
+    m, t = capsule(shoulder, hand, 2.7, 2.3)
+    img = shade(m, RAMP['cloakfar' if far else 'coat'])
+    dx, dy = hand[0] - shoulder[0], hand[1] - shoulder[1]
+    L = np.hypot(dx, dy) + 1e-9
+    ux, uy = dx / L, dy / L
+    along = (xx + 0.5 - shoulder[0]) * ux + (yy + 0.5 - shoulder[1]) * uy
+    across = (xx + 0.5 - shoulder[0]) * -uy + (yy + 0.5 - shoulder[1]) * ux
+    k = np.floor((along + 0.4 * across) / 1.0).astype(int) % 3   # косые витки
+    wrap = m & (t > 0.38)
+    if far:
+        img[wrap & (k == 0)] = NEON_FAR; img[wrap & (k == 1)] = NEON_DIM_FAR
+    else:
+        lit = run_len(m, 0, -1) <= 0                              # край на свету
+        img[wrap & (k == 0)] = NEON; img[wrap & (k == 1)] = NEON_DIM
+        img[wrap & (k == 0) & lit] = NEON_HI
+    img[wrap & (k == 2)] = WRAP_GAP
     cv.layer(m, img, keep=keep)
     g = ellipse(hand[0], hand[1] + 0.8, 2.4, 2.2)
     cv.layer(g, shade(g, RAMP['glovefar' if far else 'glove']), keep=m)
@@ -156,17 +168,24 @@ def draw_front(phase, back=False):
     top, hem = 21 + bob, 41 + bob
     body = poly([(16, top), (32, top), (34.5, hem), (13.5, hem)])
     body = hem_cut(body, hem, 13, 35, phase)
-    img = shade(body, RAMP['cloak'])
-    for fx in (21, 27):                               # складки
-        img[body & (xx == fx) & (yy > top + 6) & (yy < hem - 1)] = RAMP['cloak'][0]
+    img = shade(body, RAMP['coat'])
+    for fx in (18, 30):                               # складки по бокам
+        img[body & (xx == fx) & (yy > top + 7) & (yy < hem - 1)] = RAMP['coat'][0]
     cv.layer(body, img)
     if front:
-        # запах плаща и ремень через грудь
-        cv.paint((xx == 24) & (yy >= top + 3) & (yy <= hem - 3), RAMP['cloak'][0])
-        strap, _ = capsule((18, top + 2), (30, hem - 5), 0.9, 0.9)
+        # пальто распахнуто: под ним тёмная одежда, края полов светлее
+        inner = poly([(22, top), (26, top), (28.5, hem + 1), (19.5, hem + 1)]) & body
+        iimg = shade(inner, RAMP['inner'])
+        cv.rgb[inner] = iimg[inner]
+        edge = ring(inner) & body & (yy > top + 1)
+        cv.paint(edge & (xx < 24), RAMP['coat'][3]); cv.paint(edge & (xx >= 24), RAMP['coat'][2])
+        lapel_l = poly([(19, top), (22.5, top), (22, top + 6)]); lapel_r = poly([(25.5, top), (29, top), (26, top + 6)])
+        cv.paint(lapel_l & body, RAMP['coat'][2]); cv.paint(lapel_r & body, RAMP['coat'][1])
+        strap, _ = capsule((18, top + 2), (30, hem - 6), 0.9, 0.9)
         cv.paint(strap & body, STRAP); cv.paint(strap & body & (yy % 3 == 0), STRAP_HI)
     else:
-        strap, _ = capsule((30, top + 2), (18, hem - 5), 0.9, 0.9)
+        cv.paint((xx == 24) & (yy >= hem - 8) & body, RAMP['coat'][0])   # шлица
+        strap, _ = capsule((30, top + 2), (18, hem - 6), 0.9, 0.9)
         cv.paint(strap & body, STRAP)
     for is_away, sh, hd in arms:
         if not is_away: banded_arm(cv, sh, hd, keep=(yy <= sh[1] + 1))
@@ -207,11 +226,14 @@ def draw_east(phase):
         leg(cv, (24, 37 + bob), (24 + 5 * s, 46), facing=1, far=True)
         leg(cv, (22, 37 + bob), (22 - 5 * s, 46), facing=1)
     top, hem = 21 + bob, 41 + bob
-    body = poly([(18, top), (29, top), (31.5, hem), (15.5, hem)])
-    body = hem_cut(body, hem, 15, 32, phase)
-    img = shade(body, RAMP['cloak'])
-    img[body & (xx == 20) & (yy > top + 6) & (yy < hem - 1)] = RAMP['cloak'][0]
+    body = poly([(18, top), (29, top), (31.5, hem), (14.5, hem)])
+    body = hem_cut(body, hem, 14, 32, phase)
+    img = shade(body, RAMP['coat'])
+    img[body & (xx == 19) & (yy > top + 6) & (yy < hem - 1)] = RAMP['coat'][0]
     cv.layer(body, img)
+    front_gap = poly([(28, top + 3), (29.5, top + 3), (32, hem + 1), (29, hem + 1)]) & body
+    cv.rgb[front_gap] = shade(front_gap, RAMP['inner'])[front_gap]
+    cv.paint(ring(front_gap) & body & (xx < 30), RAMP['coat'][3])      # край полы
     strap, _ = capsule((27, top + 1), (22, hem - 6), 0.9, 0.9)
     cv.paint(strap & body, STRAP)
     near_hand = (24 + 6 * s, 35 + bob - abs(s))
