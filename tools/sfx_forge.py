@@ -4,7 +4,7 @@
 # Deltarune. Всё синтезируется с нуля, чужих сэмплов нет.
 import numpy as np, wave, os, sys
 
-SR = 44100
+SR = 22050
 rng = np.random.default_rng(7)
 
 def t_(dur): return np.arange(int(SR * dur)) / SR
