@@ -3,7 +3,8 @@
 // право — прицел и огонь), а способности получают большие кнопки под
 // правым большим пальцем, дугой вокруг угла экрана — как в мобильных
 // шутерах. Двойные тапы работают по-прежнему, кнопки их не отменяют.
-// Кнопки рисуются своим CSS, чтобы не зависеть от style.css.
+// Кнопки рисуются своим CSS, чтобы не зависеть от style.css. Шрифт — JetBrains Mono:
+// в Press Start 2P нет кириллицы, русские подписи падали бы в системный моноширинный.
 (function () {
     const touch = (typeof isMobile !== 'undefined' && isMobile)
         || ('ontouchstart' in window && window.matchMedia && matchMedia('(pointer: coarse)').matches);
@@ -11,10 +12,10 @@
 
     const css = `
     #mc-layer { position:fixed; inset:0; pointer-events:none; z-index:250; display:none;
-        font-family:"Press Start 2P", monospace; -webkit-user-select:none; user-select:none; }
+        font-family:"JetBrains Mono", monospace; font-weight:700; -webkit-user-select:none; user-select:none; }
     #mc-layer .mc-btn { position:absolute; pointer-events:auto; border-radius:50%;
         display:flex; align-items:center; justify-content:center; text-align:center;
-        color:#fff; font-size:8px; line-height:1.3; letter-spacing:0;
+        color:#fff; font-size:11px; line-height:1.2; letter-spacing:.02em;
         background:rgba(8,10,24,.55); border:2px solid var(--c); box-shadow:0 0 12px var(--c), inset 0 0 10px rgba(0,0,0,.6);
         text-shadow:0 0 6px var(--c); touch-action:none; -webkit-tap-highlight-color:transparent; overflow:hidden; }
     #mc-layer .mc-btn::before { content:""; position:absolute; inset:0; border-radius:50%;
@@ -23,10 +24,10 @@
     #mc-layer .mc-btn.ready { animation:mc-ready .35s ease-out; }
     #mc-layer .mc-btn.down { transform:scale(.9); background:var(--c); color:#000; text-shadow:none; }
     #mc-layer .mc-btn.off { opacity:.45; }
-    #mc-layer .mc-small { font-size:7px; border-radius:10px; }
+    #mc-layer .mc-small { font-size:10px; border-radius:10px; }
     @keyframes mc-ready { 0% { box-shadow:0 0 32px var(--c), 0 0 0 6px var(--c); } 100% { box-shadow:0 0 12px var(--c); } }
     #mc-rotate { position:fixed; inset:0; z-index:900; display:none; background:#05060f;
-        color:#00e0ff; font-family:"Press Start 2P", monospace; font-size:12px; line-height:2;
+        color:#00e0ff; font-family:"JetBrains Mono", monospace; font-weight:700; font-size:16px; line-height:2;
         align-items:center; justify-content:center; text-align:center; padding:24px; }
     @media (orientation: portrait) { body.in-run #mc-rotate { display:flex; } }
     body.is-mobile #touch-pad { display:none !important; }

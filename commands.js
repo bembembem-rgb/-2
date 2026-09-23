@@ -4,38 +4,71 @@
 // После первого ввода устройство запоминается: дальше хватает ` (Ё)
 // или удержания паузы. Пока консоль открыта, игра стоит на паузе.
 // В коде лежит не само слово, а его отпечаток: прочитав файл, слово не узнать.
-const SECRET = { hash: '47bc4ea3', len: 11 };
+const CMD_SECRET = { hash: '47bc4ea3', len: 11 };
 
-// Текст, который игра показывает после победы над финальным боссом (команда final).
-const DEV_MESSAGE = {
-    title: 'СООБЩЕНИЕ ОТ РАЗРАБОТЧИКА',
-    text: 'Спасибо, что играешь в NEON TIDES: ZERO!\n\n'
-        + 'Эту игру я сделал сам: код, спрайты, звуки и море нервов.\n'
-        + 'Если тебе понравилось — оставь отзыв на странице игры,\n'
-        + 'это правда помогает. До встречи в глубине.',
+// Титры после финального босса (команда final, или devmsg — сразу).
+// Всё, что здесь написано, можно менять: абзацы, подписи, строки.
+// Пустая строка в letter — пауза между абзацами.
+const DEV_CREDITS = {
+    letter: [
+        'Эта игра началась с голубого квадратика, который я гонял по пустому экрану.',
+        'Квадратик никуда не делся. Ты им и играл — просто теперь у него есть капюшон, пять боссов и целое затонувшее море вокруг.',
+        '',
+        'Между тем экраном и этими титрами — мастерская, ко-оп и очень много вечеров. Когда делаешь всё один, в какой-то момент перестаёшь верить, что по ту сторону экрана кто-то есть.',
+        '',
+        'Но ты дошёл до титров. Значит, есть.',
+        '',
+        'Скажу честно: если играть подряд, игра приедается. Я это вижу сам. Поэтому вторая часть — не «то же самое, только больше», а работа над ошибками: разобрать, что здесь не работает, и сделать так, чтобы было интересно не только первые полчаса.',
+        '',
+        'Будет ли она — зависит от того, появятся ли у первой части игроки. Это не упрёк. Просто писать продолжение в пустоту я не вытяну. А если игроков наберётся много — доберусь и до настоящего онлайна.',
+        '',
+        'Хочешь, чтобы вторая часть была? Покажи игру другу. Или оставь отзыв на странице — я читаю каждый.',
+    ],
     sign: '— разработчик',
+    roles: [
+        ['ИДЕЯ, КОД, ГЕЙМДИЗАЙН', 'разработчик'],
+        ['БОССЫ, УРОВНИ, МАСТЕРСКАЯ', 'разработчик'],
+        ['ЗВУКИ, СПРАЙТ ГЕРОЯ, ОБЛОЖКА', 'сделаны с помощью ИИ'],
+    ],
+    note: 'Пара эффектов в игре пока чужие. В следующем обновлении заменю их своими.',
+    last: 'ДО ВСТРЕЧИ В ГЛУБИНЕ',
 };
 
 (function () {
     const css = `
     #cmd-box { position:fixed; left:50%; top:12px; transform:translateX(-50%); width:min(640px, 94vw);
-        z-index:950; display:none; font-family:"Press Start 2P", monospace; font-size:10px;
+        z-index:950; display:none; font-family:"JetBrains Mono", monospace; font-size:13px;
         background:rgba(5,6,15,.92); border:2px solid #00e0ff; box-shadow:0 0 18px rgba(0,224,255,.45); }
     #cmd-log { max-height:38vh; overflow-y:auto; padding:10px 12px 4px; color:#9fb3c8; line-height:1.7; white-space:pre-wrap; }
     #cmd-log .ok { color:#3fdd4a; } #cmd-log .err { color:#ff2d55; } #cmd-log .me { color:#00e0ff; }
     #cmd-input { width:100%; box-sizing:border-box; background:transparent; border:0; border-top:1px solid #1d3550;
         color:#fff; font:inherit; padding:10px 12px; outline:none; }
-    #dev-msg { position:fixed; inset:0; z-index:960; display:none; align-items:center; justify-content:center;
-        background:rgba(0,0,0,.72); font-family:"Press Start 2P", monospace; }
-    #dev-msg .card { width:min(620px, 92vw); padding:26px 24px; text-align:center; color:#dfe8f5;
-        background:#070914; border:2px solid #ff2d55; box-shadow:0 0 40px rgba(255,45,85,.5);
-        animation:dev-in .6s cubic-bezier(.2,1.4,.4,1); }
-    #dev-msg h2 { margin:0 0 18px; font-size:13px; color:#ff2d55; text-shadow:0 0 10px #ff2d55; }
-    #dev-msg p { margin:0; font-size:10px; line-height:2; white-space:pre-wrap; }
-    #dev-msg .sign { margin-top:16px; color:#00e0ff; font-size:9px; }
-    #dev-msg button { margin-top:22px; font:inherit; font-size:10px; padding:12px 20px; cursor:pointer;
-        color:#000; background:#00e0ff; border:0; box-shadow:0 0 14px #00e0ff; }
-    @keyframes dev-in { from { transform:scale(.6); opacity:0; } to { transform:scale(1); opacity:1; } }
+    /* Титры. Press Start 2P без кириллицы — им только латинский логотип */
+    #ntz-credits { position:fixed; inset:0; z-index:960; display:none; overflow:hidden; cursor:default;
+        background:radial-gradient(ellipse at 50% 120%, #2a0716 0%, #05060f 55%, #020208 100%);
+        font-family:"JetBrains Mono", monospace; color:#dfe8f5; -webkit-user-select:none; user-select:none; }
+    #ntz-credits::before { content:""; position:absolute; inset:0; pointer-events:none; opacity:.25;
+        background:repeating-linear-gradient(0deg, rgba(0,0,0,.5) 0 2px, transparent 2px 4px); }
+    #ntz-credits .roll { position:absolute; left:50%; width:min(640px, 88vw); transform:translateX(-50%); text-align:center; }
+    #ntz-credits .logo { font-family:"Press Start 2P", monospace; font-size:clamp(18px, 4vw, 34px); line-height:1.5;
+        color:#fff; text-shadow:0 0 12px #ff2d55, 0 0 30px #ff2d55; margin-bottom:12vh; }
+    #ntz-credits .logo span { color:#ff2d55; }
+    #ntz-credits h3 { font-size:12px; letter-spacing:.3em; color:#00e0ff; margin:0 0 22px; font-weight:500; }
+    #ntz-credits .letter p { font-size:clamp(14px, 1.9vw, 17px); line-height:1.8; margin:0 0 6px; }
+    #ntz-credits .letter .gap { height:22px; }
+    #ntz-credits .letter .hl { color:#fff; font-weight:700; text-shadow:0 0 10px rgba(255,45,85,.7); }
+    #ntz-credits .sign { color:#ff2d55; margin:26px 0 18vh; font-size:14px; }
+    #ntz-credits .role { margin:0 0 26px; }
+    #ntz-credits .role b { display:block; font-size:11px; letter-spacing:.25em; color:#7d8ba3; font-weight:500; margin-bottom:6px; }
+    #ntz-credits .role span { font-size:16px; }
+    #ntz-credits .note { margin:14vh 0 0; font-size:12px; color:#7d8ba3; font-style:italic; }
+    #ntz-credits .last { margin:30vh 0 0; font-size:15px; letter-spacing:.35em; color:#00e0ff; text-shadow:0 0 12px #00e0ff; }
+    #ntz-credits .bar { position:absolute; right:16px; top:14px; display:flex; gap:10px; z-index:2; }
+    #ntz-credits button { font:inherit; font-size:12px; font-weight:700; padding:10px 16px; cursor:pointer; border:0;
+        color:#000; background:#00e0ff; box-shadow:0 0 14px #00e0ff; }
+    #ntz-credits button.ghost { background:transparent; color:#7d8ba3; box-shadow:none; border:1px solid #2a3550; }
+    #ntz-credits .done { position:absolute; left:50%; bottom:14vh; transform:translateX(-50%); display:none; }
+    #ntz-credits .hint { position:absolute; left:16px; top:24px; font-size:11px; color:#46536b; z-index:2; }
     `;
     const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -44,15 +77,28 @@ const DEV_MESSAGE = {
     document.body.appendChild(box);
     const log = box.querySelector('#cmd-log'), input = box.querySelector('#cmd-input');
 
-    const msg = document.createElement('div'); msg.id = 'dev-msg';
-    msg.innerHTML = '<div class="card"><h2></h2><p></p><div class="sign"></div><button>ПРОДОЛЖИТЬ</button></div>';
-    document.body.appendChild(msg);
+    const cr = document.createElement('div'); cr.id = 'ntz-credits';
+    const esc = (t) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    cr.innerHTML = `
+        <div class="bar"><button class="ghost skip">ПРОПУСТИТЬ</button></div>
+        <div class="roll">
+            <div class="logo">NEON TIDES:<br><span>ZERO</span></div>
+            <h3>СООБЩЕНИЕ ОТ РАЗРАБОТЧИКА</h3>
+            <div class="letter">${DEV_CREDITS.letter.map((l) => l ? `<p${l.startsWith('Но ты дошёл') ? ' class="hl"' : ''}>${esc(l)}</p>` : '<div class="gap"></div>').join('')}</div>
+            <div class="sign">${esc(DEV_CREDITS.sign)}</div>
+            ${DEV_CREDITS.roles.map(([r, n]) => `<div class="role"><b>${esc(r)}</b><span>${esc(n)}</span></div>`).join('')}
+            <div class="note">${esc(DEV_CREDITS.note)}</div>
+            <div class="last">${esc(DEV_CREDITS.last)}</div>
+        </div>
+        <button class="done">ПРОДОЛЖИТЬ</button>
+        <div class="hint">удерживай, чтобы ускорить</div>`;
+    document.body.appendChild(cr);
 
     let open = false, pausedByUs = false, codeMode = false;
     const fnv = (str) => { let h = 0x811c9dc5; for (const ch of str) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
     let unlocked = false;
-    try { unlocked = localStorage.getItem('ntz_dev') === SECRET.hash; } catch (e) {}
-    function unlock() { unlocked = true; try { localStorage.setItem('ntz_dev', SECRET.hash); } catch (e) {} }
+    try { unlocked = localStorage.getItem('ntz_dev') === CMD_SECRET.hash; } catch (e) {}
+    function unlock() { unlocked = true; try { localStorage.setItem('ntz_dev', CMD_SECRET.hash); } catch (e) {} }
     const history = []; let hi = 0;
 
     function print(text, cls = '') {
@@ -79,19 +125,50 @@ const DEV_MESSAGE = {
         }
     }
 
+    // Титры едут снизу вверх под finale.mp3. Удержание (мышь, палец, пробел) — ускорение.
+    let rollY = 0, rollLast = 0, fast = false, rolling = false, crPaused = false;
+    const roll = cr.querySelector('.roll'), doneBtn = cr.querySelector('.done');
     function showDevMessage() {
-        msg.querySelector('h2').textContent = DEV_MESSAGE.title;
-        msg.querySelector('p').textContent = DEV_MESSAGE.text;
-        msg.querySelector('.sign').textContent = DEV_MESSAGE.sign;
-        msg.style.display = 'flex';
-        if (gameState === 'playing') { gameState = 'paused'; msg._paused = true; }
-        if (typeof playSFX === 'function' && typeof sfxAchievement !== 'undefined') playSFX(sfxAchievement, 0.6);
+        if (typeof resetInputState === 'function') resetInputState();
+        if (gameState === 'playing') { gameState = 'paused'; crPaused = true; }
+        cr.style.display = 'block'; doneBtn.style.display = 'none';
+        rollY = window.innerHeight; rollLast = performance.now(); rolling = true;
+        roll.style.top = rollY + 'px';
+        if (typeof playBGM === 'function' && typeof bgmFinale !== 'undefined') {
+            try { bgmFinale.currentTime = 0; } catch (e) {}
+            playBGM(bgmFinale);
+        }
+        requestAnimationFrame(step);
     }
-    msg.querySelector('button').addEventListener('click', () => {
-        msg.style.display = 'none';
-        if (msg._paused && gameState === 'paused') { gameState = 'playing'; lastFrameTime = performance.now(); }
-        msg._paused = false;
-    });
+    function step(now) {
+        if (!rolling) return;
+        const dt = Math.min(50, now - rollLast); rollLast = now;
+        rollY -= dt * (fast ? 0.2 : 0.045);
+        // Остановка, когда последняя строка доехала до середины экрана
+        const lastEl = roll.querySelector('.last');
+        const stopAt = window.innerHeight / 2 - (lastEl.offsetTop + lastEl.offsetHeight / 2);
+        if (rollY <= stopAt) { rollY = stopAt; rolling = false; doneBtn.style.display = 'block'; }
+        roll.style.top = rollY + 'px';
+        if (rolling) requestAnimationFrame(step);
+    }
+    function closeCredits() {
+        rolling = false; cr.style.display = 'none';
+        if (typeof playBGM === 'function') playBGM(bgmFight);
+        if (crPaused && gameState === 'paused') { gameState = 'playing'; lastFrameTime = performance.now(); }
+        crPaused = false;
+    }
+    doneBtn.addEventListener('click', closeCredits);
+    cr.querySelector('.skip').addEventListener('click', closeCredits);
+    const fastOn = (e) => { if (!e.target.closest('button')) fast = true; }, fastOff = () => { fast = false; };
+    cr.addEventListener('mousedown', fastOn); cr.addEventListener('touchstart', fastOn, { passive: true });
+    window.addEventListener('mouseup', fastOff); window.addEventListener('touchend', fastOff);
+    window.addEventListener('keydown', (e) => {
+        if (cr.style.display !== 'block') return;
+        e.stopImmediatePropagation();
+        if (e.code === 'Space') { fast = true; e.preventDefault(); }
+        if ((e.code === 'Enter' || e.code === 'Escape') && !rolling) closeCredits();
+    }, true);
+    window.addEventListener('keyup', (e) => { if (e.code === 'Space') fast = false; }, true);
 
     // Финал: босс появляется через паузу-предупреждение, после его смерти — письмо.
     let finalWatch = null;
@@ -100,17 +177,20 @@ const DEV_MESSAGE = {
         setOpen(false);
         shakeTime = Math.max(shakeTime || 0, 1200);
         if (typeof spawnFloatText === 'function') spawnFloatText(player.x, player.y - 90, 'ОНО ИДЁТ…', '#c46dff', 18);
-        setTimeout(() => {
+        // Если игрок успел поставить паузу, spawnBoss молча откажет — ждём забега
+        const trySpawn = () => {
             if (!inRun()) return;
+            if (gameState !== 'playing') { setTimeout(trySpawn, 300); return; }
             window.spawnBoss(5);
-            finalWatch = activeBoss;
-        }, 1400);
+            finalWatch = activeBoss && /VOID/i.test(activeBoss.name) ? activeBoss : null;
+        };
+        setTimeout(trySpawn, 1400);
         return 'финальный босс вызван';
     }
 
     const COMMANDS = {
         help: { d: 'список команд', f: () => Object.entries(COMMANDS).map(([k, c]) => `${k.padEnd(9)} ${c.d}`).join('\n') },
-        final: { d: 'последний босс, после победы — письмо разработчика', run: true, f: startFinal },
+        final: { d: 'последний босс, после победы — титры', run: true, f: startFinal },
         boss: { d: 'boss 1-5 — вызвать босса', run: true, f: (a) => {
             if (typeof window.spawnBoss !== 'function') return 'нет spawnBoss';
             const id = isNaN(+a[0]) ? a[0] : +a[0]; window.spawnBoss(id || 1); return 'босс ' + (id || 1);
@@ -126,7 +206,7 @@ const DEV_MESSAGE = {
             if (typeof window.giveCredits !== 'function') return 'нет giveCredits'; window.giveCredits(+a[0] || 500); return '+' + (+a[0] || 500) + ' CR';
         } },
         score: { d: 'score 1000 — добавить очки', run: true, f: (a) => { window.giveScore && window.giveScore(+a[0] || 1000); return '+' + (+a[0] || 1000); } },
-        devmsg: { d: 'показать письмо разработчика', f: () => { setOpen(false); showDevMessage(); return ''; } },
+        devmsg: { d: 'сразу показать титры с письмом', f: () => { setOpen(false); showDevMessage(); return ''; } },
         clear: { d: 'очистить консоль', f: () => { log.innerHTML = ''; return ''; } },
     };
 
@@ -170,15 +250,15 @@ const DEV_MESSAGE = {
         if (e.code === 'Backquote' && unlocked) { e.preventDefault(); e.stopImmediatePropagation(); setOpen(true); return; }
         const m = /^Key([A-Z])$/.exec(e.code);
         if (!m || !inRun()) return;
-        typed = (typed + m[1].toLowerCase()).slice(-SECRET.len);
-        if (typed.length === SECRET.len && fnv(typed) === SECRET.hash) { typed = ''; unlock(); setOpen(true); }
+        typed = (typed + m[1].toLowerCase()).slice(-CMD_SECRET.len);
+        if (typed.length === CMD_SECRET.len && fnv(typed) === CMD_SECRET.hash) { typed = ''; unlock(); setOpen(true); }
     }, true);
     input.addEventListener('keydown', (e) => {
         e.stopPropagation();
         const enter = e.code === 'Enter' || e.key === 'Enter';   // у экранных клавиатур code пустой
         if (enter && codeMode) {
             // неверное слово — окно молча закрывается, без подсказок
-            const ok = fnv(input.value.trim().toLowerCase()) === SECRET.hash;
+            const ok = fnv(input.value.trim().toLowerCase()) === CMD_SECRET.hash;
             input.value = ''; setOpen(false);
             if (ok) { unlock(); setOpen(true); }
         }
