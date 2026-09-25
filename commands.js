@@ -39,6 +39,8 @@ const DEV_CREDITS = {
     #cmd-box { position:fixed; left:50%; top:12px; transform:translateX(-50%); width:min(640px, 94vw);
         z-index:950; display:none; font-family:"JetBrains Mono", monospace; font-size:13px;
         background:rgba(5,6,15,.92); border:2px solid #00e0ff; box-shadow:0 0 18px rgba(0,224,255,.45); }
+    #cmd-close { position:absolute; right:6px; top:6px; width:40px; height:40px; border:0; cursor:pointer;
+        background:transparent; color:#00e0ff; font-size:20px; line-height:40px; z-index:1; }
     #cmd-log { max-height:38vh; overflow-y:auto; padding:10px 12px 4px; color:#9fb3c8; line-height:1.7; white-space:pre-wrap; }
     #cmd-log .ok { color:#3fdd4a; } #cmd-log .err { color:#ff2d55; } #cmd-log .me { color:#00e0ff; }
     #cmd-input { width:100%; box-sizing:border-box; background:transparent; border:0; border-top:1px solid #1d3550;
@@ -73,7 +75,7 @@ const DEV_CREDITS = {
     const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
     const box = document.createElement('div'); box.id = 'cmd-box';
-    box.innerHTML = '<div id="cmd-log"></div><input id="cmd-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="команда… (help)">';
+    box.innerHTML = '<button id="cmd-close" aria-label="Закрыть">✕</button><div id="cmd-log"></div><input id="cmd-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="команда… (help)">';
     document.body.appendChild(box);
     const log = box.querySelector('#cmd-log'), input = box.querySelector('#cmd-input');
 
@@ -207,6 +209,7 @@ const DEV_CREDITS = {
         } },
         score: { d: 'score 1000 — добавить очки', run: true, f: (a) => { window.giveScore && window.giveScore(+a[0] || 1000); return '+' + (+a[0] || 1000); } },
         devmsg: { d: 'сразу показать титры с письмом', f: () => { setOpen(false); showDevMessage(); return ''; } },
+        exit: { d: 'закрыть консоль', f: () => { setTimeout(() => setOpen(false), 0); return ''; } },
         clear: { d: 'очистить консоль', f: () => { log.innerHTML = ''; return ''; } },
     };
 
@@ -269,6 +272,10 @@ const DEV_CREDITS = {
         else if (e.code === 'ArrowDown' && history.length) { hi = Math.min(history.length, hi + 1); input.value = history[hi] || ''; e.preventDefault(); }
     });
     input.addEventListener('keyup', (e) => e.stopPropagation());
+    // На телефоне нет Esc: крестик в углу окна
+    const closeBtn = box.querySelector('#cmd-close');
+    closeBtn.addEventListener('click', () => setOpen(false));
+    closeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); setOpen(false); }, { passive: false });
 
     window.runCommand = exec;
     window.openCommandConsole = () => setOpen(true, !unlocked);
